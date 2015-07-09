@@ -2,16 +2,16 @@
 
 An R package for scalable weighted subspace random forests
 
-The [wsrf](http://cran.r-project.org/web/packages/wsrf/index.html) is
-a parallel implementation of the Weighted Subspace Random Forest
-algorithm (wsrf) of xu2012classifying.  A novel variable weighting
-method is used for variable subspace selection in place of the
-traditional approach of random variable sampling.  This new approach
-is particularly useful in building models for high dimensional
-data---often consisting of thousands of variables.  Parallel
-computation is used to take advantage of multi-core machines and
-clusters of machines to build random forest models from high
-dimensional data with reduced elapsed times.
+The [wsrf](http://cran.r-project.org/package=wsrf) is a parallel
+implementation of the Weighted Subspace Random Forest algorithm (wsrf)
+of xu2012classifying.  A novel variable weighting method is used for
+variable subspace selection in place of the traditional approach of
+random variable sampling.  This new approach is particularly useful in
+building models for high dimensional data---often consisting of
+thousands of variables.  Parallel computation is used to take
+advantage of multi-core machines and clusters of machines to build
+random forest models from high dimensional data with reduced elapsed
+times.
 
 
 * [Documentation & Examples](#documentation-&-examples)
@@ -23,7 +23,7 @@ dimensional data with reduced elapsed times.
 ## Documentation & Examples ##
 
 The package ships with a
-[pdf vignette](http://cran.r-project.org/web/packages/wsrf/wsrf.pdf)
+[html vignette](http://cran.r-project.org/web/packages/wsrf/vignettes/wsrf-guide.html)
 including more details and a few examples.
 
 
