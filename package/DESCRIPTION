@@ -1,0 +1,27 @@
+Package: wsrf
+Type: Package
+Title: Weighted Subspace Random Forest for Classification
+Version: 1.5.24
+Date: 2015-07-07
+Authors@R: c(person("Qinghan", "Meng", role="aut"),
+             person("He", "Zhao", email="Simon.Yansen.Zhao@gmail.com", role=c("aut", "cre")),
+             person("Graham", "Williams", email="graham.williams@togaware.com", role="aut"),
+             person("Junchao", "Lv", role="ctb"),
+             person("Baoxun", "Xu", role="aut"))
+Maintainer: He Zhao <Simon.Yansen.Zhao@gmail.com>
+Description: A parallel implementation of Weighted Subspace Random
+    Forest.  The Weighted Subspace Random Forest algorithm was
+    proposed in the International Journal of Data Warehousing and
+    Mining, 8(2):44-63, 2012, proposed by Baoxun Xu, Joshua Zhexue
+    Huang, Graham Williams, Qiang Wang, and Yunming Ye.  The algorithm
+    can classify very high-dimensional data with random forests built
+    using small subspaces.  A novel variable weighting method is used
+    for variable subspace selection in place of the traditional random
+    variable sampling.This new approach is particularly useful in
+    building models from high-dimensional data.
+License: GPL (>= 2)
+Depends: R (>= 3.0.0), Rcpp (>= 0.10.2), stats, parallel
+LinkingTo: Rcpp
+Suggests: rattle (>= 2.6.26), randomForest (>= 4.6.7),
+          party (>= 1.0.7), stringr (>= 0.6.2), knitr (>= 1.5)
+VignetteBuilder: knitr

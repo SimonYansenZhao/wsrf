@@ -1,0 +1,215 @@
+---
+title: "A Quick Start Guide for wsrf"
+author: "He Zhao, Graham Williams"
+date: "`r Sys.Date()`"
+bibliography:
+  ./wsrf-guide.bib
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{A Quick Start Guide for wsrf}
+output:
+  knitr:::html_vignette:
+    toc: yes
+---
+
+## Introduction ##
+
+The [**wsrf**](http://cran.r-project.org/package=wsrf) package is a
+parallel implementation of the Weighted Subspace Random Forest
+algorithm (wsrf) of @xu2012classifying.  A novel variable weighting
+method is used for variable subspace selection in place of the
+traditional approach of random variable sampling.  This new approach
+is particularly useful in building models for high dimensional data
+--- often consisting of thousands of variables.  Parallel computation
+is used to take advantage of multi-core machines and clusters of
+machines to build random forest models from high dimensional data with
+reduced elapsed times.
+
+## Requirements and Installation Notes ##
+
+Currently, **wsrf** requires R (>= 3.0.0),
+[**Rcpp**](http://cran.r-project.org/package=Rcpp) (>= 0.10.2)
+[@dirk2011rcpp; @dirk2013seamless].  For the use of multi-threading, a
+C++ compiler with [C++11](https://en.wikipedia.org/wiki/C%2B%2B11)
+standard support of threads or the [*Boost*](http://www.boost.org/)
+C++ library with version above 1.54 is required. The choice is
+available at installation time depending on what is available to the
+user.  To install the latest version of the package, from within R
+run:
+
+```{r eval=FALSE}
+install.packages("wsrf")
+```
+
+By default, multi-threading functionality is not enabled, which can be
+configured through the argument `configure.args=`.
+
+```{r eval=FALSE}
+install.packages("wsrf",
+                 type="source",
+				 configure.args="--enable-c11=yes")
+```
+
+We recommend using C++11 standard library for accessing multi-threaded
+functionality, which will be our main focus for development in the
+future.  Though support for compiling C++11 code in packages is not
+fully supported in current release of R, it has been tested that it
+can be compiled if the user has already installed the latest version
+of [*GCC*](https://gcc.gnu.org/) and C++ standard library^[C++11
+support is experimental in R-devel but not yet finished, see
+[Daily News about R-devel on
+2013-12-02](http://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2013/12/02#n2013-12-02)
+and
+[MinGW-w64 Notes by Duncan
+Murdoch](https://rawgit.com/kevinushey/RToolsToolchainUpdate/master/mingwnotes.html)].
+
+Besides the default installation for C++11, we also provide another
+implementations of **wsrf**, which implements parallelism using
+*Boost*.
+
+The choice of version to install is available at installation.  The
+version without parallelism, as required when C++11 is not available
+nor is *Boost*, and is the recommended and only possible choice for
+Microsoft Windows platform with the current version of R (3.2.0) (the
+same as the first installation method above):
+
+```{r eval=FALSE}
+install.packages("wsrf",
+                 configure.args="--enable-c11=no")
+```
+
+Finally the version using *Boost* for multithreading can be installed
+with the appropriate configuration options. This is suitable when the
+version of C++ available does not support C++11.
+
+```{r eval=FALSE}
+install.packages("wsrf",
+                 type="source",
+                 configure.args="--with-boost-include=<Boost include path>
+                                 --with-boost-lib=<Boost lib path>")
+```
+
+## Usage ##
+
+This section demonstrates how to use **wsrf**, especially on a cluster
+of machines.
+
+The example uses a small dataset *weather* from
+[**rattle**](http://cran.r-project.org/package=rattle) [@rattle].  See
+the help page of **rattle** in R (`?weather`) for more details of
+*weather*.  Below are the basic information of it.
+
+```{r usage_load, message=FALSE}
+library("rattle")
+ds <- weather
+dim(ds)
+names(ds)
+```
+
+Before building the model we need to prepare the training dataset.
+First we note the various roles played by the different variables,
+including identifying the irrelevant variables.
+
+```{r usage_prepare}
+target <- "RainTomorrow"
+ignore <- c("Date", "Location", "RISK_MM")
+(vars <- setdiff(names(ds), ignore))
+dim(ds[vars])
+```
+
+Next we deal with missing values, using `na.roughfix()` from
+**randomForest** to take care of them.
+
+```{r message=FALSE}
+library("randomForest")
+if (sum(is.na(ds[vars]))) ds[vars] <- na.roughfix(ds[vars])
+ds[target] <- as.factor(ds[[target]])
+(tt <- table(ds[target]))
+```
+
+We construct the formula that describes the model which will predict
+the target based on all other variables.
+
+```{r}
+(form <- as.formula(paste(target, "~ .")))
+```
+
+Finally we create the randomly selected training and test datasets,
+setting a seed so that the results can be exactly replicated.
+
+```{r}
+seed <- 42
+set.seed(seed)
+length(train <- sample(nrow(ds), 0.7*nrow(ds)))
+length(test <- setdiff(seq_len(nrow(ds)), train))
+```
+
+The signature of the function to build a weighted random forest model
+in **wsrf** is:
+
+```{r eval=FALSE}
+wsrf(formula, 
+     data, 
+     ntrees=500, 
+     nvars=NULL,
+     weights=TRUE, 
+     parallel=TRUE)
+```
+
+We use the training dataset to build a random forest model.  All
+parameters, except `formula` and `data`, use their default values:
+`500` for `ntrees` --- the number of trees; `TRUE` for `weights` ---
+weighted subspace random forest or random forest; `TRUE` for
+`parallel` --- use multi-thread or other options, etc.
+
+```{r usage_build_by_default, message=FALSE}
+library("wsrf")
+model.wsrf.1 <- wsrf(form, data=ds[train, vars])
+print(model.wsrf.1)
+print(model.wsrf.1, 1)  # Print tree 1.
+```
+
+Then, `predict` the classes of test data.
+
+```{r usage_evaluate}
+cl <- predict(model.wsrf.1, newdata=ds[test, vars], type="class")
+actual <- ds[test, target]
+(accuracy.wsrf <- sum(cl == actual, na.rm=TRUE)/length(actual))
+```
+
+Thus, we have built a model that is around `r round(100*accuracy.wsrf,
+0)`% accurate on unseen testing data.
+
+Using different random seed, we obtain another model.
+
+```{r usage_build_another, message=FALSE}
+# Here we build another model without weighting.
+model.wsrf.2 <- wsrf(form, data=ds[train, vars], weights=FALSE)
+print(model.wsrf.2)
+```
+
+We can also derive a subset of the forest from the model or a
+combination of multiple forests.
+
+```{r usage_subset_combine}
+submodel.wsrf <- subset.wsrf(model.wsrf.1, 1:150)
+print(submodel.wsrf)
+bigmodel.wsrf <- combine.wsrf(model.wsrf.1, model.wsrf.2)
+print(bigmodel.wsrf)
+```
+
+Next, we will specify building the model on a cluster of servers.
+
+```{r usage_build_on_cluster, eval=FALSE}
+servers <- paste0("node", 31:40)
+model.wsrf.3 <- wsrf(form, data=ds[train, vars], parallel=servers)
+```
+
+All we need is a character verctor specifying the hostnames of which
+nodes to use, or a named integer vector, whose values of the elements
+give how many threads to use for model building, in other words, how
+many trees built simultaneously.  More detail descriptions about
+**wsrf** are presented in the
+[manual](http://cran.r-project.org/web/packages/wsrf/wsrf.pdf).
+
+## References ##

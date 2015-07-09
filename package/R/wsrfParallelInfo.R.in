@@ -1,0 +1,3 @@
+wsrfParallelInfo <- function(...) {
+  message("@VERSION_INFO@")
+}
