@@ -1,6 +1,6 @@
 APP=wsrf
 GITVER=$(shell git rev-list --count HEAD)
-VER=1.5.$(shell expr $(GITVER) - 24)
+VER=1.5.$(shell expr $(GITVER) + 23)
 DATE=$(shell date +%Y-%m-%d)
 LPATH=$(shell Rscript -e "write(Sys.getenv('R_LIBS_USER'), '')")
 FROMNODE=31
