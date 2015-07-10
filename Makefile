@@ -37,10 +37,20 @@ help:
 check: clean build
 	R CMD check --as-cran --check-subdirs=yes $(APP)_$(VER).tar.gz
 
+.PHONY: before_script
+before_script:
+	sed -i 's/^Version: .*/Version: $(VER)/' package/DESCRIPTION
+	sed -i 's/^Date: .*/Date: $(DATE)/' package/DESCRIPTION
+	cp package/R/wsrf.R package/R/wsrf.R.in
+	sed -i 's/packageStartupMessage("With parallel computing disabled")/packageStartupMessage("@VERSION_INFO@")/' package/R/wsrf.R.in
+	autoconf -o package/configure package/configure.ac
+	mv package/* ./
+	rm -rf package autom4te.cache configure.ac LICENSE
+
 .PHONY: build
 build:
-	perl -pi -e 's|^Version: .*|Version: $(VER)|' package/DESCRIPTION && \
-	perl -pi -e 's|^Date: .*|Date: $(DATE)|' package/DESCRIPTION && \
+	sed -i 's/^Version: .*/Version: $(VER)/' package/DESCRIPTION && \
+	sed -i 's/^Date: .*/Date: $(DATE)/' package/DESCRIPTION && \
 	cp package/R/wsrf.R package/R/wsrf.R.in && \
 	sed -i 's/packageStartupMessage("With parallel computing disabled")/packageStartupMessage("@VERSION_INFO@")/' package/R/wsrf.R.in && \
 	autoconf -o package/configure package/configure.ac && \

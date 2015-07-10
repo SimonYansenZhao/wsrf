@@ -1,0 +1,44 @@
+# Specify the default environment is for R.
+
+language: r
+
+
+# It is a must for R now on Travis (2015-07-10).
+
+sudo: required
+
+
+# apt-get install. (It is commented because autoconf is pre-installed
+# in the VM on Travis.)
+
+# apt_packages:
+#  - autoconf
+
+
+# Install other related R packages not listed in "Depends:" field in
+# DESCRIPTION, such as the ones listed in "Suggests:".
+
+r_packages:
+  - rattle
+  - randomForest
+  - party
+  - stringr
+
+
+# Take warnings as errored.
+
+warnings_are_errors: true
+
+
+# Before R CMD build.
+
+before_script:
+  - make before_script
+  - rm Makefile
+
+
+# Which Git branches to build
+
+branches:
+  only:
+    - dev
