@@ -27,7 +27,7 @@ r_binary_packages:
 
 # Take warnings as errored.
 
-warnings_are_errors: true
+# warnings_are_errors: true
 
 
 # Before R CMD build.
