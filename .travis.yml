@@ -29,12 +29,17 @@ r_binary_packages:
 
 # warnings_are_errors: true
 
+# Before install package dependence
+before_install:
+  - make before_script
+  - rm Makefile
+
 
 # Before R CMD build.
 
-before_script:
-  - make before_script
-  - rm Makefile
+# before_script:
+#   - make before_script
+#   - rm Makefile
 
 
 # Which Git branches to build
