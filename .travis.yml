@@ -18,7 +18,7 @@ sudo: required
 # Install other related R packages not listed in "Depends:" field in
 # DESCRIPTION, such as the ones listed in "Suggests:".
 
-r_packages:
+r_binary_packages:
   - rattle
   - randomForest
   - party
