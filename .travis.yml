@@ -31,15 +31,8 @@ r_binary_packages:
 
 # Before install package dependence
 before_install:
-  - make before_script
+  - make before_install
   - rm Makefile
-
-
-# Before R CMD build.
-
-# before_script:
-#   - make before_script
-#   - rm Makefile
 
 
 # Which Git branches to build
