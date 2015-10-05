@@ -22,3 +22,7 @@
 
 # temp files
 *~
+
+# Eclipse project files
+.cproject
+.project
