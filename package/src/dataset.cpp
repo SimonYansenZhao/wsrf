@@ -3,7 +3,7 @@
 Dataset::Dataset (Rcpp::DataFrame ds, MetaData* meta_data, bool training) {
     training_     = training;
     nobs_         = ds.nrows();
-    data_ptr_vec_ = vector<void*>(ds.size()-1);
+    data_ptr_vec_ = vector<void*>(ds.size());
     meta_data_    = meta_data;
 
     if (nobs_ == 0) throw std::range_error("No observations in the dataset.");
