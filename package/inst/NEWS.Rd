@@ -1,6 +1,19 @@
 \name{NEWS}
 \title{News for Package 'wsrf'}
 
+\section{Changes in wsrf version 1.5.29 (2015-10-10)}{
+
+  \subsection{Bug Fixes}{
+    \itemize{
+
+      \item Fix out-of-bound access bug triggered by passing test data
+      without the column of target variable.
+
+    }
+  }
+
+}
+
 \newcommand{\pkglink}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
 \section{Changes in wsrf version 1.5.24 (2015-07-07)}{
