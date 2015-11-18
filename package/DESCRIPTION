@@ -3,7 +3,7 @@ Type: Package
 Title: Weighted Subspace Random Forest for Classification
 Version: 1.5.24
 Date: 2015-07-07
-Authors@R: c(person("Qinghan", "Meng", role="aut"),
+Authors@R: c(person("Qinghan", "Meng", email="qinghan.meng@gmail.com", role="aut"),
              person("He", "Zhao", email="Simon.Yansen.Zhao@gmail.com", role=c("aut", "cre")),
              person("Graham", "Williams", email="graham.williams@togaware.com", role="aut"),
              person("Junchao", "Lv", role="ctb"),
