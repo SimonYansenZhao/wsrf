@@ -13,7 +13,9 @@ wsrf <- function(
   # Determine the information provided by the formula.
 
   target <- as.character(formula[[2]]) # Assumes it is a two sided formula.
+  target <- sub("^`(.*)`$", "\\1", target)  # Remove backticks
   inputs <- attr(terms.formula(formula, data=data), "term.labels")
+  inputs <- sub("^`(.*)`$", "\\1", inputs)  # Remove backticks if variable names are non-syntactic
   vars   <- union(inputs, target)
 
   # Retain just the dataset required, and perform the required
