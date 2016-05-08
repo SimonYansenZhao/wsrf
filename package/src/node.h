@@ -24,10 +24,10 @@ private:
      */
 
     int    var_idx_;      // The index of the variable represented by the node.
-    double split_value_;
-    double info_gain_;
-    double split_info_;
-    double gain_ratio_;
+    double split_value_;  // For continuous variables.
+    double info_gain_;    // Information Gain = Info - \sum(\frac{nobs_{child}}{nobs_}Info_{child})
+    double split_info_;   // Split Info = - \sum\frac{nobs_{child}}{nobs_} \times \log_2\frac{nobs_{child}}{nobs_}
+    double gain_ratio_;   // Information Gain Ratio = Information Gain / Split Info
 
     vector<Node*> child_nodes_;  // Children nodes of this node.
 
@@ -132,7 +132,7 @@ public:
     }
 
     void setLabelFreqCount (vector<int> label_nums, bool set_label = false) {
-        // If set_major_label = true, calculate and set the major label from label frequency count.
+        // If set_label = true, calculate and set the major label from label frequency count.
         // Otherwise, just set the label frequency count.
 
         label_freq_count_.swap(label_nums);
@@ -170,6 +170,9 @@ public:
     }
 
     string getLabelDstrStr () {
+        /*
+         * For printing the class distribution in the leaf node.
+         */
         vector<double> dstr = getLabelDstr();
         stringstream res;
         res.precision(2);
@@ -198,7 +201,7 @@ public:
          *     4. information gain
          *     5. split info
          *     6. information gain ratio
-         *     7. split value (optional,depends on 4.)
+         *     7. split value (optional,depends on 0.)
          */
 
         vector<double> node_info;
