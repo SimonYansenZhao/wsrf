@@ -17,9 +17,9 @@ protected:
 
 public:
 
-    VarSelector (Dataset* train_set, TargetData* targdata, MetaData* meta_data, const vector<int>& obs_vec, const vector<int>& var_vect)
+    VarSelector (Dataset* train_set, TargetData* targdata, MetaData* meta_data, const vector<int>& obs_vec, const vector<int>& var_vec)
         : obs_vec_(obs_vec),
-          var_vec_(var_vect) {
+          var_vec_(var_vec) {
         nobs_ = obs_vec.size();
         train_set_ = train_set;
         targ_data_ = targdata;

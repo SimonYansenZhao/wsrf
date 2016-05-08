@@ -8,13 +8,14 @@ C4p5Selector::C4p5Selector (Dataset* train_set, TargetData* targdata, MetaData* 
     info_ = calcEntropy(obs_vec);
 }
 
-/*
- * calculate corresponding information
- * if split by discrete variable <var_idx>
- */
 void C4p5Selector::handleDiscVar (int var_idx) {
     /*
-     * if no more than 2 child nodes contain at least <MIN_NODE_SIZE_>
+     * Calculate corresponding information
+     * if split by discrete variable <var_idx>
+     */
+
+    /*
+     * If no more than 2 child nodes contain at least <MIN_NODE_SIZE_>
      * instances, don't split training set by this attribute
      */
     map<int, vector<int> > mapper = train_set_->splitDiscVar(obs_vec_, var_idx);
@@ -136,14 +137,17 @@ void C4p5Selector::handleContVar (int var_idx) {
     };
 }
 
-/*
- * Randomly select <nselect> variables from <var_vec>.
- * Default subspace size is log(n)/log2 + 1 if <nselect> == -1.
- */
 vector<int> C4p5Selector::getRandomVars (vector<int> var_vec, int nselect) {
+    /*
+     * Randomly select <nselect> variables from <var_vec>.
+     * Default subspace size is log(n)/log2 + 1 if <nselect> == -1.
+     *
+     * Duplicate variables should not be in the result.
+     */
+
     //TODO: If possible, make similar RNG codes into a single function.
 
-    // the result attribute list can't be repeatable
+    //
     int nleft = var_vec.size();
     if (nselect == -1) nselect = log((double)nleft)/LN_2 + 1;
 

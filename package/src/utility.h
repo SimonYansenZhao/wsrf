@@ -23,8 +23,8 @@ enum NodeType {
 };
 
 typedef struct attribute_selection_result {
-    bool ok_;
-    int var_idx_;
+    bool   ok_;
+    int    var_idx_;
     double split_value_;
     double info_gain_;
     double split_info_;
