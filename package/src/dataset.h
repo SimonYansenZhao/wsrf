@@ -7,6 +7,9 @@
 using namespace std;
 
 class TargetData {
+    /*
+     * Store the data of target variable in training set.
+     */
 private:
     int  nlabels_;
     int  nobs_;
@@ -45,8 +48,7 @@ public:
     }
 
     bool haveSameLabel (const vector<int>& obs_vec) {
-        // Whether all observations have the same class label.
-
+        // Whether all observations in <obs_vec> have the same class label.
         int nobs = obs_vec.size();
         if (nobs == 0) {
             throw std::range_error("Empty node.");
@@ -57,14 +59,12 @@ public:
             for (int i = 1; i < nobs; i++)
                 if (label != targ_array_[obs_vec[i]]) return false;
             return true;
-
         }
     }
 
     vector<int> getLabelFreqCount (const vector<int>& obs_vec) {
         // Class label frequency count.
         // That is, how many observations have a specific class label.
-
         int nobs = obs_vec.size();
         vector<int> numbers (nlabels_, 0);
 
@@ -87,10 +87,10 @@ public:
 
 class Dataset {
 private:
-    vector<void*>    data_ptr_vec_;
+    vector<void*>    data_ptr_vec_;  // Pointers to the column data of all variables.
     MetaData*        meta_data_;     // Meta data.
     int              nobs_;          // The total number of observations in the training set.
-    bool             training_;
+    bool             training_;      // Training set or not?
     vector<double>   nlogn_vec_;
     vector<Rcpp::IntegerVector> preserve_int;
     vector<Rcpp::NumericVector> preserve_num;
