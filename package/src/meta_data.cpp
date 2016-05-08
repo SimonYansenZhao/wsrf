@@ -21,12 +21,13 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name) {
 
     Rcpp::CharacterVector vnames(data.names());
     for (int vindex = 0; vindex < nvars_; vindex++) {
-        string name = Rcpp::as<string>(vnames[vindex]);
-        var_names_[vindex] = name;
+        // Store the names of feature variables.
+        var_names_[vindex] = Rcpp::as<string>(vnames[vindex]);
     }
 
     for (int vindex = 0; vindex < nvars_; vindex++) {
         if (Rf_isFactor(data[vindex])) {
+            // Store the levels of factor variables.
             Rcpp::IntegerVector vals(data[vindex]);
             Rcpp::CharacterVector levels(vals.attr("levels"));
             int nlevels = levels.size();
@@ -35,7 +36,7 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name) {
             name_vec levnames(nlevels);
             for (int lindex = 0; lindex < nlevels; lindex++) {
                 string name = Rcpp::as<string>(levels[lindex]);
-                namevals.insert(name_value_map::value_type(name, lindex));
+                namevals.insert(name_value_map::value_type(name, lindex));  // Here, factor values starts from 0.
                 levnames[lindex] = name;
             }
             var_values_[vindex].swap(namevals);
@@ -46,6 +47,7 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name) {
         }
     }
 
+    // Store the levels of the target variable.
     Rcpp::IntegerVector vals(data[targ_var_idx_]);
     Rcpp::CharacterVector levels(vals.attr("levels"));
     int nlevels = levels.size();
@@ -62,13 +64,14 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name) {
 
     nlabels_ = val_names_[targ_var_idx_].size();
 
+    // Store the indexes of feature variables.
     for (int i = 0; i < nvars_; ++i)
         feature_vars_[i] = i;
 }
 
 MetaData::MetaData (Rcpp::List md) {
     /*
-     * Construct meta data from R object.
+     * Construct meta data from the R list of meta data.
      *
      * Used for prediction.
      *
@@ -121,7 +124,7 @@ MetaData::MetaData (Rcpp::List md) {
 
 Rcpp::List MetaData::save () const {
     /*
-     * Save meta data into R object.
+     * Save meta data into R list.
      *
      * Format:
      * [[0]] ---- Number of variables
