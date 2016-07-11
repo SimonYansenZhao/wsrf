@@ -1,6 +1,30 @@
 \name{NEWS}
 \title{News for Package 'wsrf'}
 
+\section{Changes in wsrf version 1.5.46 (2016-07-11)}{
+
+  \subsection{Bug Fixes}{
+    \itemize{
+
+      \item Fix undefined column error when column name is a
+      non-syntactic name, such as names contain whitespace.
+
+      \item Fix failure to switch to the code for the right compiler
+      version.
+
+    }
+  }
+
+  \subsection{Documentation}{
+    \itemize{
+
+      \item Add URL and BugReports into DESCRIPTION.
+
+    }
+  }
+
+}
+
 \section{Changes in wsrf version 1.5.29 (2015-10-10)}{
 
   \subsection{Bug Fixes}{
