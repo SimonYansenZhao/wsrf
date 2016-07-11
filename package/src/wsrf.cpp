@@ -94,7 +94,7 @@ SEXP wsrf (
                     if (res.wait_for(boost::chrono::milliseconds (100)) == boost::future_status::ready) {
 #else  // #ifdef WSRF_USE_BOOST
 
-#if (defined(__GNUC__) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 7) || defined(__clang__)
+#if (defined(__GNUC__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ >= 5))) || defined(__clang__)
                     if (res.wait_for(chrono::milliseconds {100}) == future_status::ready) {
 #else  // #if __GNUC__ >= 4 && __GNUC_MINOR__ >= 7
                     if (res.wait_for(chrono::milliseconds {100})) {

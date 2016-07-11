@@ -161,7 +161,7 @@ void RForest::buildForestAsync (
 #ifdef WSRF_USE_BOOST
                 if (mark[j] != true && results[j].valid() && results[j].wait_for(boost::chrono::seconds (0)) == boost::future_status::ready) {
 #else
-#if (defined(__GNUC__) &&  __GNUC__ >= 4 && __GNUC_MINOR__ >= 7) || defined(__clang__)
+#if (defined(__GNUC__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ >= 5))) || defined(__clang__)
                 if (mark[j] != true && results[j].valid() && results[j].wait_for(chrono::seconds {0}) == future_status::ready) {
 #else
                 if (mark[j] != true && results[j].valid() && results[j].wait_for(chrono::seconds {0})) {
