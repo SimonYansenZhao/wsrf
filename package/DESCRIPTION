@@ -8,7 +8,6 @@ Authors@R: c(person("Qinghan", "Meng", email="qinghan.meng@gmail.com", role="aut
              person("Graham", "Williams", email="graham.williams@togaware.com", role="aut"),
              person("Junchao", "Lv", role="ctb"),
              person("Baoxun", "Xu", role="aut"))
-Maintainer: He Zhao <Simon.Yansen.Zhao@gmail.com>
 Description: A parallel implementation of Weighted Subspace Random
     Forest.  The Weighted Subspace Random Forest algorithm was
     proposed in the International Journal of Data Warehousing and
