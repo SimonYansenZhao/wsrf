@@ -26,3 +26,4 @@ LinkingTo: Rcpp
 Suggests: rattle (>= 2.6.26), randomForest (>= 4.6.7),
           party (>= 1.0.7), stringr (>= 0.6.2), knitr (>= 1.5)
 VignetteBuilder: knitr
+NeedsCompilation: yes
