@@ -51,15 +51,11 @@ before_install:
 build:
 	sed -i 's/^Version: .*/Version: $(VER)/' package/DESCRIPTION && \
 	sed -i 's/^Date: .*/Date: $(DATE)/' package/DESCRIPTION && \
-	cp package/R/wsrf.R package/R/wsrf.R.in && \
-	sed -i 's/packageStartupMessage("With parallel computing disabled")/packageStartupMessage("@VERSION_INFO@")/' package/R/wsrf.R.in && \
 	autoconf -o package/configure package/configure.ac && \
 	mv package/configure.ac ./ && \
 	R CMD build package && \
-	rm -rf autom4te.cache package/configure && \
-	mv ./configure.ac package/ && \
-	rm package/R/wsrf.R.in || \
-	(mv ./configure.ac package/ && rm -rf autom4te.cache package/configure package/R/wsrf.R.in)
+	mv ./configure.ac package/ && rm -rf autom4te.cache package/configure || \
+	(mv ./configure.ac package/ && rm -rf autom4te.cache package/configure)
 
 
 .PHONY: install
