@@ -200,7 +200,7 @@ wsrf <- function(
   
   packageStartupMessage(wsrfDescription)
   packageStartupMessage(paste("Version", wsrfVersion))
-  packageStartupMessage("@VERSION_INFO@")
+  packageStartupMessage("Use C++ standard thread library for parallel computing")
 #  packageStartupMessage("With parallel computing disabled")
 #  packageStartupMessage("Type wsrfNews() to see new features/changes/bug fixes.")
 }
