@@ -52,10 +52,11 @@ build:
 	sed -i 's/^Version: .*/Version: $(VER)/' package/DESCRIPTION && \
 	sed -i 's/^Date: .*/Date: $(DATE)/' package/DESCRIPTION && \
 	autoconf -o package/configure package/configure.ac && \
+	cp package/configure package/configure.win && \
 	mv package/configure.ac ./ && \
 	R CMD build package && \
-	mv ./configure.ac package/ && rm -rf autom4te.cache package/configure || \
-	(mv ./configure.ac package/ && rm -rf autom4te.cache package/configure)
+	mv ./configure.ac package/ && rm -rf autom4te.cache package/configure package/configure.win || \
+	(mv ./configure.ac package/ && rm -rf autom4te.cache package/configure package/configure.win)
 
 
 .PHONY: install
