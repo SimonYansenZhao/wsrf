@@ -1,0 +1,19 @@
+# Eclipse project files
+.cproject
+.project
+
+# Git files
+.git
+.gitignore
+
+# R files
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.Rhistory$
+
+# travis files
+^\.travis\.yml$
+
+# misc
+Makefile
+LICENSE

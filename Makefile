@@ -8,6 +8,7 @@ TONODE=40
 REPOSITORY=repository/
 BOOST_INC=/usr/include
 BOOST_LIB=/usr/lib
+PKGSRC=$(shell basename `pwd`)
 
 .PRECIOUS: weather.pdf
 
@@ -39,25 +40,17 @@ check: clean build
 
 .PHONY: before_install
 before_install:
-	sed -i 's/^Version: .*/Version: $(VER)/' package/DESCRIPTION
-	sed -i 's/^Date: .*/Date: $(DATE)/' package/DESCRIPTION
-	cp package/R/wsrf.R package/R/wsrf.R.in
-	sed -i 's/packageStartupMessage("With parallel computing disabled")/packageStartupMessage("@VERSION_INFO@")/' package/R/wsrf.R.in
-	autoconf -o package/configure package/configure.ac
+	sed -i 's/^Version: .*/Version: $(VER)/' DESCRIPTION
+	sed -i 's/^Date: .*/Date: $(DATE)/' DESCRIPTION
 	mv package/* ./
-	rm -rf package autom4te.cache configure.ac LICENSE .travis.yml
+	rm -rf package .travis.yml
 
 .PHONY: build
 build:
-	sed -i 's/^Version: .*/Version: $(VER)/' package/DESCRIPTION && \
-	sed -i 's/^Date: .*/Date: $(DATE)/' package/DESCRIPTION && \
-	autoconf -o package/configure package/configure.ac && \
-	cp package/configure package/configure.win && \
-	mv package/configure.ac ./ && \
-	R CMD build package && \
-	mv ./configure.ac package/ && rm -rf autom4te.cache package/configure package/configure.win || \
-	(mv ./configure.ac package/ && rm -rf autom4te.cache package/configure package/configure.win)
-
+	sed -i 's/^Version: .*/Version: $(VER)/' DESCRIPTION && \
+	sed -i 's/^Date: .*/Date: $(DATE)/' DESCRIPTION && \
+	cd ..;\
+	R CMD build $(PKGSRC)
 
 .PHONY: install
 install: build
@@ -128,8 +121,9 @@ handoutwithoutc11: build
 
 .PHONY: src
 src:
-	zip -r $(APP)_$(VER)_src.zip Makefile package -x package/*/*~
-	tar zcvf $(APP)_$(VER)_src.tar.gz Makefile package --exclude="*~"
+	cd ..;\
+	zip -r $(APP)_$(VER)_src.zip $(PKGSRC) -x $(PKGSRC)/*/*~;\
+	tar zcvf $(APP)_$(VER)_src.tar.gz $(PKGSRC) --exclude="*~"
 
 .PHONY: repo
 repo: build
@@ -151,8 +145,9 @@ dist: src access repo
 
 .PHONY: manual
 manual:
-	if [ -f package.pdf ]; then rm package.pdf; fi
-	R CMD Rd2pdf package/
+	if [ -f $(APP).pdf ]; then rm $(APP).pdf; fi
+	cd ..;\
+	R CMD Rd2pdf $(PKGSRC)
 
 
 ########################################################################
@@ -160,9 +155,9 @@ manual:
 
 .PHONY: clean
 clean:
-	@rm -vf package/*/*~ *~
-	@rm -vf package/*/.Rhistory
-	@rm -rf package.Rcheck rattle.Rcheck
+	@rm -vf */*~ *~
+	@rm -vf */.Rhistory
+	@rm -rf $(APP).Rcheck rattle.Rcheck
 	@rm -vf $(RNW:.Rnw=.aux) $(RNW:.Rnw=.out) $(RNW:.Rnw=.log)
 
 .PHONY: realclean
