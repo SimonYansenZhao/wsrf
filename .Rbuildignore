@@ -1,10 +1,10 @@
 # Eclipse project files
-.cproject
-.project
+^\.cproject$
+^\.project$
 
 # Git files
-.git
-.gitignore
+^\.git$
+^\.gitignore$
 
 # R files
 ^.*\.Rproj$
@@ -17,3 +17,7 @@
 # misc
 Makefile
 LICENSE
+^.*\.tar.gz$
+^.*\.zip$
+^.*\.pdf$
+archive
