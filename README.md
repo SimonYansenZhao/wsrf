@@ -1,5 +1,9 @@
 # wsrf: An R Package for Scalable Weighted Subspace Random Forests
 
+[![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
+[![Version on CRAN](http://www.r-pkg.org/badges/version/wsrf)](http://cran.r-project.org/package=wsrf)
+[![Number of downloads from RStudio CRAN mirror](http://cranlogs.r-pkg.org/badges/wsrf)](http://www.r-pkg.org/pkg/wsrf)
+
 The [wsrf](http://cran.r-project.org/package=wsrf) is a parallel
 implementation of the Weighted Subspace Random Forest algorithm (wsrf)
 of [Xu et al](http://dx.doi.org/10.4018/jdwm.2012040103).  A novel variable weighting method is
