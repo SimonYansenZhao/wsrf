@@ -1,6 +1,7 @@
 # Eclipse project files
 ^\.cproject$
 ^\.project$
+^\.settings$
 
 # Git files
 ^\.git$
