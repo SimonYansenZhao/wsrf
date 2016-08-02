@@ -13,9 +13,9 @@ class TargetData {
 private:
     int  nlabels_;
     int  nobs_;
-    int* targ_array_;
+    int* targ_array_;           // raw data pointer
 
-    Rcpp::IntegerVector data_;
+    Rcpp::IntegerVector data_;  // raw data Rcpp wrapper
 
 public:
     TargetData (Rcpp::DataFrame ds, MetaData* meta_data) {
@@ -27,6 +27,9 @@ public:
     }
 
     TargetData (Rcpp::List targdata) {
+    	/*
+    	 * Construct target data from the R list saved by TargetData::save().
+    	 */
         nlabels_ = Rcpp::as<int>(targdata[NLABELS]);
 
         data_ = Rcpp::as<Rcpp::IntegerVector>(targdata[TRAIN_TARGET_LABELS]);
@@ -91,7 +94,9 @@ private:
     MetaData*        meta_data_;     // Meta data.
     int              nobs_;          // The total number of observations in the training set.
     bool             training_;      // Training set or not?
-    vector<double>   nlogn_vec_;
+
+    vector<double>   nlogn_vec_;     // The value of N*log(N) for all N in [1, nrows].
+
     vector<Rcpp::IntegerVector> preserve_int;
     vector<Rcpp::NumericVector> preserve_num;
 

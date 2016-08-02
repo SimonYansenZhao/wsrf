@@ -20,7 +20,7 @@ private:
     int      nobs_;  // The number of observations represented by the node.
 
     /*
-     * following attributes is for internal node
+     * following attributes are for internal node
      */
 
     int    var_idx_;      // The index of the variable represented by the node.
@@ -32,7 +32,7 @@ private:
     vector<Node*> child_nodes_;  // Children nodes of this node.
 
     /*
-     * following attributes is for leaf node
+     * following attributes are for leaf node
      */
 
     int label_;   // class label of the leaf node
@@ -201,7 +201,7 @@ public:
          *     4. information gain
          *     5. split info
          *     6. information gain ratio
-         *     7. split value (optional,depends on 0.)
+         *     7. split value (optional,depends on 3.)
          */
 
         vector<double> node_info;
