@@ -108,7 +108,7 @@ private:
 
     typedef void (Tree::*Dosth)(Node* node, int nth_iter);
 
-    void dosthOnNodes (Node* root, Dosth dosth) {
+    void doSthOnNodes (Node* root, Dosth dosth) {
         queue<Node*> untraversed_nodes;
 
         untraversed_nodes.push(root);
@@ -151,7 +151,7 @@ public:
     Tree (Dataset* training_set, TargetData* targdata, MetaData* meta_data, unsigned int seed, vector<int>* pbagging_vec, vector<int>* poob_vec);
 
     ~Tree () {
-        dosthOnNodes(root_, &Tree::deleteTheNode);
+        doSthOnNodes(root_, &Tree::deleteTheNode);
     }
 
     vector<double>& getTreePermVIs () {

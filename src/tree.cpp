@@ -275,7 +275,7 @@ void Tree::calcOOBMeasures (bool importance) {
             row_indexes[i] = row;
 
         // Find used variables.
-        dosthOnNodes(root_, &Tree::markOneVarUsed);
+        doSthOnNodes(root_, &Tree::markOneVarUsed);
 
         // Calculate percent increase in mis-classification rate.
         for (int var_idx = 0; var_idx < nvars; var_idx++) {
@@ -351,7 +351,7 @@ void Tree::save (vector<vector<double> >& res) {
      */
 
     tree_ = vector<vector<double> >(nnodes_);
-    dosthOnNodes(root_, &Tree::saveOneNode);
+    doSthOnNodes(root_, &Tree::saveOneNode);
     res.swap(tree_);
 
 }
