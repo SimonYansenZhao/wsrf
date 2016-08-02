@@ -1,17 +1,11 @@
 #include "IGR.h"
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
 IGR::IGR(const vector<double>& gain_ratio, int nvars, unsigned seed)
-#else
-IGR::IGR(const vector<double>& gain_ratio, int nvars)
-#endif
     : gain_ratio_vec_(gain_ratio) {
 
     weights_ = vector<double>(gain_ratio.size()+1);
     wst_     = vector<int>(gain_ratio.size()+1);
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
     seed_    = seed;
-#endif
 
     int n = gain_ratio.size();
     if (nvars == -1) nvars = log((double)n) / LN_2 + 1;
@@ -61,29 +55,11 @@ vector<int> IGR::getRandomWeightedVars() {
         return result;
     }
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-    boost::random::mt19937 re(seed_);
-#else
     default_random_engine re {seed_};
-#endif
-#else
-    Rcpp::RNGScope rngScope;
-#endif
 
     for(int i = 0; i < nvars_; ++ i) {
-
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-        boost::random::uniform_int_distribution<int> uid(0, wst_[1]-1);
-#else
         uniform_int_distribution<int> uid {0, wst_[1]-1};
-#endif
         result[i] = weightedSampling(uid(re));
-#else
-        result[i] = weightedSampling(unif_rand() * wst_[1]);
-#endif
-
     }
 
     return result;
@@ -100,13 +76,8 @@ void IGR::normalizeWeight(volatile bool* pInterrupt) {
 
     for (int i = 0, j = 1; i < n; i++, j++) {
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
         if (*pInterrupt)
             return;
-#else
-        // check interruption
-        if (check_interrupt()) throw interrupt_exception("The random forest model building is interrupted.");
-#endif
 
         weights_[j] = sqrt(gain_ratio_vec_[i]);
         sum += weights_[j];

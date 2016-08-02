@@ -1,17 +1,8 @@
 #include "wsrf.h"
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-#include <boost/thread.hpp>
-#include <boost/bind.hpp>
-#include <boost/chrono.hpp>
-#include <boost/exception_ptr.hpp>
-#else
 #include <thread>
 #include <chrono>
 #include <future>
-#endif
-#endif
 
 
 using namespace std;
@@ -50,13 +41,8 @@ SEXP wsrf (
         volatile bool interrupt = false;
 
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
         int nthreads       = Rcpp::as<int>(parallelSEXP);
-#ifdef WSRF_USE_BOOST
-        int nCoresMinusTwo = boost::thread::hardware_concurrency() - 2;
-#else
         int nCoresMinusTwo = thread::hardware_concurrency() - 2;
-#endif
         if (nthreads == 0 || nthreads == 1 || (nthreads < 0 && nCoresMinusTwo == 1)) {  // build trees sequentially
 
             rf.buidForestSeq(&interrupt);
@@ -71,13 +57,8 @@ SEXP wsrf (
              *  1. represents user interrupt
              *  2. represents a exception has been thrown from one tree builder
              */
-#ifdef WSRF_USE_BOOST
-            boost::packaged_task<void> pt(boost::bind(&RForest::buildForestAsync, &rf, nthreads, &interrupt));
-            boost::unique_future<void> res = pt.get_future();
-            boost::thread task(boost::move(pt));
-#else  // #ifdef WSRF_USE_BOOST
+
             future<void> res = async(launch::async, &RForest::buildForestAsync, &rf, nthreads, &interrupt);
-#endif  // #ifdef WSRF_USE_BOOST
             try {
 
                 while (true) {
@@ -90,16 +71,12 @@ SEXP wsrf (
                     }
 
                     // check RF thread completion
-#ifdef WSRF_USE_BOOST
-                    if (res.wait_for(boost::chrono::milliseconds (100)) == boost::future_status::ready) {
-#else  // #ifdef WSRF_USE_BOOST
 
 #if (defined(__GNUC__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ >= 5))) || defined(__clang__)
                     if (res.wait_for(chrono::milliseconds {100}) == future_status::ready) {
 #else  // #if __GNUC__ >= 4 && __GNUC_MINOR__ >= 7
                     if (res.wait_for(chrono::milliseconds {100})) {
 #endif // #if __GNUC__ >= 4 && __GNUC_MINOR__ >= 7
-#endif // #ifdef WSRF_USE_BOOST
                         res.get();
                         break;
                     } // if ()
@@ -111,18 +88,9 @@ SEXP wsrf (
                 if (res.valid())
                     res.get();
 
-#ifdef WSRF_USE_BOOST
-                boost::rethrow_exception(boost::current_exception());
-#else  // #ifdef WSRF_USE_BOOST
                 rethrow_exception(current_exception());
-#endif // #ifdef WSRF_USE_BOOST
             } // try-catch
         } // if-else
-#else  // #if defined WSRF_USE_C11 || defined WSRF_USE_BOOST;  run in sequence
-
-        rf.buidForestSeq(&interrupt);
-
-#endif // #if defined WSRF_USE_C11 || defined WSRF_USE_BOOST
 
         Rcpp::List wsrf_R(WSRF_MODEL_SIZE);
 

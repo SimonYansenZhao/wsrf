@@ -155,28 +155,13 @@ vector<int> C4p5Selector::getRandomVars (vector<int> var_vec, int nselect) {
 
     vector<int> result(nselect);
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-    boost::random::mt19937 re(seed_);
-#else
     default_random_engine re {seed_};
-#endif
-#else
-    Rcpp::RNGScope rngScope;
-#endif
+
 
     for (int i = 0; i < nselect; ++i) {
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-        boost::random::uniform_int_distribution<int> uid(0, nleft - 1);
-#else
         uniform_int_distribution<int> uid {0, nleft - 1};
-#endif
         int random_num = uid(re);
-#else
-        int random_num = unif_rand() * nleft;
-#endif
 
         result[i] = var_vec[random_num];
         var_vec[random_num] = var_vec[nleft-1];
@@ -192,13 +177,8 @@ void C4p5Selector::calcInfos (const vector<int>& var_vec, volatile bool* pInterr
     int n = var_vec.size();
     for (int i = 0; i < n; i++) {
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
         if (*pInterrupt)
             return;
-#else
-        // check interruption
-        if (check_interrupt()) throw interrupt_exception("The random forest model building is interrupted.");
-#endif
 
         if (meta_data_->getVarType(var_vec[i]) == DISCRETE) {
             handleDiscVar(var_vec[i]);
@@ -249,15 +229,10 @@ void C4p5Selector::doIGRSelection (int nvars, VarSelectRes& res, volatile bool* 
         }
     }
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
     if (*pInterrupt) {
         setResult(-1, res);
         return;
     }
-#else
-    // check interruption
-    if (check_interrupt()) throw interrupt_exception("The random forest model building is interrupted.");
-#endif
 
     int vindex;
     if (cand_var_vec.size() == 0) {
@@ -267,11 +242,7 @@ void C4p5Selector::doIGRSelection (int nvars, VarSelectRes& res, volatile bool* 
         gain_ratio = split_info > 0 ? info_gain_map_.begin()->second / split_info : NA_REAL;
     } else {
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
         IGR igr(cand_gain_ratio_vec, nvars, seed_);
-#else
-        IGR igr(cand_gain_ratio_vec, nvars);
-#endif
         igr.normalizeWeight(pInterrupt);
 
         int index = igr.getSelectedIdx();
@@ -321,15 +292,11 @@ void C4p5Selector::doSelection (int nvars, VarSelectRes& res, volatile bool* pIn
     bool is_set_gain_ratio = false;
     for (map<int, double>::iterator iter = info_gain_map_.begin(); iter != info_gain_map_.end(); ++iter) {
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
         if (*pInterrupt) {
             setResult(-1, res);
             return;
         }
-#else
-        // check interruption
-        if (check_interrupt()) throw interrupt_exception("The random forest model building is interrupted.");
-#endif
+
 
         if (iter->second >= average_info_gain) {
             double split_info = split_info_map_[iter->first];

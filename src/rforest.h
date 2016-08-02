@@ -1,24 +1,11 @@
 #ifndef RFORESTS_H_
 #define RFORESTS_H_
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-#include <boost/foreach.hpp>
-#include <boost/thread.hpp>
-#include <boost/bind.hpp>
-#include <boost/chrono.hpp>
-#include <boost/exception_ptr.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-#include <boost/foreach.hpp>
-#else
 #include <thread>
 #include <mutex>
 #include <random>
 #include <future>
 #include <chrono>
-#endif
-#endif
 
 #include "tree.h"
 
@@ -58,14 +45,7 @@ private:
     vector<double> sigma_perm_VIs_;  // Vector of size (nlabels+1)*nvars: Standard deviation of variable impaortance on each class label, , plus one row for VI SD over all class labels.
     vector<double> IGR_VIs_;         // Vector of size nvars: The information gain ratio decreases for each variable.
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-    boost::mutex mut;
-#else
     mutex mut;
-#endif
-#endif
-
 
     typedef void (RForest::*predictor)(Dataset* data, int index, double* out_iter);
 
@@ -152,11 +132,9 @@ public:
 
     void buildOneTree (int ind, volatile bool* interrupt);
     void buidForestSeq (volatile bool* pinterrupt);
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
     // parallel: 0 or 1 (sequential);  < 0 (cores-2 threads); > 1 (the exact num of threads)
     void buildForestAsync (int parallel, volatile bool* pInterrupt);
     void buildOneTreeAsync (int* index, volatile bool* pInterrupt);
-#endif
 
 };
 

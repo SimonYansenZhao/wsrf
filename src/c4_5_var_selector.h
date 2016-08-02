@@ -4,15 +4,7 @@
 #include "IGR.h"
 #include "var_selector.h"
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-#include <boost/bind.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-#else
 #include <random>
-#endif
-#endif
 
 class C4p5Selector: public VarSelector {
 private:

@@ -61,24 +61,12 @@ void Tree::genBaggingSets () {
     int nobs = train_set_->nobs();
     vector<bool> selected_status(nobs, false);
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-    boost::random::uniform_int_distribution<int> uid(0, nobs - 1);
-    boost::random::mt19937 re (seed_);
-#else
     uniform_int_distribution<int> uid {0, nobs - 1};
     default_random_engine re {seed_};
-#endif
-#else
-    Rcpp::RNGScope rngScope;
-#endif
 
     for (int j = 0; j < nobs; ++j) {
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
         int random_num = uid(re);
-#else
-        int random_num = unif_rand() * nobs;
-#endif
+
         (*pbagging_vec_)[j] = random_num;
         selected_status[random_num] = true;
     }
@@ -102,14 +90,9 @@ Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec,
      * Build a tree recursively.
      */
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
     if (*pInterrupt) {
         return NULL;
     }
-#else
-    // check interruption
-    if (check_interrupt()) throw interrupt_exception("The random forest model building is interrupted.");
-#endif
 
     int nobs = obs_vec.size();
     if (targ_data_->haveSameLabel(obs_vec)) {
@@ -194,28 +177,12 @@ void Tree::permute (int index) {
 
     //TODO: If possible, make similar RNG codes into a single function.
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-    boost::random::mt19937 re(seed_);
-#else
     default_random_engine re {seed_};
-#endif
-#else
-    Rcpp::RNGScope rngScope;
-#endif
 
     for (int i = train_set_->nobs()-1; i > 0; --i) {
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
-#ifdef WSRF_USE_BOOST
-        boost::random::uniform_int_distribution<int> uid(0, i);
-#else
         uniform_int_distribution<int> uid {0, i};
-#endif
         int random_num = uid(re);
-#else
-        int random_num = unif_rand() * (i+1);
-#endif
 
         swap(perm_var_data_[i], perm_var_data_[random_num]);
 

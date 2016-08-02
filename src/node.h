@@ -1,12 +1,6 @@
 #ifndef NODE_H_
 #define NODE_H_
 
-#ifdef WSRF_USE_BOOST
-#include <boost/bind.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/foreach.hpp>
-#endif
-
 #include <algorithm>
 #include <iostream>
 #include <sstream>

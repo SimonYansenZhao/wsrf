@@ -101,7 +101,6 @@ void RForest::buidForestSeq (volatile bool* pinterrupt) {
     }
 }
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
 /**
  * Build RandomForests::trees_num_ decision trees
  *
@@ -116,11 +115,7 @@ void RForest::buildForestAsync (
     int parallel,
     volatile bool* pInterrupt) {
 
-#ifdef WSRF_USE_BOOST
-    int nCoresMinusTwo = boost::thread::hardware_concurrency() - 2;
-#else
     int nCoresMinusTwo = thread::hardware_concurrency() - 2;
-#endif
 
     // simultaneously build <nThreads> trees until <tree_num_> trees has been built
     int nThreads;
@@ -133,23 +128,10 @@ void RForest::buildForestAsync (
 
     // using <nThreads> tree builder to build trees
     int index = 0;
-#ifdef WSRF_USE_BOOST
-    vector<boost::unique_future<void> > results(nThreads);
-    vector<boost::thread> tasks(nThreads);
-#else
     vector<future<void> > results(nThreads);
-#endif
     this->tree_vec_ = vector<Tree*>(this->ntrees_);
     for (int i = 0; i < nThreads; i++)
-#ifdef WSRF_USE_BOOST
-    {
-        boost::packaged_task<void> pt(boost::bind(&RForest::buildOneTreeAsync, this, &index, pInterrupt));
-        results[i] = pt.get_future();
-        tasks[i] = boost::thread(boost::move(pt));
-    }
-#else
     results[i] = async(launch::async, &RForest::buildOneTreeAsync, this, &index, pInterrupt);
-#endif
 
     try {
         bool mark[nThreads];
@@ -158,14 +140,10 @@ void RForest::buildForestAsync (
         do {
             // check each tree builder's status till all are finished
             for (int j = 0; j < nThreads; j++) {
-#ifdef WSRF_USE_BOOST
-                if (mark[j] != true && results[j].valid() && results[j].wait_for(boost::chrono::seconds (0)) == boost::future_status::ready) {
-#else
 #if (defined(__GNUC__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ >= 5))) || defined(__clang__)
                 if (mark[j] != true && results[j].valid() && results[j].wait_for(chrono::seconds {0}) == future_status::ready) {
 #else
                 if (mark[j] != true && results[j].valid() && results[j].wait_for(chrono::seconds {0})) {
-#endif
 #endif
                     results[j].get();
                     mark[j] = true;
@@ -176,18 +154,12 @@ void RForest::buildForestAsync (
         } while (i < nThreads);
     } catch (...) {
         (*pInterrupt) = true;  // if one tree builder throw a exception, set true to inform others
-#ifdef WSRF_USE_BOOST
-        boost::rethrow_exception(boost::current_exception());
-#else
         rethrow_exception(current_exception());
-#endif
     } // try-catch
 }
-#endif
 
 
 
-#if defined WSRF_USE_BOOST || defined WSRF_USE_C11
 /*
  * tree building function: pick a bagging set from bagging_set_ to build one tree a time until no set to fetch
  */
@@ -201,11 +173,7 @@ void RForest::buildOneTreeAsync (int* index, volatile bool* pInterrupt)
         if (*pInterrupt)
         break;
 
-#ifdef WSRF_USE_BOOST
-        boost::unique_lock<boost::mutex> ulk(mut);
-#else
         unique_lock<mutex> ulk(mut);
-#endif
         if (*index < ntrees_) {
             ind = *index;
             (*index)++;
@@ -220,7 +188,6 @@ void RForest::buildOneTreeAsync (int* index, volatile bool* pInterrupt)
     }
 }
 
-#endif
 
 Rcpp::NumericMatrix RForest::predictMatrix (Dataset* data, predictor pred) {
 
