@@ -15,9 +15,10 @@ SEXP wsrf (
     SEXP tnSEXP,         // Target variable name.
     SEXP ntreesSEXP,     // Number of trees.
     SEXP nvarsSEXP,      // Number of variables.
+    SEXP minnodeSEXP,    // Minimum node size.
     SEXP weightsSEXP,    // Whether use weights.
     SEXP parallelSEXP,   // Whether parallel or how many cores performing parallelism.
-    SEXP seedsSEXP,      // Random seeds for each cores.
+    SEXP seedsSEXP,      // Random seeds for each trees.
     SEXP importanceSEXP, // Whether calculate variable importance measures.
     SEXP ispartSEXP      // Indicating whether it is part of the whole forests.
     ) {
@@ -34,6 +35,7 @@ SEXP wsrf (
                                       &meta_data,
                                       Rcpp::as<int>(ntreesSEXP),
                                       Rcpp::as<int>(nvarsSEXP),
+                                      Rcpp::as<int>(minnodeSEXP),
                                       Rcpp::as<bool>(weightsSEXP),
                                       Rcpp::as<bool>(importanceSEXP),
                                       seedsSEXP);

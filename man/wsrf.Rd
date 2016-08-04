@@ -21,7 +21,8 @@
 \usage{
 
 wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE, 
-                 parallel=TRUE, na.action=na.fail, importance=FALSE, clusterlogfile)
+                 parallel=TRUE, na.action=na.fail, importance=FALSE, 
+                 minnode=2, clusterlogfile)
 
 }
 
@@ -52,6 +53,9 @@ wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE,
       sequentially (FALSE).}
 
   \item{importance}{should importance of predictors be assessed? }
+  
+  \item{minnode}{minimum size of leaf node, i.e., minimum number of
+      observations a leaf node represents.  By default, 2.}
 
   \item{clusterlogfile}{character.  The pathname of the log file when
       building model in a cluster.  For debug.}
@@ -69,7 +73,7 @@ wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE,
   (variables) and \emph{k}-way split for categorical ones.  For
   continuous predictors, each of the values themselves is used as split
   points, no discretization used.  The only stopping condition for split
-  is the minimum node size is 2.
+  is the minimum node size must not less than \code{minnode}.
 
 }
 

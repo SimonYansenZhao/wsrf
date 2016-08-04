@@ -13,26 +13,27 @@ using namespace std;
 class Tree {
 private:
 
-    unsigned    seed_;                  // Random seed.
+    unsigned    seed_;                  // Random seed for this tree.
     Node*       root_;                  // Root node of the tree.
     Dataset*    train_set_;             // Training set the tree built from.
     TargetData* targ_data_;
     MetaData*   meta_data_;             // Meta data.
-    int         nnodes_;                // The number of nodes.
+    int         nnodes_;                // Total number of nodes in the tree.
     int         node_id_;               // For printing tree.
     double      tree_oob_error_rate_;   // Out-of-bag error rate.
+    int         min_node_size_;         // Minimum node size.
 
     vector<double> label_oob_error_rate_;  // Vector of nlabels: The OOB error rate for each class label.
 
     vector<vector<double> > tree_;     // Serialized tree.
 
     vector<int>* pbagging_vec_;  // Bagging set
-    vector<int>* poob_vec_;      // Out-of-bag set.
+    vector<int>* poob_vec_;      // Out-of-bag set: The size of it may be one third of the number of observations.
 
-    vector<int> oob_predict_label_set_;  // The predicted labels for Out-of-bag set.
+    vector<int> oob_predict_label_set_;  // The predicted labels for Out-of-bag set: The same size of *poob_vec_.
 
     int            perm_var_idx_;      // Should variable importance be assessed (-1), or otherwise, the index of current permuted variable.
-    vector<bool>   perm_is_var_used_;  // Vector of size nvars: Is the variable used for node splitting in this tree.
+    vector<bool>   perm_is_var_used_;  // Vector of size nvars: Indicate whether the variable is used for node splitting in this tree.
     vector<double> perm_var_data_;     // Vector of size nobs: Permuted data of variable perm_var_idx_.
     vector<double> tree_IGR_VIs_;      // Vector of size nvars: The information gain ratio decreases for each variable.
     vector<double> tree_perm_VIs_;     // Matrix of (nlabels+1)*nvars: The percent increases of OOB error rate on each class label in the permuted OOB data, plus one over all class labels.
@@ -148,7 +149,7 @@ private:
 public:
 
     Tree (const vector<vector<double> >& node_infos, MetaData* meta_data, double tree_oob_error_rate);
-    Tree (Dataset* training_set, TargetData* targdata, MetaData* meta_data, unsigned int seed, vector<int>* pbagging_vec, vector<int>* poob_vec);
+    Tree (Dataset*, TargetData*, MetaData*, int, unsigned int, vector<int>*, vector<int>*);
 
     ~Tree () {
         doSthOnNodes(root_, &Tree::deleteTheNode);
@@ -185,11 +186,13 @@ public:
         bool isWeighted,
         volatile bool* pInterrupt);
 
-    Node* createLeafNode (const vector<int>& obs_vec, int nobs, bool pure) {
-        // Create a leaf node.
-        // Because all observations are the same label (pure = true),
-        // or there is no better variable to split (pure = false).
-
+    Node* createLeafNode (const vector<int>& obs_vec, int nobs, bool pure)
+    /*
+     * Create a leaf node.
+     * Because all observations are the same label (pure = true),
+     * or there is no better variable to split (pure = false).
+     */
+    {
         ++nnodes_;
         Node* node = new Node(LEAFNODE, nobs);
         if (pure) {  // All observations have the same label.
@@ -205,7 +208,13 @@ public:
         return node;
     }
 
-    Node* createInternalNode (int nobs, VarSelectRes& res) {
+    Node* createInternalNode (int nobs, VarSelectRes& res)
+    /*
+     * Create a internal node.
+     * It represents the variable selected to split the data,
+     * with related impurity measures.
+     */
+    {
         ++nnodes_;
         Node* node = new Node(INTERNALNODE, nobs, res.split_map_.size());
         node->setVarIdx(res.var_idx_);

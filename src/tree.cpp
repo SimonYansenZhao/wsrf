@@ -1,16 +1,17 @@
 #include "tree.h"
 
-Tree::Tree (Dataset* train_set, TargetData* targdata, MetaData* meta_data, unsigned seed, vector<int>* pbagging_vec, vector<int>* poob_vec) {
+Tree::Tree (Dataset* train_set, TargetData* targdata, MetaData* meta_data, int min_node_size, unsigned seed, vector<int>* pbagging_vec, vector<int>* poob_vec) {
 
-    train_set_    = train_set;
-    targ_data_    = targdata;
-    meta_data_    = meta_data;
-    seed_         = seed;
-    pbagging_vec_ = pbagging_vec;
-    poob_vec_     = poob_vec;
-    nnodes_       = 0;
-    node_id_      = 0;
-    root_         = NULL;
+    train_set_     = train_set;
+    targ_data_     = targdata;
+    meta_data_     = meta_data;
+    min_node_size_ = min_node_size;
+    seed_          = seed;
+    pbagging_vec_  = pbagging_vec;
+    poob_vec_      = poob_vec;
+    nnodes_        = 0;
+    node_id_       = 0;
+    root_          = NULL;
 
     tree_oob_error_rate_  = NA_REAL;
     label_oob_error_rate_ = vector<double>(meta_data->nlabels(), 0);
@@ -54,7 +55,12 @@ Tree::Tree (const vector<vector<double> >& node_infos, MetaData* meta_data, doub
     resetPerm(true);
 }
 
-void Tree::genBaggingSets () {
+void Tree::genBaggingSets ()
+/*
+ * Sample the observations with replacement.
+ * Generate bagging data set and out-of-bag data set.
+ */
+{
 
     //TODO: If possible, make similar RNG codes into a single function.
 
@@ -85,10 +91,12 @@ void Tree::build (int nvars, bool withweights, bool importance, volatile bool* p
     calcOOBMeasures(importance);
 }
 
-Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec, int nvars, bool isWeighted, volatile bool* pInterrupt) {
-    /*
-     * Build a tree recursively.
-     */
+Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec, int nvars, bool isWeighted, volatile bool* pInterrupt)
+/*
+ * Build a tree recursively.
+ */
+{
+
 
     if (*pInterrupt) {
         return NULL;
@@ -106,12 +114,14 @@ Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec,
     } else {
         VarSelectRes result;
         if (isWeighted) {
-            C4p5Selector method(train_set_, targ_data_, meta_data_, obs_vec, var_vec, seed_++);
+            C4p5Selector method(train_set_, targ_data_, meta_data_, min_node_size_, obs_vec, var_vec, seed_);
             method.doIGRSelection(nvars, result, pInterrupt);
         } else {
-            C4p5Selector method(train_set_, targ_data_, meta_data_, obs_vec, var_vec, seed_++);
+            C4p5Selector method(train_set_, targ_data_, meta_data_, min_node_size_, obs_vec, var_vec, seed_);
             method.doSelection(nvars, result, pInterrupt);
         }
+
+        seed_ += 1;  // Change seed.
 
         if (!result.ok_) {
             // If no better attribute selected

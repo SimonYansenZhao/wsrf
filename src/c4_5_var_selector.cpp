@@ -1,27 +1,24 @@
 #include "c4_5_var_selector.h"
 
-const int C4p5Selector::MIN_NODE_SIZE_ = 2;  //TODO: Make it variable.
-
-C4p5Selector::C4p5Selector (Dataset* train_set, TargetData* targdata, MetaData* meta_data, const vector<int>& obs_vec, const vector<int>& var_vec, unsigned seed)
+C4p5Selector::C4p5Selector (Dataset* train_set, TargetData* targdata, MetaData* meta_data, int min_node_size, const vector<int>& obs_vec, const vector<int>& var_vec, unsigned seed)
     : VarSelector(train_set, targdata, meta_data, obs_vec, var_vec) {
     seed_ = seed;
     info_ = calcEntropy(obs_vec);
+    min_node_size_ = min_node_size;
 }
 
-void C4p5Selector::handleDiscVar (int var_idx) {
-    /*
-     * Calculate corresponding information
-     * if split by discrete variable <var_idx>
-     */
-
-    /*
-     * If no more than 2 child nodes contain at least <MIN_NODE_SIZE_>
-     * instances, don't split training set by this attribute
-     */
+void C4p5Selector::handleDiscVar (int var_idx)
+/*
+ * Calculate corresponding information if split by discrete variable <var_idx>.
+ *
+ * If no more than 2 child nodes contain at least <MIN_NODE_SIZE_>
+ * instances, don't split training set by this attribute
+ */
+{
     map<int, vector<int> > mapper = train_set_->splitDiscVar(obs_vec_, var_idx);
     int count = 0;
     for (map<int, vector<int> >::iterator iter = mapper.begin(); iter != mapper.end(); ++iter)
-        if (int(iter->second.size()) >= MIN_NODE_SIZE_) count++;
+        if (int(iter->second.size()) >= min_node_size_) count++;
 
     if (count < 2) return;
 
@@ -57,8 +54,8 @@ void C4p5Selector::handleContVar (int var_idx) {
     int min_split = (nobs_ * 0.1) / (meta_data_->nlabels());
     if (min_split > 25) {
         min_split = 25;
-    } else if (min_split < MIN_NODE_SIZE_) {
-        min_split = MIN_NODE_SIZE_;
+    } else if (min_split < min_node_size_) {
+        min_split = min_node_size_;
     }
 
     vector<int> sorted_obs_vec = obs_vec_;
@@ -137,17 +134,16 @@ void C4p5Selector::handleContVar (int var_idx) {
     };
 }
 
-vector<int> C4p5Selector::getRandomVars (vector<int> var_vec, int nselect) {
-    /*
-     * Randomly select <nselect> variables from <var_vec>.
-     * Default subspace size is log(n)/log2 + 1 if <nselect> == -1.
-     *
-     * Duplicate variables should not be in the result.
-     */
-
+vector<int> C4p5Selector::getRandomVars (vector<int> var_vec, int nselect)
+/*
+ * Randomly select <nselect> variables from <var_vec> without replacement.
+ * Default subspace size is log(n)/log2 + 1 if <nselect> == -1.
+ *
+ * Duplicate variables should not be in the result.
+ */
+{
     //TODO: If possible, make similar RNG codes into a single function.
 
-    //
     int nleft = var_vec.size();
     if (nselect == -1) nselect = log((double)nleft)/LN_2 + 1;
 
@@ -173,7 +169,11 @@ vector<int> C4p5Selector::getRandomVars (vector<int> var_vec, int nselect) {
 
 }
 
-void C4p5Selector::calcInfos (const vector<int>& var_vec, volatile bool* pInterrupt) {
+void C4p5Selector::calcInfos (const vector<int>& var_vec, volatile bool* pInterrupt)
+/*
+ * Calculate the impurity difference when using each variable for node splitting.
+ */
+{
     int n = var_vec.size();
     for (int i = 0; i < n; i++) {
 
@@ -268,11 +268,12 @@ void C4p5Selector::setResult (int vindex, VarSelectRes& result, double gain_rati
     }
 }
 
-void C4p5Selector::doSelection (int nvars, VarSelectRes& res, volatile bool* pInterrupt) {
-    /*
-     * calculate all information gain when split by any one of the variables
-     * from the randomly selected subspace of size <nvars>
-     */
+void C4p5Selector::doSelection (int nvars, VarSelectRes& res, volatile bool* pInterrupt)
+/*
+ * calculate all information gain when split by any one of the variables
+ * from the randomly selected subspace of size <nvars>
+ */
+{
 
     vector<int> subvar_vec = getRandomVars(var_vec_, nvars);
 
@@ -296,7 +297,6 @@ void C4p5Selector::doSelection (int nvars, VarSelectRes& res, volatile bool* pIn
             setResult(-1, res);
             return;
         }
-
 
         if (iter->second >= average_info_gain) {
             double split_info = split_info_map_[iter->first];

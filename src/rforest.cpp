@@ -1,6 +1,6 @@
 #include "rforest.h"
 
-RForest::RForest (Dataset* train_set, TargetData* targdata, MetaData* meta_data, int ntrees, int nvars, bool weights, bool importance, SEXP seeds) {
+RForest::RForest (Dataset* train_set, TargetData* targdata, MetaData* meta_data, int ntrees, int nvars, int min_node_size, bool weights, bool importance, SEXP seeds) {
     /*
      * For training.
      */
@@ -9,6 +9,7 @@ RForest::RForest (Dataset* train_set, TargetData* targdata, MetaData* meta_data,
     meta_data_         = meta_data;
     ntrees_            = ntrees;
     mtry_              = nvars;
+    min_node_size_     = min_node_size;
     weights_           = weights;
     tree_seeds_        = (unsigned int*) INTEGER(seeds);
     nlabels_           = meta_data->nlabels();
@@ -87,7 +88,7 @@ RForest::~RForest () {
 }
 
 void RForest::buildOneTree (int ind, volatile bool* pinterrupt) {
-    Tree* decision_tree = new Tree(train_set_, targ_data_, meta_data_, tree_seeds_[ind], &(bagging_set_[ind]), &(oob_set_vec_[ind]));
+    Tree* decision_tree = new Tree(train_set_, targ_data_, meta_data_, min_node_size_, tree_seeds_[ind], &(bagging_set_[ind]), &(oob_set_vec_[ind]));
     decision_tree->build(mtry_, weights_, importance_, pinterrupt);
     tree_vec_[ind] = decision_tree;
 }
