@@ -55,7 +55,11 @@ public:
     }
 
     template<class T>
-    struct VarValueComparor {
+    struct VarValueComparor
+    /*
+     * Compare the values of variable <var_idx>, given the indexes of the observations.
+     */
+    {
         //TODO: Need better way to deal with different type of variable, that is DISCRETE, INTSXP, REALSXP.
         T* var_array_;
 

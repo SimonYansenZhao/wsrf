@@ -186,7 +186,11 @@ public:
     }
 
     template<class T>
-    T* getVar (int index) {
+    T* getVar (int index)
+    /*
+     * Get raw data for all the values of variable <index>.
+     */
+    {
         //TODO: Need better way to deal with different type of variable, that is DISCRETE, INTSXP, REALSXP.
         return (T*)(data_ptr_vec_[index]);
     }

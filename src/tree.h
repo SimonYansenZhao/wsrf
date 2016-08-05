@@ -23,7 +23,7 @@ private:
     double      tree_oob_error_rate_;   // Out-of-bag error rate.
     int         min_node_size_;         // Minimum node size.
 
-    vector<double> label_oob_error_rate_;  // Vector of nlabels: The OOB error rate for each class label.
+    vector<double> label_oob_error_rate_;  // Vector of size nlabels: The OOB error rate for each class label.
 
     vector<vector<double> > tree_;     // Serialized tree.
 
@@ -38,18 +38,17 @@ private:
     vector<double> tree_IGR_VIs_;      // Vector of size nvars: The information gain ratio decreases for each variable.
     vector<double> tree_perm_VIs_;     // Matrix of (nlabels+1)*nvars: The percent increases of OOB error rate on each class label in the permuted OOB data, plus one over all class labels.
 
-    vector<int> removeOneVar (const vector<int>& var_vec, int index) {
-        /*
-         * Remove a <index> from <var_vec>.
-         */
-
+    vector<int> removeOneVar (const vector<int>& var_vec, int index)
+    /*
+     * Remove a <index> from <var_vec>.
+     */
+    {
         int n = var_vec.size();
         vector<int> res(n - 1);
         for (int i = 0, j = 0; i < n; i++)
             if (var_vec[i] != index) res[j++] = var_vec[i];
 
         return res;
-
     }
 
     template<class T>
@@ -61,12 +60,12 @@ private:
         }
     }
 
-    Node* predictNode (Dataset* data_set, int oindex, Node* node) {
-        /*
-         * Return leaf node to which the observation belongs.
-         * index : is the index of the observation in the training set
-         */
-
+    Node* predictNode (Dataset* data_set, int oindex, Node* node)
+    /*
+     * Return leaf node to which the observation belongs.
+     * index : is the index of the observation in the training set
+     */
+    {
         while (node->type() != LEAFNODE) {
             int vindex = node->getVarIdx();
             double value;
@@ -109,7 +108,11 @@ private:
 
     typedef void (Tree::*Dosth)(Node* node, int nth_iter);
 
-    void doSthOnNodes (Node* root, Dosth dosth) {
+    void doSthOnNodes (Node* root, Dosth dosth)
+    /*
+     * Traverse the tree rooted at <root>, and operate <dosth> on the node.
+     */
+    {
         queue<Node*> untraversed_nodes;
 
         untraversed_nodes.push(root);
@@ -130,7 +133,11 @@ private:
         node->save(tree_[nth_iter], meta_data_);
     }
 
-    void markOneVarUsed (Node* node, int nth_iter) {
+    void markOneVarUsed (Node* node, int nth_iter)
+    /*
+     * Check whether the node is internal node and mark the variable as used for node splitting.
+     */
+    {
         if (node->type() != LEAFNODE)
             perm_is_var_used_[node->getVarIdx()] = true;
     }

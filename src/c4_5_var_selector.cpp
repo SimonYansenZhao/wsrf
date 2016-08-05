@@ -49,14 +49,7 @@ void C4p5Selector::handleDiscVar (int var_idx)
 template<class T>
 void C4p5Selector::handleContVar (int var_idx) {
     //TODO: Need better way to deal with different type of variable, that is DISCRETE, INTSXP, REALSXP.
-    if (nobs_ < 4) return;
-
-    int min_split = (nobs_ * 0.1) / (meta_data_->nlabels());
-    if (min_split > 25) {
-        min_split = 25;
-    } else if (min_split < min_node_size_) {
-        min_split = min_node_size_;
-    }
+    if (nobs_ < 2 * min_node_size_) return;
 
     vector<int> sorted_obs_vec = obs_vec_;
     sort(sorted_obs_vec.begin(), sorted_obs_vec.end(), VarValueComparor<T>(train_set_, var_idx));
@@ -66,19 +59,19 @@ void C4p5Selector::handleContVar (int var_idx) {
 
 
     int current_label;
-    for (int i = 0; i < min_split; ++i) {
+    for (int i = 0; i < min_node_size_; ++i) {
         current_label = targ_data_->getLabel(sorted_obs_vec[i]) - 1;
         left_dstr[current_label]++;
         right_dstr[current_label]--;
     }
 
     T* var_array = train_set_->getVar<T>(var_idx);
-    double current_value = var_array[sorted_obs_vec[min_split-1]];
+    double current_value = var_array[sorted_obs_vec[min_node_size_-1]];
     double subinfo;
     double split_value = -1;
     bool subinfo_is_set = false;
     int pos;
-    for (int i = min_split; i < nobs_ - min_split; ++i) {
+    for (int i = min_node_size_; i < nobs_ - min_node_size_; ++i) {
         int next_label = targ_data_->getLabel(sorted_obs_vec[i]) - 1;
         double next_value = var_array[sorted_obs_vec[i]];
         if (current_label != next_label && current_value != next_value) {
@@ -121,7 +114,11 @@ void C4p5Selector::handleContVar (int var_idx) {
     }
 }
 
-void C4p5Selector::handleContVar (int var_idx) {
+void C4p5Selector::handleContVar (int var_idx)
+/*
+ * Calculate corresponding information if split by numerical variable <var_idx>.
+ */
+{
     switch (meta_data_->getVarType(var_idx)) {
     case INTSXP:
         handleContVar<int>(var_idx);

@@ -20,13 +20,13 @@ Tree::Tree (Dataset* train_set, TargetData* targdata, MetaData* meta_data, int m
     resetPerm(true);
 }
 
-Tree::Tree (const vector<vector<double> >& node_infos, MetaData* meta_data, double tree_oob_error_rate) {
-    /*
-     * Reconstruct the tree from <node_infos>.
-     *
-     * See Tree::save() for details.
-     */
-
+Tree::Tree (const vector<vector<double> >& node_infos, MetaData* meta_data, double tree_oob_error_rate)
+/*
+ * Reconstruct the tree from <node_infos>.
+ *
+ * See Tree::save() for details.
+ */
+{
     train_set_    = NULL;
     targ_data_    = NULL;
     meta_data_    = meta_data;
@@ -85,7 +85,11 @@ void Tree::genBaggingSets ()
     oob_predict_label_set_ = vector<int>(poob_vec_->size());
 }
 
-void Tree::build (int nvars, bool withweights, bool importance, volatile bool* pinterrupt) {
+void Tree::build (int nvars, bool withweights, bool importance, volatile bool* pinterrupt)
+/*
+ * Grow a tree.
+ */
+{
     genBaggingSets();
     root_ = genC4p5Tree(*pbagging_vec_, meta_data_->getFeatureVars(), nvars, withweights, pinterrupt);
     calcOOBMeasures(importance);
@@ -154,10 +158,11 @@ Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec,
 }
 
 template<class T>
-void Tree::copyPermData () {
-    /*
-     * Copy data from training set to prepare for permutation.
-     */
+void Tree::copyPermData ()
+/*
+ * Copy data from training set to perm_var_data_, to prepare for permutation.
+ */
+{
 
     //TODO: Need better way to deal with different type of variable, that is DISCRETE, INTSXP, REALSXP.
 
@@ -166,11 +171,11 @@ void Tree::copyPermData () {
     copy(var_array, var_array + train_set_->nobs(), perm_var_data_.begin());
 }
 
-void Tree::permute (int index) {
-    /*
-     * Permute the values of variable <index> for preparation of assessing variable importance.
-     */
-
+void Tree::permute (int index)
+/*
+ * Permute the values of variable <index> for preparation of assessing variable importance.
+ */
+{
     perm_var_idx_ = index;
 
     switch (meta_data_->getVarType(perm_var_idx_)) {
@@ -207,11 +212,11 @@ void Tree::resetPerm (bool initial) {
     }
 }
 
-void Tree::calcOOBMeasures (bool importance) {
-    /*
-     * return error rate for classifying training set
-     */
-
+void Tree::calcOOBMeasures (bool importance)
+/*
+ * return error rate for classifying training set
+ */
+{
     // TODO: Extract a method for OOB error rate.
 
     int error_oob = 0;
@@ -251,13 +256,17 @@ void Tree::calcOOBMeasures (bool importance) {
         for (int i = 0, row = 0; i < nlabels+1; row += nvars, i++)
             row_indexes[i] = row;
 
-        // Find used variables.
+        // Find used variables and mark in perm_is_var_used_.
         doSthOnNodes(root_, &Tree::markOneVarUsed);
 
-        // Calculate percent increase in mis-classification rate.
+        /*
+         * Calculate percent increase in mis-classification rate.
+         * TODO: Here we permute only once for each variable used for node splitting.
+         *       We may let the user to specify the number of times for permutation.
+         */
         for (int var_idx = 0; var_idx < nvars; var_idx++) {
             if (perm_is_var_used_[var_idx]) {
-                int error_oob = 0;
+                int total_error_oob = 0;
                 permute(var_idx);
                 for (int i = 0; i < nobs_oob; i++) {
                     int index = (*poob_vec_)[i];
@@ -265,13 +274,15 @@ void Tree::calcOOBMeasures (bool importance) {
                     int actual_label  = targ_data_->getLabel(index) - 1;
 
                     if (predict_label != actual_label) {
-                        error_oob++;
+                        total_error_oob++;
                         tree_perm_VIs_[row_indexes[actual_label] + var_idx]++;
                     }
                 }
 
-                tree_perm_VIs_[row_indexes[nlabels] + var_idx] = error_oob / (double) nobs_oob - tree_oob_error_rate_;
+                // Percent increase in total out-of-bag error rate after permutation.
+                tree_perm_VIs_[row_indexes[nlabels] + var_idx] = total_error_oob / (double) nobs_oob - tree_oob_error_rate_;
 
+                // Percent increase in each label out-of-bag error rate after permutation.
                 for (int i = 0; i < nlabels; i++)
                     tree_perm_VIs_[row_indexes[i] + var_idx] = tree_perm_VIs_[row_indexes[i] + var_idx] / labelcounts[i] - label_oob_error_rate_[i];
             }
@@ -319,14 +330,14 @@ void Tree::print () {
     Rprintf("\n");
 }
 
-void Tree::save (vector<vector<double> >& res) {
-    /*
-     * Store the tree.
-     *
-     * A node is saved as vector<double>,
-     * so the tree is saved as vector<vector<double>>, in breadth-first order and from left to right.
-     */
-
+void Tree::save (vector<vector<double> >& res)
+/*
+ * Store the tree.
+ *
+ * A node is saved as vector<double>,
+ * so the tree is saved as vector<vector<double>>, in breadth-first order and from left to right.
+ */
+{
     tree_ = vector<vector<double> >(nnodes_);
     doSthOnNodes(root_, &Tree::saveOneNode);
     res.swap(tree_);
