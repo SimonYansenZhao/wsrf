@@ -36,12 +36,14 @@ Dataset::Dataset (Rcpp::DataFrame ds, MetaData* meta_data, bool training) {
 
 }
 
-map<int, vector<int> > Dataset::splitDiscVar (const vector<int>& obs_vec, int vindex) {
-    /*
-     * Return a mapping table which elements are
-     * <value>:<index list of observations with that same value> pairs
-     * where values are possible ones of that variable.
-     */
+map<int, vector<int> > Dataset::splitDiscVar (const vector<int>& obs_vec, int vindex)
+/*
+ * Return a mapping table which elements are
+ * <value>:<index list of observations with that same value> pairs
+ * where values are possible ones of that variable.
+ */
+{
+
     int nvals = meta_data_->getNumValues(vindex);
     int nobs = obs_vec.size();
     int * var_array = getVar<int>(vindex);
@@ -59,11 +61,13 @@ map<int, vector<int> > Dataset::splitDiscVar (const vector<int>& obs_vec, int vi
 
 }
 
-map<int, vector<int> > Dataset::splitPosition (vector<int>& obs_vec, int pos) {
-    /*
-     * Separate <obs_vec> into two parts,
-     * and the split point is at index <pos>.
-     */
+map<int, vector<int> > Dataset::splitPosition (vector<int>& obs_vec, int pos)
+/*
+ * Separate <obs_vec> into two parts,
+ * and the split point is at index <pos>.
+ */
+{
+
     int nobs = obs_vec.size();
     map<int, vector<int> > result;
     if (pos < 0 || pos >= nobs) {

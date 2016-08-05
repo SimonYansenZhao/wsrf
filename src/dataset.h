@@ -6,10 +6,11 @@
 
 using namespace std;
 
-class TargetData {
-    /*
-     * Store the data of target variable in training set.
-     */
+class TargetData
+/*
+ * Store the data of target variable in training set.
+ */
+{
 private:
     int  nlabels_;
     int  nobs_;
@@ -26,10 +27,11 @@ public:
         targ_array_ = INTEGER(data_);
     }
 
-    TargetData (Rcpp::List targdata) {
-    	/*
-    	 * Construct target data from the R list saved by TargetData::save().
-    	 */
+    TargetData (Rcpp::List targdata)
+    /*
+     * Construct target data from the R list saved by TargetData::save().
+     */
+    {
         nlabels_ = Rcpp::as<int>(targdata[NLABELS]);
 
         data_ = Rcpp::as<Rcpp::IntegerVector>(targdata[TRAIN_TARGET_LABELS]);
@@ -65,9 +67,12 @@ public:
         }
     }
 
-    vector<int> getLabelFreqCount (const vector<int>& obs_vec) {
-        // Class label frequency count.
-        // That is, how many observations have a specific class label.
+    vector<int> getLabelFreqCount (const vector<int>& obs_vec)
+    /*
+     * Class label frequency count.
+     * That is, how many observations have a specific class label.
+     */
+    {
         int nobs = obs_vec.size();
         vector<int> numbers (nlabels_, 0);
 

@@ -163,10 +163,11 @@ public:
         return label_distribution_;
     }
 
-    string getLabelDstrStr () {
-        /*
-         * For printing the class distribution in the leaf node.
-         */
+    string getLabelDstrStr ()
+    /*
+     * For printing the class distribution in the leaf node.
+     */
+    {
         vector<double> dstr = getLabelDstr();
         stringstream res;
         res.precision(2);
@@ -180,24 +181,24 @@ public:
         return res.str();
     }
 
-    void save (vector<double>& res, MetaData* meta_data) {
-        /*
-         *     0. type
-         *     1. number of observations
-         *
-         * Leaf node structure:
-         *     2. class label
-         *     3. label frequency count
-         *
-         * Internal node structure:
-         *     2. number of child nodes
-         *     3. variable index
-         *     4. information gain
-         *     5. split info
-         *     6. information gain ratio
-         *     7. split value (optional,depends on 3.)
-         */
-
+    void save (vector<double>& res, MetaData* meta_data)
+    /*
+     *     0. type
+     *     1. number of observations
+     *
+     * Leaf node structure:
+     *     2. class label
+     *     3. label frequency count
+     *
+     * Internal node structure:
+     *     2. number of child nodes
+     *     3. variable index
+     *     4. information gain
+     *     5. split info
+     *     6. information gain ratio
+     *     7. split value (optional,depends on 3.)
+     */
+    {
         vector<double> node_info;
         node_info.push_back((int) (type_));
         node_info.push_back(nobs_);

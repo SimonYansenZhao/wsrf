@@ -1,14 +1,16 @@
 #include "meta_data.h"
 
-MetaData::MetaData (Rcpp::DataFrame data, string targ_name) {
-    /*
-     * Obtain meta data directly from data set.
-     *
-     * Used for training.
-     *
-     * Assume that the target variable is the last variable,
-     * and no unused variables are in argument <data>
-     */
+MetaData::MetaData (Rcpp::DataFrame data, string targ_name)
+/*
+ * Obtain meta data directly from data set.
+ *
+ * Used for training.
+ *
+ * Assume that the target variable is the last variable,
+ * and no unused variables are in argument <data>
+ */
+{
+
     nvars_         = data.size() - 1;
     targ_var_name_ = targ_name;
 
@@ -69,20 +71,22 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name) {
         feature_vars_[i] = i;
 }
 
-MetaData::MetaData (Rcpp::List md) {
-    /*
-     * Construct meta data from the R list of meta data.
-     *
-     * Used for prediction.
-     *
-     * Format:
-     * [[0]] ---- Number of variables
-     * [[1]] ---- Index of target variable
-     * [[2]] ---- Target variable name
-     * [[3]] ---- Variable name vector
-     * [[4]] ---- Variable type vector
-     * [[5]] ---- Discrete variable value list
-     */
+MetaData::MetaData (Rcpp::List md)
+/*
+ * Construct meta data from the R list of meta data.
+ *
+ * Used for prediction.
+ *
+ * Format:
+ * [[0]] ---- Number of variables
+ * [[1]] ---- Index of target variable
+ * [[2]] ---- Target variable name
+ * [[3]] ---- Variable name vector
+ * [[4]] ---- Variable type vector
+ * [[5]] ---- Discrete variable value list
+ */
+{
+
     nvars_         = Rcpp::as<int>(md[NVARS]);
     targ_var_idx_  = Rcpp::as<int>(md[TARG_IDX]);
     targ_var_name_ = Rcpp::as<string>(md[TARG_NAME]);
@@ -122,18 +126,19 @@ MetaData::MetaData (Rcpp::List md) {
 
 }
 
-Rcpp::List MetaData::save () const {
-    /*
-     * Save meta data into R list.
-     *
-     * Format:
-     * [[0]] ---- Number of variables
-     * [[1]] ---- Index of target variable
-     * [[2]] ---- Target variable name
-     * [[3]] ---- Variable name vector
-     * [[4]] ---- Variable type vector
-     * [[5]] ---- Discrete variable value list
-     */
+Rcpp::List MetaData::save () const
+/*
+ * Save meta data into R list.
+ *
+ * Format:
+ * [[0]] ---- Number of variables
+ * [[1]] ---- Index of target variable
+ * [[2]] ---- Target variable name
+ * [[3]] ---- Variable name vector
+ * [[4]] ---- Variable type vector
+ * [[5]] ---- Discrete variable value list
+ */
+{
 
     Rcpp::List meta_data;
 

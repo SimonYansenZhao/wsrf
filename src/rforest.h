@@ -61,19 +61,22 @@ public:
     RForest (Dataset*, TargetData*, MetaData*, int, int, int, bool, bool, SEXP);
     ~RForest ();
 
-    void predictLabelFreqCount (Dataset* data, int index, double* out_iter) {
-        /*
-         * Predicted label frequency count by all trees for data[index].
-         */
+    void predictLabelFreqCount (Dataset* data, int index, double* out_iter)
+    /*
+     * Predicted label frequency count by all trees for data[index].
+     */
+    {
         for (vector<Tree*>::iterator iter = tree_vec_.begin(); iter != tree_vec_.end(); ++iter)
             out_iter[(*iter)->predictLabel(data, index)]++;
 
     }
 
-    void predictProbVec (Dataset* data, int index, double* out_iter) {
-        /*
-         * Predicted label frequency by all trees for data[index].
-         */
+    void predictProbVec (Dataset* data, int index, double* out_iter)
+    /*
+     * Predicted label frequency by all trees for data[index].
+     */
+    {
+
         for (vector<Tree*>::iterator iter = tree_vec_.begin(); iter != tree_vec_.end(); ++iter)
             out_iter[(*iter)->predictLabel(data, index)]++;
 
@@ -137,6 +140,7 @@ public:
 
     void buildOneTree (int ind, volatile bool* interrupt);
     void buidForestSeq (volatile bool* pinterrupt);
+
     // parallel: 0 or 1 (sequential);  < 0 (cores-2 threads); > 1 (the exact num of threads)
     void buildForestAsync (int parallel, volatile bool* pInterrupt);
     void buildOneTreeAsync (int* index, volatile bool* pInterrupt);

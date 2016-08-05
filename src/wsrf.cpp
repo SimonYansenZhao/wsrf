@@ -7,9 +7,6 @@
 
 using namespace std;
 
-/*
- * Main entry function for building random forests model.
- */
 SEXP wsrf (
     SEXP dsSEXP,         // Data.
     SEXP tnSEXP,         // Target variable name.
@@ -21,7 +18,11 @@ SEXP wsrf (
     SEXP seedsSEXP,      // Random seeds for each trees.
     SEXP importanceSEXP, // Whether calculate variable importance measures.
     SEXP ispartSEXP      // Indicating whether it is part of the whole forests.
-    ) {
+    )
+/*
+ * Main entry function for building random forests model.
+ */
+{
     BEGIN_RCPP
 
         bool            ispart      = Rcpp::as<bool>(ispartSEXP);

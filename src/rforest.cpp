@@ -1,9 +1,11 @@
 #include "rforest.h"
 
-RForest::RForest (Dataset* train_set, TargetData* targdata, MetaData* meta_data, int ntrees, int nvars, int min_node_size, bool weights, bool importance, SEXP seeds) {
-    /*
-     * For training.
-     */
+RForest::RForest (Dataset* train_set, TargetData* targdata, MetaData* meta_data, int ntrees, int nvars, int min_node_size, bool weights, bool importance, SEXP seeds)
+/*
+ * For training.
+ */
+{
+
     train_set_         = train_set;
     targ_data_         = targdata;
     meta_data_         = meta_data;
@@ -25,13 +27,13 @@ RForest::RForest (Dataset* train_set, TargetData* targdata, MetaData* meta_data,
     oob_set_vec_ = vector<vector<int> >(ntrees);
 }
 
-RForest::RForest (Rcpp::List& wsrf_R, MetaData* meta_data, TargetData* targdata) {
-    /*
-     * Construct forest from R.
-     *
-     * For merge, split and prediction.
-     */
-
+RForest::RForest (Rcpp::List& wsrf_R, MetaData* meta_data, TargetData* targdata)
+/*
+ * Construct forest from R.
+ *
+ * For merge, split and prediction.
+ */
+{
     importance_        = false;
     tree_seeds_        = NULL;
     rf_strength_       = NA_REAL;
@@ -102,7 +104,10 @@ void RForest::buidForestSeq (volatile bool* pinterrupt) {
     }
 }
 
-/**
+void RForest::buildForestAsync (
+    int parallel,
+    volatile bool* pInterrupt)
+/*
  * Build RandomForests::trees_num_ decision trees
  *
  * forest building controller
@@ -112,9 +117,7 @@ void RForest::buidForestSeq (volatile bool* pinterrupt) {
  * 2. check at the beginning of every node building: DecisionTree::GenerateDecisionTreeByC4_5()
  * 3. check at the beginning of time consuming operation: C4_5AttributeSelectionMethod::HandleDiscreteAttribute() in C4_5AttributeSelectionMethod::ExecuteSelectionByIGR()
  */
-void RForest::buildForestAsync (
-    int parallel,
-    volatile bool* pInterrupt) {
+{
 
     int nCoresMinusTwo = thread::hardware_concurrency() - 2;
 
@@ -159,12 +162,10 @@ void RForest::buildForestAsync (
     } // try-catch
 }
 
-
-
+void RForest::buildOneTreeAsync (int* index, volatile bool* pInterrupt)
 /*
  * tree building function: pick a bagging set from bagging_set_ to build one tree a time until no set to fetch
  */
-void RForest::buildOneTreeAsync (int* index, volatile bool* pInterrupt)
 {
     bool finished = false;
     int ind;
@@ -363,11 +364,11 @@ void RForest::assessPermVariableImportance () {
 
 }
 
-void RForest::saveModel (Rcpp::List& wsrf_R) {
-    /*
-     * Save the model.  Only used for a model of wsrf, not for combine or merge.
-     */
-
+void RForest::saveModel (Rcpp::List& wsrf_R)
+/*
+ * Save the model.  Only used for a model of wsrf, not for combine or merge.
+ */
+{
     wsrf_R[WEIGHTS_IDX]        = Rcpp::wrap(weights_);
     wsrf_R[MTRY_IDX]           = Rcpp::wrap(mtry_);
 
@@ -392,13 +393,13 @@ void RForest::saveModel (Rcpp::List& wsrf_R) {
     wsrf_R[TREE_IGR_IMPORTANCE_IDX] = Rcpp::wrap(tree_IGR_VIs_vec);
 }
 
-void RForest::saveMeasures (Rcpp::List& wsrf_R) {
-    /*
-     * Calculated values, need not to be unserialized.
-     *
-     * And all related data should be initialized in RForest::calcEvalMeasures();
-     */
-
+void RForest::saveMeasures (Rcpp::List& wsrf_R)
+/*
+ * Calculated values, need not to be unserialized.
+ *
+ * And all related data should be initialized in RForest::calcEvalMeasures();
+ */
+{
     wsrf_R[RF_OOB_ERROR_RATE_IDX] = Rcpp::wrap(rf_oob_error_rate_);
     wsrf_R[STRENGTH_IDX]          = Rcpp::wrap(rf_strength_);
     wsrf_R[CORRELATION_IDX]       = Rcpp::wrap(rf_correlation_);

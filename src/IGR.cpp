@@ -38,11 +38,12 @@ int IGR::weightedSampling(int rand_num) {
 //    return n - 1;
 }
 
+vector<int> IGR::getRandomWeightedVars()
 /*
  * generate an integer list of size <size> according to probability
  * that is, select <size> variables by their weights
  */
-vector<int> IGR::getRandomWeightedVars() {
+{
 
     //TODO: If possible, make similar RNG codes into a single function.
 
@@ -65,11 +66,12 @@ vector<int> IGR::getRandomWeightedVars() {
     return result;
 }
 
+void IGR::normalizeWeight(volatile bool* pInterrupt)
 /*
  * calculate weights of all variables according to their gain ratios
  * the results are in this->weights_
  */
-void IGR::normalizeWeight(volatile bool* pInterrupt) {
+{
 
     double sum = 0;
     int n = gain_ratio_vec_.size();
@@ -103,11 +105,12 @@ void IGR::normalizeWeight(volatile bool* pInterrupt) {
     }
 }
 
+int IGR::getSelectedIdx()
 /*
  * select the most weighted variable from < this->m_ > variables that
  * are randomly picked from all varialbes according to their weights
  */
-int IGR::getSelectedIdx() {
+{
     const vector<int>& wrs_vec = getRandomWeightedVars();
     int max = -1;
     bool is_max_set = false;

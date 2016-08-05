@@ -195,11 +195,12 @@ double C4p5Selector::averageInfoGain () {
     return average_info_gain;
 }
 
-void C4p5Selector::doIGRSelection (int nvars, VarSelectRes& res, volatile bool* pInterrupt) {
-    /*
-     * calculate all information gain when split by any one of the variables
-     * from the randomly selected subspace of size <nvars>
-     */
+void C4p5Selector::doIGRSelection (int nvars, VarSelectRes& res, volatile bool* pInterrupt)
+/*
+ * calculate all information gain when split by any one of the variables
+ * from the randomly selected subspace of size <nvars>
+ */
+{
     calcInfos(var_vec_, pInterrupt);
 
     if (info_gain_map_.empty()) {
