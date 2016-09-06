@@ -23,7 +23,7 @@ public:
         nlabels_ = meta_data->nlabels();
         nobs_    = ds.nrows();
 
-        data_       = Rcpp::as<Rcpp::IntegerVector>(ds[meta_data->targVarIdx()]);
+        data_       = Rcpp::as<Rcpp::IntegerVector>((SEXPREC*)ds[meta_data->targVarIdx()]);
         targ_array_ = INTEGER(data_);
     }
 
@@ -110,15 +110,15 @@ private:
         switch (meta_data_->getVarType(pindex)) {
         case DISCRETE:
             if (!training_) {
+                if (!Rf_isFactor(dataptr)) throw std::range_error("Variable " + meta_data_->getVarName(pindex) + "is not type of factor which is different from the data for the model!");
+
                 Rcpp::IntegerVector rcppdata(dataptr);
-                preserve_int.push_back(rcppdata);  // Preserve data in case that if the type of the variable is different from training data, <rcppdata> would be destroyed out of the code block.
                 int nlevels_actual = Rcpp::CharacterVector(rcppdata.attr("levels")).size();
                 int nlevels_known = meta_data_->getNumValues(pindex);
 
                 if (nlevels_known < nlevels_actual) {  // There are more values than in training data.
 
-                    throw std::range_error("New values that do not exist in training data found in variable "
-                        + meta_data_->getVarName(pindex) + "!");
+                    throw std::range_error("New values that do not exist in training data found in variable " + meta_data_->getVarName(pindex) + "!");
 
                 } else if (nlevels_known == nlevels_actual) {
 
@@ -127,8 +127,7 @@ private:
 
                     if (equal(actual_levels.begin(), actual_levels.end(), known_levels.begin())) {
                         data_ptr_vec_[pindex] = INTEGER(rcppdata);
-                    } else throw std::range_error("Mismatch values between training data and predicting data found in variable "
-                        + meta_data_->getVarName(pindex) + "!");
+                    } else throw std::range_error("Mismatch values between training data and predicting data found in variable " + meta_data_->getVarName(pindex) + "!");
 
                 } else {  // There are less values than in training data.  We need to match the values with training data.
 
@@ -149,15 +148,16 @@ private:
                             pdata[i] = match_vec[pdata[i]];
                         data_ptr_vec_[pindex] = pdata;
 
-                    } else throw std::range_error("New values that do not exist in training data found in variable "
-                        + meta_data_->getVarName(pindex) + "!");
+                    } else throw std::range_error("New values that do not exist in training data found in variable " + meta_data_->getVarName(pindex) + "!");
 
                 }
-                break;
+
+            } else {
+                data_ptr_vec_[pindex] = INTEGER(Rcpp::IntegerVector(dataptr));
             }
-            /* no break */
+            break;
         case INTSXP:
-            if (!training_) {
+            if (!training_ && TYPEOF(dataptr) != INTSXP) {
                 preserve_int.push_back(Rcpp::IntegerVector(dataptr));  // Preserve data in case that the type of the variable is different from training data.
                 data_ptr_vec_[pindex] = INTEGER(preserve_int.back());
             } else {
@@ -165,7 +165,7 @@ private:
             }
             break;
         case REALSXP:
-            if (!training_) {
+            if (!training_ && TYPEOF(dataptr) != REALSXP) {
                 preserve_num.push_back(Rcpp::NumericVector(dataptr));  // Preserve data in case that the type of the variable is different from training data.
                 data_ptr_vec_[pindex] = REAL(preserve_num.back());
             } else {
