@@ -22,6 +22,9 @@ private:
     int         node_id_;               // For printing tree.
     double      tree_oob_error_rate_;   // Out-of-bag error rate.
     int         min_node_size_;         // Minimum node size.
+    int         mtry_;                  // Number of variables selected for node splitting.
+    bool        isweight_;              // Whether weighting.
+    bool        isimportance_;          // Whether calculate variable importance.
 
     vector<double> label_oob_error_rate_;  // Vector of size nlabels: The OOB error rate for each class label.
 
@@ -156,7 +159,7 @@ private:
 public:
 
     Tree (const vector<vector<double> >& node_infos, MetaData* meta_data, double tree_oob_error_rate);
-    Tree (Dataset*, TargetData*, MetaData*, int, unsigned int, vector<int>*, vector<int>*);
+    Tree (Dataset*, TargetData*, MetaData*, int, unsigned int, vector<int>*, vector<int>*, int, bool, bool);
 
     ~Tree () {
         doSthOnNodes(root_, &Tree::deleteTheNode);
@@ -189,8 +192,6 @@ public:
     Node* genC4p5Tree (
         const vector<int>& training_set_index,
         const vector<int>& attribute_list,
-        int nvars,
-        bool isWeighted,
         volatile bool* pInterrupt);
 
     Node* createLeafNode (const vector<int>& obs_vec, int nobs, bool pure)
@@ -242,7 +243,7 @@ public:
     }
 
     void print ();
-    void build (int nvars, bool withweights, bool importance, volatile bool* pinterrupt);
+    void build (volatile bool* pinterrupt);
     void save (vector<vector<double> >& res);
 
     void permute (int index);

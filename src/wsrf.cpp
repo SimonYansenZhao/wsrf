@@ -25,21 +25,16 @@ SEXP wsrf (
 {
     BEGIN_RCPP
 
-        bool            ispart      = Rcpp::as<bool>(ispartSEXP);
+        Rcpp::DataFrame ds (dsSEXP);
 
-        Rcpp::DataFrame ds           (dsSEXP);
-        MetaData        meta_data    (ds, Rcpp::as<string>(tnSEXP));
-        TargetData      targ_data    (ds, &meta_data);
-        Dataset         train_set    (ds, &meta_data, true);
-        RForest         rf           (&train_set,
-                                      &targ_data,
-                                      &meta_data,
-                                      Rcpp::as<int>(ntreesSEXP),
-                                      Rcpp::as<int>(nvarsSEXP),
-                                      Rcpp::as<int>(minnodeSEXP),
-                                      Rcpp::as<bool>(weightsSEXP),
-                                      Rcpp::as<bool>(importanceSEXP),
-                                      seedsSEXP);
+        MetaData   meta_data (ds, Rcpp::as<string>(tnSEXP));
+        TargetData targ_data (ds, &meta_data);
+        Dataset    train_set (ds, &meta_data, true);
+
+
+        RForest rf (&train_set, &targ_data, &meta_data,
+                    Rcpp::as<int>(ntreesSEXP), Rcpp::as<int>(nvarsSEXP), Rcpp::as<int>(minnodeSEXP), Rcpp::as<bool>(weightsSEXP),
+                    Rcpp::as<bool>(importanceSEXP), seedsSEXP);
 
         volatile bool interrupt = false;
 
@@ -97,7 +92,7 @@ SEXP wsrf (
 
         Rcpp::List wsrf_R(WSRF_MODEL_SIZE);
 
-        if (!ispart) {
+        if (!Rcpp::as<bool>(ispartSEXP)) {
             rf.calcEvalMeasures();
             wsrf_R[META_IDX]        = meta_data.save();
             wsrf_R[TARGET_DATA_IDX] = targ_data.save();
@@ -134,8 +129,8 @@ SEXP afterMergeOrSubset (SEXP wsrfSEXP) {
     BEGIN_RCPP
 
         Rcpp::List wsrf_R    (wsrfSEXP);
-        MetaData   meta_data (Rcpp::as<Rcpp::List>(wsrf_R[META_IDX]));
-        TargetData targ_data (Rcpp::as<Rcpp::List>(wsrf_R[TARGET_DATA_IDX]));
+        MetaData   meta_data (Rcpp::as<Rcpp::List>((SEXPREC*)wsrf_R[META_IDX]));
+        TargetData targ_data (Rcpp::as<Rcpp::List>((SEXPREC*)wsrf_R[TARGET_DATA_IDX]));
         RForest    rf        (wsrf_R, &meta_data, &targ_data);
 
         rf.calcEvalMeasures();
@@ -150,7 +145,7 @@ SEXP predict (SEXP wsrfSEXP, SEXP dsSEXP, SEXP typeSEXP) {
     BEGIN_RCPP
 
         Rcpp::List wsrf_R    (wsrfSEXP);
-        MetaData   meta_data (Rcpp::as<Rcpp::List>(wsrf_R[META_IDX]));
+        MetaData   meta_data (Rcpp::as<Rcpp::List>((SEXPREC*)wsrf_R[META_IDX]));
         Dataset    test_set  (Rcpp::as<Rcpp::DataFrame>(dsSEXP), &meta_data, false);
         RForest    rf        (wsrf_R, &meta_data, NULL);
 
@@ -174,7 +169,7 @@ SEXP print (SEXP wsrfSEXP, SEXP treesSEXP) {
     BEGIN_RCPP
 
         Rcpp::List          wsrf_R            (wsrfSEXP);
-        MetaData            meta_data         (Rcpp::as<Rcpp::List>(wsrf_R[META_IDX]));
+        MetaData            meta_data         (Rcpp::as<Rcpp::List>((SEXPREC*)wsrf_R[META_IDX]));
         Rcpp::List          trees             (wsrf_R[TREES_IDX]);
         Rcpp::NumericVector tree_error_rates  (wsrf_R[TREE_OOB_ERROR_RATES_IDX]);
         Rcpp::IntegerVector tree_idx_vec      (treesSEXP);
@@ -184,7 +179,7 @@ SEXP print (SEXP wsrfSEXP, SEXP treesSEXP) {
             int    index      = tree_idx_vec[i]-1;
             double error_rate = tree_error_rates[index];
 
-            vector<vector<double> > node_infos = Rcpp::as<vector<vector<double> > >(trees[index]);
+            vector<vector<double> > node_infos = Rcpp::as<vector<vector<double> > >((SEXPREC*)trees[index]);
 
             int ntests = 0;
             int nnodes = node_infos.size();

@@ -1,10 +1,20 @@
 #include "c4_5_var_selector.h"
 
-C4p5Selector::C4p5Selector (Dataset* train_set, TargetData* targdata, MetaData* meta_data, int min_node_size, const vector<int>& obs_vec, const vector<int>& var_vec, unsigned seed)
+C4p5Selector::C4p5Selector (
+        Dataset* train_set,
+        TargetData* targdata,
+        MetaData* meta_data,
+        int min_node_size,
+        const vector<int>& obs_vec,
+        const vector<int>& var_vec,
+        int mtry,
+        unsigned seed)
     : VarSelector(train_set, targdata, meta_data, obs_vec, var_vec) {
     seed_ = seed;
     info_ = calcEntropy(obs_vec);
+    mtry_ = mtry;
     min_node_size_ = min_node_size;
+
 }
 
 void C4p5Selector::handleDiscVar (int var_idx)
@@ -131,41 +141,6 @@ void C4p5Selector::handleContVar (int var_idx)
     };
 }
 
-vector<int> C4p5Selector::getRandomVars (vector<int> var_vec, int nselect)
-/*
- * Randomly select <nselect> variables from <var_vec> without replacement.
- * Default subspace size is log(n)/log2 + 1 if <nselect> == -1.
- *
- * Duplicate variables should not be in the result.
- */
-{
-    //TODO: If possible, make similar RNG codes into a single function.
-
-    int nleft = var_vec.size();
-    if (nselect == -1) nselect = log((double)nleft)/LN_2 + 1;
-
-    if (nselect >= nleft) return var_vec;
-
-    vector<int> result(nselect);
-
-    default_random_engine re {seed_};
-
-
-    for (int i = 0; i < nselect; ++i) {
-
-        uniform_int_distribution<int> uid {0, nleft - 1};
-        int random_num = uid(re);
-
-        result[i] = var_vec[random_num];
-        var_vec[random_num] = var_vec[nleft-1];
-        nleft--;
-
-    }
-
-    return result;
-
-}
-
 void C4p5Selector::calcInfos (const vector<int>& var_vec, volatile bool* pInterrupt)
 /*
  * Calculate the impurity difference when using each variable for node splitting.
@@ -195,10 +170,10 @@ double C4p5Selector::averageInfoGain () {
     return average_info_gain;
 }
 
-void C4p5Selector::doIGRSelection (int nvars, VarSelectRes& res, volatile bool* pInterrupt)
+void C4p5Selector::doIGRSelection (VarSelectRes& res, volatile bool* pInterrupt)
 /*
  * calculate all information gain when split by any one of the variables
- * from the randomly selected subspace of size <nvars>
+ * from the weighted randomly selected subspace of size <mtry_>
  */
 {
     calcInfos(var_vec_, pInterrupt);
@@ -240,10 +215,8 @@ void C4p5Selector::doIGRSelection (int nvars, VarSelectRes& res, volatile bool* 
         gain_ratio = split_info > 0 ? info_gain_map_.begin()->second / split_info : NA_REAL;
     } else {
 
-        IGR igr(cand_gain_ratio_vec, nvars, seed_);
-        igr.normalizeWeight(pInterrupt);
-
-        int index = igr.getSelectedIdx();
+        IGR igr(cand_gain_ratio_vec, mtry_, seed_);
+        int index = igr.getSelectedIdx(pInterrupt);
         vindex = cand_var_vec[index];
 
         gain_ratio = cand_gain_ratio_vec[index];
@@ -266,14 +239,14 @@ void C4p5Selector::setResult (int vindex, VarSelectRes& result, double gain_rati
     }
 }
 
-void C4p5Selector::doSelection (int nvars, VarSelectRes& res, volatile bool* pInterrupt)
+void C4p5Selector::doSelection (VarSelectRes& res, volatile bool* pInterrupt)
 /*
  * calculate all information gain when split by any one of the variables
- * from the randomly selected subspace of size <nvars>
+ * from the randomly selected subspace of size <mtry_>
  */
 {
-
-    vector<int> subvar_vec = getRandomVars(var_vec_, nvars);
+    Sampling rs (seed_);
+    vector<int> subvar_vec = rs.nonReplaceRandomSample(var_vec_, mtry_);
 
     calcInfos(subvar_vec, pInterrupt);
 
@@ -282,9 +255,14 @@ void C4p5Selector::doSelection (int nvars, VarSelectRes& res, volatile bool* pIn
         return;
     }
 
-    /*
-     * find the best variable
-     */
+    findBest(res, pInterrupt);
+}
+
+void C4p5Selector::findBest(VarSelectRes& res, volatile bool* pInterrupt)
+/*
+ * find the best variable.
+ */
+{
     double average_info_gain = averageInfoGain();
     double gain_ratio = -1;
     int vindex = -1;

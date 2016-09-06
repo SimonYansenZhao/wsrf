@@ -1,6 +1,15 @@
 #include "tree.h"
 
-Tree::Tree (Dataset* train_set, TargetData* targdata, MetaData* meta_data, int min_node_size, unsigned seed, vector<int>* pbagging_vec, vector<int>* poob_vec) {
+Tree::Tree (Dataset* train_set,
+        TargetData* targdata,
+        MetaData* meta_data,
+        int min_node_size,
+        unsigned seed,
+        vector<int>* pbagging_vec,
+        vector<int>* poob_vec,
+        int mtry,
+        bool isweight,
+        bool isimportance) {
 
     train_set_     = train_set;
     targ_data_     = targdata;
@@ -12,6 +21,9 @@ Tree::Tree (Dataset* train_set, TargetData* targdata, MetaData* meta_data, int m
     nnodes_        = 0;
     node_id_       = 0;
     root_          = NULL;
+    mtry_          = mtry;
+    isweight_      = isweight;
+    isimportance_  = isimportance;
 
     tree_oob_error_rate_  = NA_REAL;
     label_oob_error_rate_ = vector<double>(meta_data->nlabels(), 0);
@@ -85,17 +97,17 @@ void Tree::genBaggingSets ()
     oob_predict_label_set_ = vector<int>(poob_vec_->size());
 }
 
-void Tree::build (int nvars, bool withweights, bool importance, volatile bool* pinterrupt)
+void Tree::build (volatile bool* pinterrupt)
 /*
  * Grow a tree.
  */
 {
     genBaggingSets();
-    root_ = genC4p5Tree(*pbagging_vec_, meta_data_->getFeatureVars(), nvars, withweights, pinterrupt);
-    calcOOBMeasures(importance);
+    root_ = genC4p5Tree(*pbagging_vec_, meta_data_->getFeatureVars(), pinterrupt);
+    calcOOBMeasures(isimportance_);
 }
 
-Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec, int nvars, bool isWeighted, volatile bool* pInterrupt)
+Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec, volatile bool* pInterrupt)
 /*
  * Build a tree recursively.
  */
@@ -117,12 +129,12 @@ Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec,
 
     } else {
         VarSelectRes result;
-        if (isWeighted) {
-            C4p5Selector method(train_set_, targ_data_, meta_data_, min_node_size_, obs_vec, var_vec, seed_);
-            method.doIGRSelection(nvars, result, pInterrupt);
+        if (isweight_) {
+            C4p5Selector method(train_set_, targ_data_, meta_data_, min_node_size_, obs_vec, var_vec, mtry_, seed_);
+            method.doIGRSelection(result, pInterrupt);
         } else {
-            C4p5Selector method(train_set_, targ_data_, meta_data_, min_node_size_, obs_vec, var_vec, seed_);
-            method.doSelection(nvars, result, pInterrupt);
+            C4p5Selector method(train_set_, targ_data_, meta_data_, min_node_size_, obs_vec, var_vec, mtry_, seed_);
+            method.doSelection(result, pInterrupt);
         }
 
         seed_ += 1;  // Change seed.
@@ -142,14 +154,14 @@ Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec,
                         // Use parent node statistics
                         node->setChild(iter->first, createLeafNode(obs_vec, 0, false));
                     } else {
-                        node->setChild(iter->first, genC4p5Tree(iter->second, new_var_vec, nvars, isWeighted, pInterrupt));
+                        node->setChild(iter->first, genC4p5Tree(iter->second, new_var_vec, pInterrupt));
                     }
                 }
             } else {
                 node = createInternalNode(nobs, result);
                 node->setSplitValue(result.split_value_);
                 for (map<int, vector<int> >::iterator iter = result.split_map_.begin(); iter != result.split_map_.end(); ++iter)
-                    node->setChild(iter->first, genC4p5Tree(iter->second, var_vec, nvars, isWeighted, pInterrupt));
+                    node->setChild(iter->first, genC4p5Tree(iter->second, var_vec, pInterrupt));
             }
 
             return node;

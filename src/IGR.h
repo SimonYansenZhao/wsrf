@@ -4,6 +4,7 @@
 #include<random>
 
 #include "utility.h"
+#include "sampling.h"
 
 using namespace std;
 
@@ -17,14 +18,10 @@ private:
 
     const vector<double>& gain_ratio_vec_;
 
-
-    int weightedSampling(int random_integer);
-    inline vector<int> getRandomWeightedVars();
 public:
     IGR(const vector<double>& gain_ratio, int nvars, unsigned seed);
 
-    void normalizeWeight(volatile bool* pInterrupt);
-    int  getSelectedIdx();
+    int  getSelectedIdx(volatile bool* pInterrupt);
 };
 
 #endif /* IGR_H_ */

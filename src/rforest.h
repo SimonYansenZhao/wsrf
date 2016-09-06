@@ -46,7 +46,7 @@ private:
     vector<double> sigma_perm_VIs_;  // Vector of size (nlabels+1)*nvars: Standard deviation of variable impaortance on each class label, , plus one row for VI SD over all class labels.
     vector<double> IGR_VIs_;         // Vector of size nvars: The information gain ratio decreases for each variable.
 
-    mutex mut;
+    mutex mut_;
 
     typedef void (RForest::*predictor)(Dataset* data, int index, double* out_iter);
 

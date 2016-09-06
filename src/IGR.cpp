@@ -8,114 +8,20 @@ IGR::IGR(const vector<double>& gain_ratio, int nvars, unsigned seed)
     seed_    = seed;
 
     int n = gain_ratio.size();
-    if (nvars == -1) nvars = log((double)n) / LN_2 + 1;
     nvars_ = nvars >= n ? n : nvars;
 }
 
-int IGR::weightedSampling(int rand_num) {
-    int i = 1;
-    while (rand_num > weights_[i]) {
-        rand_num -= weights_[i];
-        i <<= 1;
-        if (rand_num > wst_[i]) {
-            rand_num -= wst_[i];
-            i++;
-        }
-    }
-
-    int res = i-1;
-    int w = weights_[i];
-    weights_[i] = 0;
-
-    while (i != 0) {
-        wst_[i] -= w;
-        i >>= 1;
-    }
-
-    return res;
-
-//    //may be the largest right is smaller RAND_MAX,because double to int may lose information
-//    return n - 1;
-}
-
-vector<int> IGR::getRandomWeightedVars()
-/*
- * generate an integer list of size <size> according to probability
- * that is, select <size> variables by their weights
- */
-{
-
-    //TODO: If possible, make similar RNG codes into a single function.
-
-    int n = weights_.size()-1;
-    vector<int> result(nvars_ >= n ? n : nvars_);
-
-    if (nvars_ >= n) {
-        for (int i = 0; i < n; i++)
-            result[i] = i;
-        return result;
-    }
-
-    default_random_engine re {seed_};
-
-    for(int i = 0; i < nvars_; ++ i) {
-        uniform_int_distribution<int> uid {0, wst_[1]-1};
-        result[i] = weightedSampling(uid(re));
-    }
-
-    return result;
-}
-
-void IGR::normalizeWeight(volatile bool* pInterrupt)
-/*
- * calculate weights of all variables according to their gain ratios
- * the results are in this->weights_
- */
-{
-
-    double sum = 0;
-    int n = gain_ratio_vec_.size();
-
-    for (int i = 0, j = 1; i < n; i++, j++) {
-
-        if (*pInterrupt)
-            return;
-
-        weights_[j] = sqrt(gain_ratio_vec_[i]);
-        sum += weights_[j];
-    }
-
-    if (sum != 0) {
-        for (int i = 1; i <= n; i++) {
-            weights_[i] /= sum;
-            int temp = weights_[i] * RAND_MAX;
-            weights_[i] = temp;
-            wst_[i] = temp;
-        }
-    } else {
-        int temp = RAND_MAX / (double) n;
-        for (int i = 1; i <= n; i++) {
-            weights_[i] = temp;
-            wst_[i] = temp;
-        }
-    }
-
-    for (int i = n; i > 1; i--) {
-        wst_[i>>1] += wst_[i];
-    }
-}
-
-int IGR::getSelectedIdx()
+int IGR::getSelectedIdx(volatile bool* pInterrupt)
 /*
  * select the most weighted variable from < this->m_ > variables that
- * are randomly picked from all varialbes according to their weights
+ * are randomly picked from all variables according to their weights
  */
 {
-    const vector<int>& wrs_vec = getRandomWeightedVars();
+    Sampling rs (seed_);
+    const vector<int>& wrs_vec = rs.nonReplaceWeightedSample(gain_ratio_vec_, nvars_, pInterrupt);
     int max = -1;
     bool is_max_set = false;
-    for (int i = 0, rand_num; i < nvars_; i++) {
-        rand_num = wrs_vec[i];
+    for (int rand_num : wrs_vec) {
         if (is_max_set) {
             if (gain_ratio_vec_[rand_num] >= gain_ratio_vec_[max]) max = rand_num;
         } else {

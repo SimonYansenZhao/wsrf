@@ -24,11 +24,11 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name)
     Rcpp::CharacterVector vnames(data.names());
     for (int vindex = 0; vindex < nvars_; vindex++) {
         // Store the names of feature variables.
-        var_names_[vindex] = Rcpp::as<string>(vnames[vindex]);
+        var_names_[vindex] = Rcpp::as<string>((SEXPREC*)vnames[vindex]);
     }
 
     for (int vindex = 0; vindex < nvars_; vindex++) {
-        if (Rf_isFactor(data[vindex])) {
+        if (Rf_isFactor((SEXPREC*)data[vindex])) {
             // Store the levels of factor variables.
             Rcpp::IntegerVector vals(data[vindex]);
             Rcpp::CharacterVector levels(vals.attr("levels"));
@@ -37,7 +37,7 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name)
             name_value_map namevals;
             name_vec levnames(nlevels);
             for (int lindex = 0; lindex < nlevels; lindex++) {
-                string name = Rcpp::as<string>(levels[lindex]);
+                string name = Rcpp::as<string>((SEXPREC*)levels[lindex]);
                 namevals.insert(name_value_map::value_type(name, lindex));  // Here, factor values starts from 0.
                 levnames[lindex] = name;
             }
@@ -45,7 +45,7 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name)
             val_names_[vindex].swap(levnames);
             var_types_[vindex] = DISCRETE;
         } else {
-            var_types_[vindex] = TYPEOF(data[vindex]);
+            var_types_[vindex] = TYPEOF((SEXPREC*)data[vindex]);
         }
     }
 
@@ -57,7 +57,7 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name)
     name_value_map namevals;
     name_vec levnames(nlevels);
     for (int lindex = 0; lindex < nlevels; lindex++) {
-        string name = Rcpp::as<string>(levels[lindex]);
+        string name = Rcpp::as<string>((SEXPREC*)levels[lindex]);
         namevals.insert(name_value_map::value_type(name, lindex));
         levnames[lindex] = name;
     }
@@ -97,21 +97,21 @@ MetaData::MetaData (Rcpp::List md)
 
     Rcpp::CharacterVector varnames((SEXP)(md[VAR_NAMES]));
     for (int vindex = 0; vindex < nvars_; vindex++) {
-        string name = Rcpp::as<string>(varnames[vindex]);
+        string name = Rcpp::as<string>((SEXPREC*)varnames[vindex]);
         var_names_[vindex] = name;
     }
 
     Rcpp::List valuenames((SEXP)(md[VAL_NAMES]));
     for (int i = 0; i < valuenames.size(); i++) {
         Rcpp::List lst(valuenames[i]);
-        int vindex = Rcpp::as<int>(lst[0]);
+        int vindex = Rcpp::as<int>((SEXPREC*)lst[0]);
         Rcpp::CharacterVector levels(lst[1]);
         int nlevels = levels.size();
 
         name_vec levnames(nlevels);
         name_value_map namevals;
         for (int lindex = 0; lindex < nlevels; lindex++) {
-            string name = Rcpp::as<string>(levels[lindex]);
+            string name = Rcpp::as<string>((SEXPREC*)levels[lindex]);
             namevals.insert(name_value_map::value_type(name, lindex));
             levnames[lindex] = name;
         }

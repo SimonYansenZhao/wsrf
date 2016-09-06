@@ -59,7 +59,7 @@ const double LN_2 = log((double)2);
 
 
 // wsrf$
-const int WSRF_MODEL_SIZE          = 18;
+const int WSRF_MODEL_SIZE          = 19;
 
 const int META_IDX                 = 0;
 const int TARGET_DATA_IDX          = 1;
@@ -79,6 +79,7 @@ const int CORRELATION_IDX          = 14;
 const int C_S2_IDX                 = 15;
 const int WEIGHTS_IDX              = 16;
 const int MTRY_IDX                 = 17;
+const int MIN_NODE_SIZE_IDX        = 18;
 
 // targetData$
 const string TRAIN_TARGET_LABELS  = "trainTargLabels";
