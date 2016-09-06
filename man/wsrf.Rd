@@ -12,22 +12,22 @@
 }
 
 \description{
-  
+
   Build weighted subspace C4.5-based decision trees to construct a
   forest.
-  
+
 }
 
 \usage{
 
-wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE, 
-                 parallel=TRUE, na.action=na.fail, importance=FALSE, 
-                 minnode=2, clusterlogfile)
+wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE,
+              parallel=TRUE, na.action=na.fail, importance=FALSE,
+              minnode=2, clusterlogfile)
 
 }
 
 \arguments{
-  
+
   \item{formula}{a formula, with a response but no interaction terms.}
 
   \item{data}{a data frame in which to interpret the variables named in
@@ -53,7 +53,7 @@ wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE,
       sequentially (FALSE).}
 
   \item{importance}{should importance of predictors be assessed? }
-  
+
   \item{minnode}{minimum size of leaf node, i.e., minimum number of
       observations a leaf node represents.  By default, 2.}
 
@@ -78,7 +78,7 @@ wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE,
 }
 
 \value{
-  
+
   An object of class \pkg{wsrf}, which is a list with the following
   components:
 
@@ -118,14 +118,14 @@ wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE,
   set.seed(42)
   train <- sample(nrow(ds), 0.7*nrow(ds))
   test  <- setdiff(seq_len(nrow(ds)), train)
-  
+
   # Build model.
   model.wsrf <- wsrf(form, data=ds[train, vars])
   
   # View model.
   print(model.wsrf)
   print(model.wsrf, tree=1)
-  
+
   # Evaluate.
   strength(model.wsrf)
   correlation(model.wsrf)
@@ -135,7 +135,7 @@ wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE,
 }
 
 \references{
-  
+
   Xu B, Huang JZ, Williams G, Wang Q, Ye YM
   (2012). "Classifying very high-dimensional data with random forests built from small subspaces."
   \emph{International Journal of Data Warehousing and Mining (IJDWM)},
@@ -144,13 +144,13 @@ wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE,
   Quinlan
   J. R. (1993). "C4.5: Programs for Machine Learning". \emph{Morgan
   Kaufmann}.
-  
+
 }
 
 \author{
-  
+
   He Zhao and Graham Williams (SIAT)
-  
+
 }
 
 \keyword{ models }
