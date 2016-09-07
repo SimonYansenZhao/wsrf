@@ -13,10 +13,14 @@ Obtain a subset of a forest.
 }
 
 \arguments{
+
   \item{x}{an object of class \code{wsrf}.}
-  \item{trees}{Which trees should be included in the sub-forest.
-  An integer vector, which indicates the index of the trees.}
+
+  \item{trees}{which trees should be included in the sub-forest.  An
+    integer vector, which indicates the index of the trees.}
+
   \item{...}{not used.}
+
 }
 
 \value{

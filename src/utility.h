@@ -79,7 +79,7 @@ const int CORRELATION_IDX          = 14;
 const int C_S2_IDX                 = 15;
 const int WEIGHTS_IDX              = 16;
 const int MTRY_IDX                 = 17;
-const int MIN_NODE_SIZE_IDX        = 18;
+const int NODESIZE_IDX             = 18;
 
 // targetData$
 const string TRAIN_TARGET_LABELS  = "trainTargLabels";
@@ -87,8 +87,6 @@ const string NLABELS              = "nlabels";
 
 // meta$
 const string NVARS                = "nvars";
-const string TARG_IDX             = "targidx";
-const string TARG_NAME            = "targname";
 const string VAR_NAMES            = "varnames";
 const string VAR_TYPES            = "vartypes";
 const string VAL_NAMES            = "valnames";

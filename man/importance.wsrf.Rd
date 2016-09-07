@@ -6,18 +6,26 @@
   This is the extractor function for variable importance measures as
   produced by \code{wsrf}.
 }
+
 \usage{
 \method{importance}{wsrf}(x, type=NULL, class=NULL, scale=TRUE, ...)
 }
+
 \arguments{
+
   \item{x}{an object of class \code{wsrf}.}
+
   \item{type}{either 1 or 2, specifying the type of importance measure
     (1=mean decrease in accuracy, 2=mean decrease in node impurity).}
+
   \item{class}{for classification problem, which class-specific measure
     to return.}
-  \item{scale}{For permutation based measures, should the measures be
+
+  \item{scale}{for permutation based measures, should the measures be
     divided their ``standard errors''?}
+
   \item{...}{not used.}
+
 }
 \value{
   A matrix of importance measure, one row for each predictor variable.

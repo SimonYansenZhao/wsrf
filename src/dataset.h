@@ -19,11 +19,11 @@ private:
     Rcpp::IntegerVector data_;  // raw data Rcpp wrapper
 
 public:
-    TargetData (Rcpp::DataFrame ds, MetaData* meta_data) {
-        nlabels_ = meta_data->nlabels();
-        nobs_    = ds.nrows();
+    TargetData (SEXP ySEXP) {
+        data_    = Rcpp::as<Rcpp::IntegerVector>(ySEXP);
+        nlabels_ = Rcpp::as<Rcpp::CharacterVector>(data_.attr("levels")).size();
+        nobs_    = data_.size();
 
-        data_       = Rcpp::as<Rcpp::IntegerVector>((SEXPREC*)ds[meta_data->targVarIdx()]);
         targ_array_ = INTEGER(data_);
     }
 
@@ -180,7 +180,7 @@ private:
 
 public:
 
-    Dataset (Rcpp::DataFrame ds, MetaData* meta_data, bool training);
+    Dataset (SEXP xSEXP, MetaData* meta_data, bool training);
 
     double nlogn (int n) {
         return nlogn_vec_[n];

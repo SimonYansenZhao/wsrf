@@ -1,6 +1,6 @@
 #include "meta_data.h"
 
-MetaData::MetaData (Rcpp::DataFrame data, string targ_name)
+MetaData::MetaData (SEXP xSEXP, SEXP ySEXP)
 /*
  * Obtain meta data directly from data set.
  *
@@ -10,13 +10,11 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name)
  * and no unused variables are in argument <data>
  */
 {
-
-    nvars_         = data.size() - 1;
-    targ_var_name_ = targ_name;
+    Rcpp::DataFrame data(xSEXP);
+    nvars_ = data.size() - 1;
 
     if (nvars_ == 0) throw std::range_error("Dataset is empty.");
 
-    targ_var_idx_ = nvars_;
     feature_vars_ = idx_vec(nvars_);
     var_names_    = name_vec(nvars_);
     var_types_    = type_vec(nvars_);
@@ -50,7 +48,7 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name)
     }
 
     // Store the levels of the target variable.
-    Rcpp::IntegerVector vals(data[targ_var_idx_]);
+    Rcpp::IntegerVector vals(ySEXP);
     Rcpp::CharacterVector levels(vals.attr("levels"));
     int nlevels = levels.size();
 
@@ -61,10 +59,10 @@ MetaData::MetaData (Rcpp::DataFrame data, string targ_name)
         namevals.insert(name_value_map::value_type(name, lindex));
         levnames[lindex] = name;
     }
-    var_values_[targ_var_idx_].swap(namevals);
-    val_names_[targ_var_idx_].swap(levnames);
+    var_values_[nvars_].swap(namevals);
+    val_names_[nvars_].swap(levnames);
 
-    nlabels_ = val_names_[targ_var_idx_].size();
+    nlabels_ = val_names_[nvars_].size();
 
     // Store the indexes of feature variables.
     for (int i = 0; i < nvars_; ++i)
@@ -88,8 +86,6 @@ MetaData::MetaData (Rcpp::List md)
 {
 
     nvars_         = Rcpp::as<int>(md[NVARS]);
-    targ_var_idx_  = Rcpp::as<int>(md[TARG_IDX]);
-    targ_var_name_ = Rcpp::as<string>(md[TARG_NAME]);
     var_types_     = type_vec(Rcpp::as<vector<int> >(md[VAR_TYPES]));
 
     feature_vars_ = idx_vec(nvars_);
@@ -122,7 +118,7 @@ MetaData::MetaData (Rcpp::List md)
     for (int i = 0; i < nvars_; ++i)
         feature_vars_[i] = i;
 
-    nlabels_ = val_names_[targ_var_idx_].size();
+    nlabels_ = val_names_[nvars_].size();
 
 }
 
@@ -143,8 +139,6 @@ Rcpp::List MetaData::save () const
     Rcpp::List meta_data;
 
     meta_data[NVARS]     = Rcpp::wrap(nvars_);
-    meta_data[TARG_IDX]  = Rcpp::wrap(targ_var_idx_);
-    meta_data[TARG_NAME] = Rcpp::wrap(targ_var_name_);
     meta_data[VAR_NAMES] = Rcpp::wrap(var_names_);
     meta_data[VAR_TYPES] = Rcpp::wrap(var_types_);
 

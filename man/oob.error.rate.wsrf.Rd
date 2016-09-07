@@ -18,14 +18,18 @@
 }
 
 \arguments{
+
   \item{object}{object of class \code{wsrf}.}
+
   \item{tree}{logical or an integer vector for the index of a specific
-      tree in the forest model.  If provided as an integer vector,
-      \code{oobErrorRate.wsrf} will give the corresponding out-of-bag
-      error rates of the exact trees specified by \code{tree}.  If
-      TRUE, all error rates will be presented.  If FALSE or missing,
-      the gross error rate for the forest will be given.}
+    tree in the forest model.  If provided as an integer vector,
+    \code{oobErrorRate.wsrf} will give the corresponding out-of-bag
+    error rates of the exact trees specified by \code{tree}.  If TRUE,
+    all error rates will be presented.  If FALSE or missing, the gross
+    error rate for the forest will be given.}
+
   \item{...}{not used.}
+
 }
 
 \value{

@@ -16,8 +16,8 @@ wsrfParallelInfo(...)
 
 \arguments{
   
-  \item{\dots}{Optional additional arguments. At present no additional
-  arguments are used.}
+  \item{\dots}{optional additional arguments. At present no additional
+    arguments are used.}
 
 }
 

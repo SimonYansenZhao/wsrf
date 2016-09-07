@@ -20,9 +20,6 @@ private:
     typedef map<int, name_vec >       val_name_map;
 
     int            nvars_;          // The total number of feature variables, exclusive of target variable.
-
-    int            targ_var_idx_;   // The index of target variable.
-    string         targ_var_name_;  // The name of the target variable.
     int            nlabels_;        // The number of labels of target variable.
 
     name_vec       var_names_;      // The names of all feature variables, exclusive of target variable.
@@ -33,7 +30,7 @@ private:
     idx_vec        feature_vars_;   // The indexes of all feature variables, exclusive of target variable.
 
 public:
-    MetaData (Rcpp::DataFrame data, string targ_name);
+    MetaData (SEXP xSEXP, SEXP ySEXP);
     MetaData (Rcpp::List md);
 
     Rcpp::List save () const;
@@ -41,16 +38,6 @@ public:
     int nvars () const {
         // The total number of feature variables, exclusive of target variable.
         return nvars_;
-    }
-
-    int targVarIdx () const {
-        // The index of target variable.
-        return targ_var_idx_;
-    }
-
-    string targVarName () const {
-        // The name of target variable.
-        return targ_var_name_;
     }
 
     int getNumValues (int index) const {
@@ -83,12 +70,12 @@ public:
 
     vector<string> getLabelNames () const {
         // The names of class labels.
-        return getValueNames(targ_var_idx_);
+        return getValueNames(nvars_);
     }
 
     string getLabelName (int index) const {
         // The name of class label <index>.
-        return getValueName(targ_var_idx_, index);
+        return getValueName(nvars_, index);
     }
 
     int getValue (int index, string name) const {

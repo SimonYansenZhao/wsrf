@@ -9,6 +9,7 @@ print.wsrf <- function(x, trees, ...)
         " tree", ifelse(ntrees == 1, "", "s"), ".\n\n", sep="")
     
     cat(sprintf("%38s: %d\n",     "No. of variables tried at each split", x[[.MTRY_IDX]]))
+    cat(sprintf("%38s: %d\n",     "Minimum size of terminal nodes",       x[[.NODESIZE_IDX]]))
     cat(sprintf("%38s: %.2f\n",   "Out-of-Bag Error Rate",                x[[.RF_OOB_ERROR_RATE_IDX]]))
     cat(sprintf("%38s: %.2f\n",   "Strength",                             x[[.STRENGTH_IDX]]))
     cat(sprintf("%38s: %.2f\n\n", "Correlation",                          x[[.CORRELATION_IDX]]))

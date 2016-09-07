@@ -15,14 +15,13 @@ subset.wsrf <- function(x, trees, ...)
   for (tag in tags)
     res[[tag]] <- x[[tag]][trees]
 
-  res[[.META_IDX]]           <- x[[.META_IDX]]
-  res[[.TARGET_DATA_IDX]]    <- x[[.TARGET_DATA_IDX]]
+  res[[.META_IDX]]        <- x[[.META_IDX]]
+  res[[.TARGET_DATA_IDX]] <- x[[.TARGET_DATA_IDX]]
 
-  if (!is.null(x[[.WEIGHTS_IDX]])) res[[.WEIGHTS_IDX]] <- x[[.WEIGHTS_IDX]]
-  else res[.WEIGHTS_IDX] <- list(NULL)
-
-  if (!is.null(x[[.MTRY_IDX]])) res[[.MTRY_IDX]] <- x[[.MTRY_IDX]]
-  else res[.MTRY_IDX] <- list(NULL)
+  for (tag in c(.WEIGHTS_IDX, .MTRY_IDX, .NODESIZE_IDX)) {
+    if (!is.null(x[[tag]])) res[[tag]] <- x[[tag]]
+    else res[tag] <- list(NULL)
+  }
 
   .Call("afterMergeOrSubset", res, PACKAGE="wsrf")
 

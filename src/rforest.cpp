@@ -390,9 +390,9 @@ void RForest::saveModel (Rcpp::List& wsrf_R)
  * Save the model.  Only used for a model of wsrf, not for combine or merge.
  */
 {
-    wsrf_R[WEIGHTS_IDX]       = Rcpp::wrap(weights_);
-    wsrf_R[MTRY_IDX]          = Rcpp::wrap(mtry_);
-    wsrf_R[MIN_NODE_SIZE_IDX] = Rcpp::wrap(min_node_size_);
+    wsrf_R[WEIGHTS_IDX]  = Rcpp::wrap(weights_);
+    wsrf_R[MTRY_IDX]     = Rcpp::wrap(mtry_);
+    wsrf_R[NODESIZE_IDX] = Rcpp::wrap(min_node_size_);
 
     vector<vector<vector<double> > > trees(ntrees_);
     vector<double> tree_oob_error_rates(ntrees_);

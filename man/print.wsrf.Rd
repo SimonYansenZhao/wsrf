@@ -5,19 +5,27 @@
 
 \title{ Print Method for \code{wsrf} model }
 
-\description{ Print a summary of the forest model or one specific tree in the forest model
-  built from \code{wsrf}.  }
+\description{
+
+  Print a summary of the forest model or one specific tree in the forest
+  model built from \code{wsrf}.
+
+}
 
 \usage{
 \method{print}{wsrf}(x, trees, \dots)
 }
 
 \arguments{
+
   \item{x}{object of class \code{wsrf}.}
+
   \item{trees}{the index of a specific tree.  If missing, \code{print}
-      will print a summary of the model.}
-  \item{\dots}{Optional additional arguments. At present no additional
-  arguments are used.}
+    will print a summary of the model.}
+
+  \item{\dots}{optional additional arguments. At present no additional
+    arguments are used.}
+
 }
 
 \author{

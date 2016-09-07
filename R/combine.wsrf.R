@@ -4,7 +4,7 @@
 
   # xs should be a list of objects of wsrf.
 
-  tags <- c(.TREES_IDX, .TREE_OOB_ERROR_RATES_IDX, .OOB_SETS_IDX, .OOB_PREDICT_LABELS_IDX, .TREE_IGR_IMPORTANCE_IDX, .WEIGHTS_IDX, .MTRY_IDX)
+  tags <- c(.TREES_IDX, .TREE_OOB_ERROR_RATES_IDX, .OOB_SETS_IDX, .OOB_PREDICT_LABELS_IDX, .TREE_IGR_IMPORTANCE_IDX, .WEIGHTS_IDX, .MTRY_IDX, .NODESIZE_IDX)
 
   res <- vector("list", .WSRF_MODEL_SIZE)
   names(res) <- .WSRF_MODEL_NAMES
@@ -12,11 +12,10 @@
   for (tag in tags)
     res[[tag]] <- unlist(lapply(xs, function(x, tg) { x[[tg]] }, tag), recursive=FALSE, use.names=FALSE)
 
-  if (!is.null(res[[.WEIGHTS_IDX]]) && length(unique(res[[.WEIGHTS_IDX]]))==1) res[[.WEIGHTS_IDX]] <- res[[.WEIGHTS_IDX]][1]
-  else res[.WEIGHTS_IDX] <- list(NULL)
-
-  if (!is.null(res[[.MTRY_IDX]]) && length(unique(res[[.MTRY_IDX]]))==1) res[[.MTRY_IDX]] <- res[[.MTRY_IDX]][1]
-  else res[.MTRY_IDX] <- list(NULL)
+  for (tag in c(.WEIGHTS_IDX, .MTRY_IDX, .NODESIZE_IDX)) {
+    if (!is.null(res[[tag]]) && length(unique(res[[tag]]))==1) res[[tag]] <- res[[tag]][1]
+    else res[tag] <- list(NULL)
+  }
 
   if (!is.null(xs[[1]][[.META_IDX]]))
     res[[.META_IDX]] <- xs[[1]][[.META_IDX]]

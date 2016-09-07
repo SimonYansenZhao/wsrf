@@ -1,6 +1,8 @@
 \name{wsrf}
 
 \alias{wsrf}
+\alias{wsrf.formula}
+\alias{wsrf.default}
 
 \concept{weighted subspace decision trees}
 \concept{weighted subspace random forest}
@@ -20,37 +22,38 @@
 
 \usage{
 
-wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE,
-              parallel=TRUE, na.action=na.fail, importance=FALSE,
-              minnode=2, clusterlogfile)
+\method{wsrf}{formula}(formula, data, ...)
+\method{wsrf}{default}(x, y, mtry=floor(log2(length(x))+1), ntrees=500,
+                       weights=TRUE, parallel=TRUE, na.action=na.fail,
+                       importance=FALSE, minnode=2, clusterlogfile, ...)
 
 }
 
 \arguments{
 
-  \item{formula}{a formula, with a response but no interaction terms.}
+  \item{x, formula}{a data frame or a matrix of predictors, or a formula
+    with a response but no interaction terms.}
+
+  \item{y}{a response vector.}
 
   \item{data}{a data frame in which to interpret the variables named in
-          the formula.}
+    the formula.}
 
-  \item{ntrees}{number of trees to build on each server; By default,
-  500}
+  \item{ntrees}{number of trees to grow.  By default, 500}
 
-  \item{nvars, mtry}{number of variables to choose, by default, being
-      the integer less than or equal to \eqn{log_2(ninputs) + 1}.  For
-      compatibility with other \code{R} packages like
-      \code{randomForest}, both \code{nvars} and \code{mtry} are
-      supported, however, only one of them should be specified.}
+  \item{mtry}{number of variables to choose as candidates at each node
+    split, by default, \code{floor(log2(length(x))+1)}.}
 
   \item{weights}{logical.  \code{TRUE} for weighted subspace selection,
-      which is the default; \code{FALSE} for random selection, and the
-      trees are based on C4.5.}
+    which is the default; \code{FALSE} for random selection, and the
+    trees are based on C4.5.}
 
-  \item{na.action}{indicate the behaviour when encountering NA values in
-      \code{data}.}
+  \item{na.action}{a function indicate the behaviour when encountering
+    NA values in \code{data}.  By default, \code{na.fail}.  If
+    \code{NULL}, do nothing.}
 
   \item{parallel}{whether to run multiple cores (TRUE), nodes, or
-      sequentially (FALSE).}
+    sequentially (FALSE).}
 
   \item{importance}{should importance of predictors be assessed? }
 
@@ -60,6 +63,9 @@ wsrf(formula, data, nvars, mtry, ntrees=500, weights=TRUE,
   \item{clusterlogfile}{character.  The pathname of the log file when
       building model in a cluster.  For debug.}
 
+  \item{...}{optional parameters to be passed to the low level function
+             \code{wsrf.default}.}
+  
 }
 
 \details{

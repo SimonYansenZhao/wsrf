@@ -8,8 +8,8 @@
 using namespace std;
 
 SEXP wsrf (
-    SEXP dsSEXP,         // Data.
-    SEXP tnSEXP,         // Target variable name.
+    SEXP xSEXP,         // Data.
+    SEXP ySEXP,         // Target variable name.
     SEXP ntreesSEXP,     // Number of trees.
     SEXP nvarsSEXP,      // Number of variables.
     SEXP minnodeSEXP,    // Minimum node size.
@@ -25,11 +25,9 @@ SEXP wsrf (
 {
     BEGIN_RCPP
 
-        Rcpp::DataFrame ds (dsSEXP);
-
-        MetaData   meta_data (ds, Rcpp::as<string>(tnSEXP));
-        TargetData targ_data (ds, &meta_data);
-        Dataset    train_set (ds, &meta_data, true);
+        MetaData   meta_data (xSEXP, ySEXP);
+        TargetData targ_data (ySEXP);
+        Dataset    train_set (xSEXP, &meta_data, true);
 
 
         RForest rf (&train_set, &targ_data, &meta_data,
@@ -106,13 +104,12 @@ SEXP wsrf (
     END_RCPP
 }
 
-SEXP afterReduceForCluster (SEXP wsrfSEXP, SEXP dsSEXP, SEXP tnSEXP) {
+SEXP afterReduceForCluster (SEXP wsrfSEXP, SEXP xSEXP, SEXP ySEXP) {
     BEGIN_RCPP
 
         Rcpp::List      wsrf_R    (wsrfSEXP);
-        Rcpp::DataFrame ds        (dsSEXP);
-        MetaData        meta_data (ds, Rcpp::as<string>(tnSEXP));
-        TargetData      targ_data (ds, &meta_data);
+        MetaData        meta_data (xSEXP, ySEXP);
+        TargetData      targ_data (ySEXP);
         RForest         rf        (wsrf_R, &meta_data, &targ_data);
 
         rf.calcEvalMeasures();
@@ -140,13 +137,13 @@ SEXP afterMergeOrSubset (SEXP wsrfSEXP) {
     END_RCPP
 }
 
-SEXP predict (SEXP wsrfSEXP, SEXP dsSEXP, SEXP typeSEXP) {
+SEXP predict (SEXP wsrfSEXP, SEXP xSEXP, SEXP typeSEXP) {
 
     BEGIN_RCPP
 
         Rcpp::List wsrf_R    (wsrfSEXP);
         MetaData   meta_data (Rcpp::as<Rcpp::List>((SEXPREC*)wsrf_R[META_IDX]));
-        Dataset    test_set  (Rcpp::as<Rcpp::DataFrame>(dsSEXP), &meta_data, false);
+        Dataset    test_set  (xSEXP, &meta_data, false);
         RForest    rf        (wsrf_R, &meta_data, NULL);
 
         string type = Rcpp::as<string>(typeSEXP);

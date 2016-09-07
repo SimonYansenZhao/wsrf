@@ -1,6 +1,7 @@
 #include "dataset.h"
 
-Dataset::Dataset (Rcpp::DataFrame ds, MetaData* meta_data, bool training) {
+Dataset::Dataset (SEXP xSEXP, MetaData* meta_data, bool training) {
+    Rcpp::DataFrame ds(xSEXP);
     training_     = training;
     nobs_         = ds.nrows();
     data_ptr_vec_ = vector<void*>(ds.size());

@@ -15,9 +15,12 @@
 }
 
 \arguments{
+
   \item{object}{object of class \code{wsrf}.}
-  \item{\dots}{Optional additional arguments. At present no additional
-  arguments are used.}
+
+  \item{\dots}{optional additional arguments. At present no additional
+    arguments are used.}
+
 }
 
 \details{

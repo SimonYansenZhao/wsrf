@@ -13,8 +13,10 @@ combine(...)
 }
 
 \arguments{
+
   \item{...}{two or more objects of class \code{randomForest}, to be
     combined into one.}
+
 }
 
 \value{
