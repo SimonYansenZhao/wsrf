@@ -7,7 +7,7 @@ wsrf.default <- function(
     parallel=TRUE,
     na.action=na.fail,
     importance=FALSE,
-    minnode=2,
+    nodesize=2,
     clusterlogfile,
     ...) {
 
@@ -27,7 +27,7 @@ wsrf.default <- function(
     y <- as.factor(y)
   
   mtry    <- as.integer(mtry)
-  minnode <- as.integer(minnode)
+  nodesize <- as.integer(nodesize)
   ntrees  <- as.integer(ntrees)
   seeds   <- as.integer(runif(ntrees) * 10000000)
   
@@ -42,11 +42,11 @@ wsrf.default <- function(
       parallel <- detectCores()-2
       if (is.na(parallel) || parallel < 1) parallel <- 1
     }
-    model <- .wsrf(x, y, ntrees, mtry, minnode, weights, parallel, seeds, importance, FALSE)
+    model <- .wsrf(x, y, ntrees, mtry, nodesize, weights, parallel, seeds, importance, FALSE)
   }
   else if (is.vector(parallel))
   {
-    model <- .clwsrf(x, y, ntrees, mtry, minnode, weights, serverargs=parallel, seeds, importance, clusterlogfile)
+    model <- .clwsrf(x, y, ntrees, mtry, nodesize, weights, serverargs=parallel, seeds, importance, clusterlogfile)
   }
   else
     stop ("Parallel must be logical, character, or numeric.")
@@ -58,27 +58,27 @@ wsrf.default <- function(
 
 
 
-.wsrf <- function(x, y, ntrees, mtry, minnode, weights, parallel, seeds, importance, ispart)
+.wsrf <- function(x, y, ntrees, mtry, nodesize, weights, parallel, seeds, importance, ispart)
 {
-  model <- .Call("wsrf", x, y, ntrees, mtry, minnode,
+  model <- .Call("wsrf", x, y, ntrees, mtry, nodesize,
       weights, parallel, seeds, importance, ispart, PACKAGE="wsrf")
   names(model) <- .WSRF_MODEL_NAMES
   return(model)
 }
 
 
-.localwsrf <- function(serverargs, x, y, mtry, minnode, weights, importance)
+.localwsrf <- function(serverargs, x, y, mtry, nodesize, weights, importance)
 {
   ntrees   <- serverargs[1][[1]]
   parallel <- serverargs[2][[1]]
   seeds    <- serverargs[3][[1]]
   
-  model <- .wsrf(x, y, ntrees, mtry, minnode, weights, parallel, seeds, importance, TRUE)
+  model <- .wsrf(x, y, ntrees, mtry, nodesize, weights, parallel, seeds, importance, TRUE)
   return(model)
 }
 
 
-.clwsrf <- function(x, y, ntrees, mtry, minnode, weights, serverargs, seeds, importance, clusterlogfile)
+.clwsrf <- function(x, y, ntrees, mtry, nodesize, weights, serverargs, seeds, importance, clusterlogfile)
 {
   # Multiple cores on multiple servers.
   # where serverargs like c("apollo9", "apollo10", "apollo11", "apollo12")
@@ -157,7 +157,7 @@ wsrf.default <- function(
   seedsPerNode <- split(seeds, rep(1:nservers, nTreesPerNode))
   
   forests <- parRapply(cl, cbind(nTreesPerNode, parallels, seedsPerNode),
-      .localwsrf, x, y, mtry, minnode, weights, importance)
+      .localwsrf, x, y, mtry, nodesize, weights, importance)
   stopCluster(cl)
   model <- .reduce.wsrf(forests)
   
