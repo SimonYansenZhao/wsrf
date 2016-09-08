@@ -38,10 +38,10 @@ version of the package, from within R run:
 install.packages("wsrf")
 ```
 
-The version of R before 3.3.0 doesn't provide fully support of C++11.
-Thus We provided other options for installation of wsrf.  From 1.6.0,
-we drop the support for those options.  One can find the usage from
-the previous version of the documentation if interested.
+The version of R before 3.3.0 doesn't provide fully support of C++11,
+thus we provided other options for installation of wsrf.  From 1.6.0,
+we drop the support for those options.  One can find the usage in the
+documentation from previous version if interested.
 
 ## Usage ##
 
