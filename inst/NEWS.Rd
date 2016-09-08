@@ -1,6 +1,48 @@
 \name{NEWS}
 \title{News for Package 'wsrf'}
 
+\section{Changes in wsrf version 1.6.22 (2016-09-08)}{
+  \subsection{New Features}{
+    \itemize{
+
+      \item Add a new argument \code{nodesize} to change the minimum
+      node size.
+
+      \item Add a method \code{wsrf.default} to deal with seperate
+      inputs (\code{x}) and response (\code{y}), besides
+      \code{wsrf.formula} with \code{formula}.
+
+    }
+  }
+
+  \subsection{Changes}{
+    \itemize{
+
+      \item Drop support of Boost for multithreading.
+
+    }
+  }
+
+  \subsection{Enhancements}{
+    \itemize{
+
+      \item Speed up data loading in \code{wsrf} and \code{predict}.
+
+    }
+  }
+
+  \subsection{Misc}{
+    \itemize{
+
+      \item Add subject classifications for the content of the package.
+
+      \item Add badges in README.
+
+    }
+  }
+
+}
+
 \section{Changes in wsrf version 1.5.46 (2016-07-11)}{
 
   \subsection{Bug Fixes}{
