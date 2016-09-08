@@ -68,7 +68,7 @@ void C4p5Selector::handleContVar (int var_idx) {
     vector<int> right_dstr = targ_data_->getLabelFreqCount(sorted_obs_vec);
 
 
-    int current_label;
+    int current_label = -1;
     for (int i = 0; i < min_node_size_; ++i) {
         current_label = targ_data_->getLabel(sorted_obs_vec[i]) - 1;
         left_dstr[current_label]++;

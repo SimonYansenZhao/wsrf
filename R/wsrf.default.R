@@ -26,9 +26,9 @@ wsrf.default <- function(
   if (!is.factor(y))
     y <- as.factor(y)
   
-  mtry    <- as.integer(mtry)
-  nodesize <- as.integer(nodesize)
-  ntrees  <- as.integer(ntrees)
+  mtry    <- as.integer(mtry); if (mtry <= 0) stop("mtry should be at least 1.")
+  nodesize <- as.integer(nodesize); if (nodesize <= 0) stop("nodesize should be at least 1.")
+  ntrees  <- as.integer(ntrees); if (ntrees <= 0) stop("ntrees should be at least 1.")
   seeds   <- as.integer(runif(ntrees) * 10000000)
   
   # Determine what kind of parallel to perform. By default, when

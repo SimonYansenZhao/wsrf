@@ -117,7 +117,7 @@ vector<int> Sampling::nonReplaceWeightedSample(const vector<double>& originalwei
 
 vector<int> Sampling::nonReplaceWeightedSample(const vector<int>& var_vec, const vector<double>& originalweights, int nselect, volatile bool* pInterrupt, bool needsqrt) {
     vector<int> res = nonReplaceWeightedSample(originalweights, nselect, pInterrupt, needsqrt);
-    for (int i = 0; i < res.size(); i++)
+    for (int i = 0; i < (int)res.size(); i++)
         res[i] = var_vec[res[i]];
     return res;
 }

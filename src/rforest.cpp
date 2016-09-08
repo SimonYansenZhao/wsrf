@@ -160,8 +160,7 @@ void RForest::buildForestAsync (
         results[i] = async(launch::async, &RForest::buildOneTreeAsync, this, &index, pInterrupt);
 
     try {
-        bool mark[nThreads];
-        for (int i = 0; i < nThreads; i++) mark[i] = false;
+        vector<bool> mark(nThreads, false);
         int i = 0;
         do {
             // check each tree builder's status till all are finished
