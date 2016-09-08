@@ -1,10 +1,10 @@
 # wsrf: An R Package for Scalable Weighted Subspace Random Forests
 
 [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![Version on CRAN](http://www.r-pkg.org/badges/version/wsrf)](http://cran.r-project.org/package=wsrf)
+[![Version on CRAN](http://www.r-pkg.org/badges/version/wsrf)](https://cran.r-project.org/package=wsrf)
 [![Number of downloads from RStudio CRAN mirror](http://cranlogs.r-pkg.org/badges/wsrf)](http://www.r-pkg.org/pkg/wsrf)
 
-The [wsrf](http://cran.r-project.org/package=wsrf) is a parallel
+The [wsrf](https://cran.r-project.org/package=wsrf) is a parallel
 implementation of the Weighted Subspace Random Forest algorithm (wsrf)
 of [Xu et al](http://dx.doi.org/10.4018/jdwm.2012040103).  A novel
 variable weighting method is used for variable subspace selection in
@@ -18,14 +18,14 @@ dimensional data with reduced elapsed times.
 ## Documentation & Examples
 
 The package ships with a [html
-vignette](http://cran.r-project.org/web/packages/wsrf/vignettes/wsrf-guide.html)
+vignette](https://cran.r-project.org/web/packages/wsrf/vignettes/wsrf-guide.html)
 including more details and a few examples.
 
 
 ## Installation
 
 Currently, wsrf requires [R](http://www.r-project.org/) (>= 3.3.0),
-[Rcpp](http://cran.r-project.org/package=Rcpp) (>= 0.10.2).  For the
+[Rcpp](https://cran.r-project.org/package=Rcpp) (>= 0.10.2).  For the
 use of multi-threading, a C++ compiler with
 [C++11](http://en.wikipedia.org/wiki/C%2B%2B11) standard support of
 threads (for example, [GCC](http://gcc.gnu.org/) 4.8.1) is required.

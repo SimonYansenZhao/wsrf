@@ -1,7 +1,7 @@
 \name{NEWS}
 \title{News for Package 'wsrf'}
 
-\section{Changes in wsrf version 1.6.22 (2016-09-08)}{
+\section{Changes in wsrf version 1.6.23 (2016-09-08)}{
   \subsection{New Features}{
     \itemize{
 
@@ -80,7 +80,7 @@
 
 }
 
-\newcommand{\pkglink}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
+\newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
 \section{Changes in wsrf version 1.5.24 (2015-07-07)}{
 
