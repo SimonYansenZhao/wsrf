@@ -21,7 +21,7 @@ help:
 	check\tCheck for issues with the packaging\n\n\
 	rebuild\tBuild and install the package.\n\
 	build\tGenerate $(PKGNAME)_$(VERSION).tar.gz\n\n\
-	install\t\t\tInstall with C++11 enabled\n\
+	install\t\t\tInstall the package\n\
 	zip\tCreate a binary zip package\n\n\
 	dist\tUpdate files on /var/www/\n\
 	  src    \tCreate src packages (zip and tar).\n\
@@ -52,7 +52,7 @@ build: clean
 .PHONY: install
 install: clean build
 	mkdir -p $(LPATH)
-	R CMD INSTALL -l $(LPATH) --configure-args='--enable-c11=yes' $(PKGNAME)_$(VERSION).tar.gz
+	R CMD INSTALL -l $(LPATH) $(PKGNAME)_$(VERSION).tar.gz
 
 .PHONY: zip
 zip: install
@@ -73,7 +73,7 @@ handout: build
             (echo ----------------- node$$i ------------------; \
             scp $(PKGNAME)_$(VERSION).tar.gz node$$i:; \
             ssh node$$i mkdir -p $(LPATH); \
-            ssh node$$i R CMD INSTALL -l $(LPATH) --configure-args='--enable-c11=yes' $(PKGNAME)_$(VERSION).tar.gz; \
+            ssh node$$i R CMD INSTALL -l $(LPATH) $(PKGNAME)_$(VERSION).tar.gz; \
             ssh node$$i rm $(PKGNAME)_$(VERSION).tar.gz) > node$$i.log 2>&1 & \
         done; \
         wait)

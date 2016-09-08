@@ -27,67 +27,21 @@ reduced elapsed times.
 
 ## Requirements and Installation Notes ##
 
-Currently, **wsrf** requires R (>= 3.0.0),
+Currently, **wsrf** requires R (>= 3.3.0),
 [**Rcpp**](http://cran.r-project.org/package=Rcpp) (>= 0.10.2)
 [@dirk2011rcpp; @dirk2013seamless].  For the use of multi-threading, a
 C++ compiler with [C++11](https://en.wikipedia.org/wiki/C%2B%2B11)
-standard support of threads or the [*Boost*](http://www.boost.org/)
-C++ library with version above 1.54 is required. The choice is
-available at installation time depending on what is available to the
-user.  To install the latest version of the package, from within R
-run:
+standard support of threads is required.  To install the latest
+version of the package, from within R run:
 
 ```{r eval=FALSE}
 install.packages("wsrf")
 ```
 
-By default, multi-threading functionality is not enabled, which can be
-configured through the argument `configure.args=`.
-
-```{r eval=FALSE}
-install.packages("wsrf",
-                 type="source",
-				 configure.args="--enable-c11=yes")
-```
-
-We recommend using C++11 standard library for accessing multi-threaded
-functionality, which will be our main focus for development in the
-future.  Though support for compiling C++11 code in packages is not
-fully supported in current release of R, it has been tested that it
-can be compiled if the user has already installed the latest version
-of [*GCC*](https://gcc.gnu.org/) and C++ standard library^[C++11
-support is experimental in R-devel but not yet finished, see
-[Daily News about R-devel on
-2013-12-02](http://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2013/12/02#n2013-12-02)
-and
-[MinGW-w64 Notes by Duncan
-Murdoch](https://rawgit.com/kevinushey/RToolsToolchainUpdate/master/mingwnotes.html)].
-
-Besides the default installation for C++11, we also provide another
-implementations of **wsrf**, which implements parallelism using
-*Boost*.
-
-The choice of version to install is available at installation.  The
-version without parallelism, as required when C++11 is not available
-nor is *Boost*, and is the recommended and only possible choice for
-Microsoft Windows platform with the current version of R (3.2.0) (the
-same as the first installation method above):
-
-```{r eval=FALSE}
-install.packages("wsrf",
-                 configure.args="--enable-c11=no")
-```
-
-Finally the version using *Boost* for multithreading can be installed
-with the appropriate configuration options. This is suitable when the
-version of C++ available does not support C++11.
-
-```{r eval=FALSE}
-install.packages("wsrf",
-                 type="source",
-                 configure.args="--with-boost-include=<Boost include path>
-                                 --with-boost-lib=<Boost lib path>")
-```
+The version of R before 3.3.0 doesn't provide fully support of C++11.
+Thus We provided other options for installation of wsrf.  From 1.6.0,
+we drop the support for those options.  One can find the usage from
+the previous version of the documentation if interested.
 
 ## Usage ##
 
@@ -144,16 +98,26 @@ length(train <- sample(nrow(ds), 0.7*nrow(ds)))
 length(test <- setdiff(seq_len(nrow(ds)), train))
 ```
 
-The signature of the function to build a weighted random forest model
-in **wsrf** is:
+The function to build a weighted random forest model in **wsrf** is:
 
 ```{r eval=FALSE}
-wsrf(formula, 
-     data, 
-     ntrees=500, 
-     nvars=NULL,
-     weights=TRUE, 
-     parallel=TRUE)
+wsrf(formula, data, ...)
+```
+
+and
+
+```{r eval=FALSE}
+wsrf(x,
+     y,
+     mtry=floor(log2(length(x))+1),
+     ntrees=500,
+     weights=TRUE,
+     parallel=TRUE,
+     na.action=na.fail,
+     importance=FALSE,
+     nodesize=2,
+     clusterlogfile,
+     ...)
 ```
 
 We use the training dataset to build a random forest model.  All
