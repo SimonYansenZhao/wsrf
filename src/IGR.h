@@ -1,8 +1,6 @@
 #ifndef IGR_H_
 #define IGR_H_
 
-#include<random>
-
 #include "utility.h"
 #include "sampling.h"
 
