@@ -1,7 +1,7 @@
 \name{NEWS}
 \title{News for Package 'wsrf'}
 
-\section{Changes in wsrf version 1.6.23 (2016-09-08)}{
+\section{Changes in wsrf version 1.6.25 (2016-09-10)}{
   \subsection{New Features}{
     \itemize{
 

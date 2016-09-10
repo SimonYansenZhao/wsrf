@@ -1,8 +1,8 @@
 Package: wsrf
 Type: Package
 Title: Weighted Subspace Random Forest for Classification
-Version: 1.6.0
-Date: 2016-07-26
+Version: 1.6.25
+Date: 2016-09-10
 Authors@R: c(person("Qinghan", "Meng", email="qinghan.meng@gmail.com", role="aut"),
              person("He", "Zhao", email="Simon.Yansen.Zhao@gmail.com", role=c("aut", "cre")),
              person("Graham", "Williams", email="graham.williams@togaware.com", role="aut"),
