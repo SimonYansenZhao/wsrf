@@ -125,8 +125,12 @@
   train <- sample(nrow(ds), 0.7*nrow(ds))
   test  <- setdiff(seq_len(nrow(ds)), train)
 
-  # Build model.
-  model.wsrf <- wsrf(form, data=ds[train, vars])
+  # Build model.  We disable parallelism here, since CRAN Repository
+  # Policy (https://cran.r-project.org/web/packages/policies.html)
+  # limits the usage of multiple cores to save the limited resource of
+  # the check farm.
+
+  model.wsrf <- wsrf(form, data=ds[train, vars], parallel=FALSE)
   
   # View model.
   print(model.wsrf)

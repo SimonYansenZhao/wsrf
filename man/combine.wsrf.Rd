@@ -41,9 +41,13 @@ An object of class \code{wsrf}.
   train.2 <- sample(nrow(ds), 0.7*nrow(ds))
   test.2  <- setdiff(seq_len(nrow(ds)), train.2)
   
-  # Build model.
-  model.wsrf.1 <- wsrf(form, data=ds[train.1, vars])
-  model.wsrf.2 <- wsrf(form, data=ds[train.2, vars])
+  # Build model.  We disable parallelism here, since CRAN Repository
+  # Policy (https://cran.r-project.org/web/packages/policies.html)
+  # limits the usage of multiple cores to save the limited resource of
+  # the check farm.
+
+  model.wsrf.1 <- wsrf(form, data=ds[train.1, vars], parallel=FALSE)
+  model.wsrf.2 <- wsrf(form, data=ds[train.2, vars], parallel=FALSE)
 
   
   # Merge two models.

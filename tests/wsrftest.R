@@ -19,9 +19,9 @@ length(test  <- setdiff(seq_len(nrow(ds)), train))
 
 
 # build model
-model.wsrf       <- wsrf(form, data=ds[train, vars])
-model.wsrf.nw    <- wsrf(form, data=ds[train, vars], weights=FALSE)
-model.wsrf.nw.vi <- wsrf(form, data=ds[train, vars], weights=FALSE, importance=TRUE)
+model.wsrf       <- wsrf(form, data=ds[train, vars], parallel=FALSE)
+model.wsrf.nw    <- wsrf(form, data=ds[train, vars], weights=FALSE, parallel=FALSE)
+model.wsrf.nw.vi <- wsrf(form, data=ds[train, vars], weights=FALSE, importance=TRUE, parallel=FALSE)
 model.subset     <- subset.wsrf(model.wsrf, 1:200)
 model.combine    <- combine.wsrf(model.wsrf, model.wsrf.nw)
 

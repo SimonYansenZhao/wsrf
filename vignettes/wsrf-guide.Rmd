@@ -128,7 +128,7 @@ weighted subspace random forest or random forest; `TRUE` for
 
 ```{r usage_build_by_default, message=FALSE}
 library("wsrf")
-model.wsrf.1 <- wsrf(form, data=ds[train, vars])
+model.wsrf.1 <- wsrf(form, data=ds[train, vars], parallel=FALSE)
 print(model.wsrf.1)
 print(model.wsrf.1, 1)  # Print tree 1.
 ```
@@ -148,7 +148,7 @@ Using different random seed, we obtain another model.
 
 ```{r usage_build_another, message=FALSE}
 # Here we build another model without weighting.
-model.wsrf.2 <- wsrf(form, data=ds[train, vars], weights=FALSE)
+model.wsrf.2 <- wsrf(form, data=ds[train, vars], weights=FALSE, parallel=FALSE)
 print(model.wsrf.2)
 ```
 
