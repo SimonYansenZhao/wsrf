@@ -35,7 +35,11 @@ Dataset::Dataset (SEXP xSEXP, MetaData* meta_data, bool training) {
             if (Rcpp::as<string>((SEXPREC*)vnames[i]) == meta_data_->getVarName(i)) {
                 this->init(i, (SEXPREC*)ds[i]);
             } else {
-                this->init(i, ds[meta_data_->getVarName(i)]);
+                try {
+                    this->init(i, ds[meta_data_->getVarName(i)]);
+                } catch(const Rcpp::index_out_of_bounds& e) {
+                    throw interrupt_exception("Variable not found: " + meta_data_->getVarName(i));
+                }
             }
         }
     }
