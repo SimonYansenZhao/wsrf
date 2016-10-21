@@ -33,7 +33,7 @@ model.combine    <- combine.wsrf(model.wsrf, model.wsrf.nw)
 # if random seed is fixed, the same results will be presented in the
 # same system.
 
-cl         <- predict(model.wsrf,     newdata=ds[test, vars], type="class")
-cl.nw      <- predict(model.wsrf.nw,  newdata=ds[test, vars], type="class")
-cl.subset  <- predict(model.subset,   newdata=ds[test, vars], type="class")
-cl.combine <- predict(model.combine,  newdata=ds[test, vars], type="class")
+cl         <- predict(model.wsrf,     newdata=ds[test, vars], type="class")$class
+cl.nw      <- predict(model.wsrf.nw,  newdata=ds[test, vars], type="class")$class
+cl.subset  <- predict(model.subset,   newdata=ds[test, vars], type="class")$class
+cl.combine <- predict(model.combine,  newdata=ds[test, vars], type="class")$class

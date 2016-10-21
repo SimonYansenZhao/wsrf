@@ -146,18 +146,8 @@ SEXP predict (SEXP wsrfSEXP, SEXP xSEXP, SEXP typeSEXP) {
         Dataset    test_set  (xSEXP, &meta_data, false);
         RForest    rf        (wsrf_R, &meta_data, NULL);
 
-        string type = Rcpp::as<string>(typeSEXP);
-        if (type == "aprob") {
-            return rf.predictMatrix(&test_set, &RForest::predictAprobVec);
-        } else if (type == "waprob") {
-            return rf.predictMatrix(&test_set, &RForest::predictWAprobVec);
-        } else if (type == "prob") {
-            return rf.predictMatrix(&test_set, &RForest::predictProbVec);
-        } else if (type == "vote") {
-            return rf.predictMatrix(&test_set, &RForest::predictLabelFreqCount);
-        } else {
-            return rf.predictClassVec(&test_set);
-        }
+        int type = Rcpp::as<int>(typeSEXP);
+        return rf.predict(&test_set, type);
 
     END_RCPP
 }

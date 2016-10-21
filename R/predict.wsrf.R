@@ -1,16 +1,43 @@
 predict.wsrf <- function(object,
                          newdata,
-                         type=c("response", "class", "prob", "vote", "aprob", "waprob"), ...)
+                         type=c("response",
+                                "class",
+                                "vote",
+                                "prob",
+                                "aprob",
+                                "waprob"),
+                         ...)
 {
-  if (!inherits(object, "wsrf")) 
+  if (!inherits(object, "wsrf"))
     stop("Not a legitimate wsrf object")
 
+  # "class" is the default type.
+
   if (missing(type)) type <- "class"
-  if (type=="response") type <- "class"
 
-  type <- match.arg(type)
+  # Several types are allowed.
 
-  # The C code for predict does not handle missing values. So handle
+  type <- match.arg(type, several.ok = TRUE)
+
+  # type "reponse" is the same as "class"
+
+  hasResponseType <- ifelse("response" %in% type, TRUE, FALSE)
+  hasClassType <- ifelse("class" %in% type, TRUE, FALSE)
+
+  if (hasClassType && hasResponseType) {
+    type <- type[-which(type == "response")]
+  } else if (!hasClassType && hasResponseType) {
+    hasClassType <- TRUE
+    type[which(type == "response")] <- "class"
+  }
+
+  # Convert string type into integer flag.
+
+  type <- sum(sapply(type, function(x) {
+    switch(x, response=1, class=1, vote=2, prob=4, aprob=8, waprob=16)
+  }))
+
+  # The C++ code for prediction does not handle missing values.  So handle
   # them here by removing them from the dataset and then add in, in
   # the correct places, NA as the results from predict.
 
@@ -20,43 +47,39 @@ predict.wsrf <- function(object,
 
   hasmissing <- !all(complete)
   nobs       <- length(complete)
-  
-  # function "predict()" in C returns "votes" by default, 
-  # and can also directly returns "aprob" or "waprob" correspondingly in terms of <type>
-  # but "class" and "prob" will be treated as "votes",
-  # so "class" and "prob" still need to be calculated in R below
-
-  # .Call("predict") returns a factor vector of labels or 
-  # a numeric matrix of nclass * nobservations with labels as rownames.
 
   res <- .Call("predict", object, newdata, type, PACKAGE="wsrf")
-  if (type != "class") res <- t(res)
+  names(res) <- c("class", "vote", "prob", "aprob", "waprob")
+  
 
-  # Deal with observations with missing values.
+  # Deal with names and observations with missing values.
 
-  if (hasmissing)
-  {
-    if (type == "class")
-    {
-      cl <- factor(rep(NA, nobs), levels=levels(res))
-      cl[complete] <- res
+  res <- sapply(names(res), function(ty) {
+    cl <- res[[ty]]
+
+    if (is.null(cl)) return(cl)
+
+    if (ty == "class") {
+      if (hasmissing) {
+        cl <- factor(rep(NA, nobs), levels=levels(res[[ty]]))
+        cl[complete] <- res[[ty]]
+      }
       names(cl) <- rnames
       return(cl)
+    } else {
+      if (hasmissing) {
+        cl <- matrix(NA_real_, nrow=nobs, ncol=ncol(res[[ty]]))
+        cl[complete, ] <- res[[ty]]
+      }
+      rownames(cl) <- rnames
+      colnames(cl) <- colnames(res[[ty]])
+      return(cl)
     }
-    else
-    {
-      fin <- matrix(NA_real_, nrow=nobs, ncol=ncol(res))
-      fin[complete, ] <- res
-      rownames(fin) <- rnames
-      colnames(fin) <- colnames(res)
-      return(fin)
-    }
-  }
+  }, simplify=FALSE)
 
-  if (type == "class")
-    names(res) <- rnames
-  else
-    rownames(res) <- rnames
+  # In case users aren't aware that type "reponse" is the same as "class".
+
+  if (hasResponseType) res[["response"]] <- res[["class"]]
 
   return(res)
 }

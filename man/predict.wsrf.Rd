@@ -9,7 +9,7 @@
   model built from \code{wsrf}.  }
 
 \usage{ \method{predict}{wsrf}(object, newdata, type=c("response",
-  "class", "prob", "vote", "aprob", "waprob"), \dots) }
+  "class", "vote", "prob", "aprob", "waprob"), \dots) }
 
 \arguments{
 
@@ -18,8 +18,8 @@
   \item{newdata}{the data that needs to be predicted.  Its format
     should be the same as that for \code{\link{wsrf}}.}
 
-  \item{type}{ the type of prediction required, indicating the type of
-    output, and can be one of the values below:
+  \item{type}{the type of prediction required, a character vector indicating
+    the types of output, and can be one of the values below:
     \describe{
       \item{vote}{matrix of vote counts}
       \item{response}{predicted values.}
@@ -41,9 +41,13 @@
 
 }
 
-\value{ a vector of length \code{nrow(newdata)} if given \code{type} of
-    \code{response} or \code{class}, otherwise, a matrix of
-  \code{nrow(newdata) * (number of class label)}.}
+\value{a list of predictions for the new data with corresponding components for 
+  each type of predictions.  For \code{type=class} or \code{type=class}, a 
+  vector of length \code{nrow(newdata)}, otherwise, a matrix of
+  \code{nrow(newdata) * (number of class label)}.  For example, if given 
+  \code{type=c("class", "prob")} and the return value is \code{res}, then 
+  \code{res$class} is a vector of predicted class labels of length 
+  \code{nrow(newdata)}, and \code{res$prob} is a matrix of class probabilities.}
 
 \author{
   He Zhao and Graham Williams (SIAT)

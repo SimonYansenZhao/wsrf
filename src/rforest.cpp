@@ -211,40 +211,110 @@ void RForest::buildOneTreeAsync (int* index, volatile bool* pInterrupt)
     }
 }
 
-Rcpp::NumericMatrix RForest::predictMatrix (Dataset* data, predictor pred) {
+Rcpp::List RForest::predict (Dataset* data, int type) {
+    // 0 - class; 1 - vote; 2 - prob; 3 - aprob; 4 - waprob
+    Rcpp::List res(PRED_TYPE_NUM);
+    double* res_iter[PRED_TYPE_NUM];
+    int* class_iter;
 
-    int nobs    = data->nobs();
-    int nlabels = meta_data_->nlabels();
-    Rcpp::NumericMatrix res_mat(nlabels, nobs);
-    double* iter = REAL(SEXP(res_mat));
+    int nobs = data->nobs();
 
-    for (int i = 0; i < nobs; ++i) {
-        (this->*pred)(data, i, iter);
-        iter += nlabels;
+    bool need_class  = type & PRED_TYPE_CLASS;
+    bool need_vote   = type & PRED_TYPE_VOTE;
+    bool need_prob   = type & PRED_TYPE_PROB;
+    bool need_aprob  = type & PRED_TYPE_APROB;
+    bool need_waprob = type & PRED_TYPE_WAPROB;
+
+    // Allocate memory.
+    for (int tindex = 0, left_type = type; tindex < PRED_TYPE_NUM; tindex++, left_type >>= 1) {
+        if (left_type % 2                                     // For required prediction types.
+            || ( tindex == PRED_TYPE_VOTE_IDX && need_class)  // For vote if class is required.
+            ) {
+
+            if (tindex == PRED_TYPE_CLASS_IDX) {  // class or response
+                res[tindex] = Rcpp::IntegerVector(nobs);
+                ((Rcpp::IntegerVector) res[tindex]).attr("levels") = meta_data_->getLabelNames();
+                ((Rcpp::IntegerVector) res[tindex]).attr("class") = "factor";
+                class_iter = INTEGER(SEXP(res[tindex]));
+            } else {  // vote, prob, aprob or waprob
+                res[tindex] = Rcpp::NumericMatrix(nlabels_, nobs);
+                Rcpp::List dimnames;
+                dimnames.push_back(meta_data_->getLabelNames());
+                Rcpp::as<Rcpp::NumericMatrix>((SEXPREC*)res[tindex]).attr("dimnames") = dimnames;
+                res_iter[tindex] = REAL(SEXP(res[tindex]));
+            }
+
+        } else
+            res[tindex] = R_NilValue;
     }
 
-    Rcpp::List dimnames;
-    dimnames.push_back(meta_data_->getLabelNames());
-    res_mat.attr("dimnames") = dimnames;
+    // Get predictions.
+    for (int obs_idx = 0; obs_idx < nobs; ++obs_idx) {
+        double sumAccuracy = 0;
 
-    return res_mat;
+        // Get leaf node information.
+        for (vector<Tree*>::iterator iter = tree_vec_.begin(); iter != tree_vec_.end(); ++iter) {
+            Node* node = (*iter)->predictLeafNode(data, obs_idx);
 
-}
+            if (need_vote || need_class) res_iter[PRED_TYPE_VOTE_IDX][node->label()]++;  // vote or class
 
-Rcpp::IntegerVector RForest::predictClassVec (Dataset* data) {
-    int nobs    = data->nobs();
-    int nlabels = meta_data_->nlabels();
+            if (need_prob) res_iter[PRED_TYPE_PROB_IDX][node->label()]++;  // prob
 
-    Rcpp::NumericMatrix res_mat = predictMatrix(data, &RForest::predictLabelFreqCount);
-    Rcpp::IntegerVector res_vec(nobs);
+            if (need_aprob) {  // aprob
+                vector<double> classDistributions = node->getLabelDstr();
+                for (int lab_idx = 0; lab_idx < nlabels_; lab_idx++)
+                    res_iter[PRED_TYPE_APROB_IDX][lab_idx] += classDistributions[lab_idx];
+            }
 
-    double* iter = REAL(SEXP(res_mat));
-    for (int i = 0; i < nobs; iter += nlabels, i++)
-        res_vec[i] = distance(iter, max_element(iter, iter+nlabels))+1;
+            if (need_waprob) {  // waprob
+                vector<double> classDistributions = node->getLabelDstr();
+                double accuracy = 1 - (*iter)->getTreeOOBErrorRate();
+                sumAccuracy += accuracy;
+                for (int lab_idx = 0; lab_idx < nlabels_; lab_idx++)
+                    res_iter[PRED_TYPE_WAPROB_IDX][lab_idx] += classDistributions[lab_idx] * accuracy;
+            }
+        }
 
-    res_vec.attr("levels") = meta_data_->getLabelNames();
-    res_vec.attr("class") = "factor";
-    return res_vec;
+        // Calculate predictions.
+        if (need_class) {  // class or response
+            class_iter[obs_idx] =
+                distance(res_iter[PRED_TYPE_VOTE_IDX],
+                         max_element(res_iter[PRED_TYPE_VOTE_IDX],
+                                     res_iter[PRED_TYPE_VOTE_IDX] + nlabels_))
+                 + 1;
+        }
+
+        if (need_prob) {  // prob
+            for (int lab_idx = 0; lab_idx < nlabels_; lab_idx++)
+                res_iter[PRED_TYPE_PROB_IDX][lab_idx] /= ntrees_;
+        }
+
+        if (need_aprob) {  // aprob
+            for (int lab_idx = 0; lab_idx < nlabels_; lab_idx++)
+                res_iter[PRED_TYPE_APROB_IDX][lab_idx] /= ntrees_;
+        }
+
+        if (need_waprob) {  // waprob
+            for (int lab_idx = 0; lab_idx < nlabels_; lab_idx++)
+                res_iter[PRED_TYPE_WAPROB_IDX][lab_idx] /= sumAccuracy;
+        }
+
+        // Update pointers.
+        for (int tindex = 1, left_type = type >> 1; tindex < PRED_TYPE_NUM; tindex++, left_type >>= 1) {
+            if (left_type % 2) res_iter[tindex] += nlabels_;
+        }
+    }
+
+    // Remove vote because it is used for class.
+    if (need_class && !need_vote)
+        res[PRED_TYPE_VOTE_IDX] = R_NilValue;
+
+    // Transpose matrix.
+    for (int tindex = 1, left_type = type >> 1; tindex < PRED_TYPE_NUM; tindex++, left_type >>= 1) {
+        if (left_type % 2) res[tindex] = Rcpp::transpose(Rcpp::as<Rcpp::NumericMatrix>((SEXPREC*)res[tindex]));
+    }
+
+    return res;
 }
 
 void RForest::collectBasicStatistics () {

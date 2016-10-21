@@ -60,59 +60,8 @@ public:
     RForest (Dataset*, TargetData*, MetaData*, int, int, int, bool, bool, SEXP);
     ~RForest ();
 
-    void predictLabelFreqCount (Dataset* data, int index, double* out_iter)
-    /*
-     * Predicted label frequency count by all trees for data[index].
-     */
-    {
-        for (vector<Tree*>::iterator iter = tree_vec_.begin(); iter != tree_vec_.end(); ++iter)
-            out_iter[(*iter)->predictLabel(data, index)]++;
-
-    }
-
-    void predictProbVec (Dataset* data, int index, double* out_iter)
-    /*
-     * Predicted label frequency by all trees for data[index].
-     */
-    {
-
-        for (vector<Tree*>::iterator iter = tree_vec_.begin(); iter != tree_vec_.end(); ++iter)
-            out_iter[(*iter)->predictLabel(data, index)]++;
-
-        for (int i = 0; i < nlabels_; i++)
-            out_iter[i] /= ntrees_;
-
-    }
-
-    void predictAprobVec (Dataset* data, int index, double* out_iter) {
-        for (vector<Tree*>::iterator iter = tree_vec_.begin(); iter != tree_vec_.end(); ++iter) {
-            vector<double> classDistributions = (*iter)->predictLeafNode(data, index)->getLabelDstr();
-            for (int i = 0; i < nlabels_; i++)
-                out_iter[i] += classDistributions[i];
-        }
-
-        for (int i = 0; i < nlabels_; i++)
-            out_iter[i] /= ntrees_;
-
-    }
-
-    void predictWAprobVec (Dataset* data, int index, double* out_iter) {
-        double sumAccuracy = 0;
-        for (vector<Tree*>::iterator iter = tree_vec_.begin(); iter != tree_vec_.end(); ++iter) {
-            vector<double> classDistributions = (*iter)->predictLeafNode(data, index)->getLabelDstr();
-            double accuracy = 1 - (*iter)->getTreeOOBErrorRate();
-            sumAccuracy += accuracy;
-            for (int i = 0; i < nlabels_; i++)
-                out_iter[i] += classDistributions[i] * accuracy;
-        }
-
-        for (int i = 0; i < nlabels_; i++)
-            out_iter[i] /= sumAccuracy;
-
-    }
-
     Rcpp::NumericMatrix predictMatrix (Dataset* data, predictor pred);
-    Rcpp::IntegerVector predictClassVec (Dataset* data);
+    Rcpp::List predict (Dataset* data, int type);
 
     void saveModel (Rcpp::List& wsrf_R);
     void saveMeasures (Rcpp::List& wsrf_R);

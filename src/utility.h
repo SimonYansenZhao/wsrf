@@ -58,6 +58,22 @@ inline bool check_interrupt() {
 
 const double LN_2 = log((double)2);
 
+// type of prediction
+const int PRED_TYPE_NUM        = 5;
+
+const int PRED_TYPE_CLASS_IDX  = 0;
+const int PRED_TYPE_VOTE_IDX   = 1;
+const int PRED_TYPE_PROB_IDX   = 2;
+const int PRED_TYPE_APROB_IDX  = 3;
+const int PRED_TYPE_WAPROB_IDX = 4;
+
+const int PRED_TYPE_CLASS  = 1 << PRED_TYPE_CLASS_IDX;   // 1,  0x000001
+const int PRED_TYPE_VOTE   = 1 << PRED_TYPE_VOTE_IDX;    // 2,  0x000010
+const int PRED_TYPE_PROB   = 1 << PRED_TYPE_PROB_IDX;    // 4,  0x000100
+const int PRED_TYPE_APROB  = 1 << PRED_TYPE_APROB_IDX;   // 8,  0x001000
+const int PRED_TYPE_WAPROB = 1 << PRED_TYPE_WAPROB_IDX;  // 16, 0x010000
+
+
 
 // wsrf$
 const int WSRF_MODEL_SIZE          = 19;

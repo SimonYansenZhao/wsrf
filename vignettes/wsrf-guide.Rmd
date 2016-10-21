@@ -136,9 +136,9 @@ print(model.wsrf.1, 1)  # Print tree 1.
 Then, `predict` the classes of test data.
 
 ```{r usage_evaluate}
-cl <- predict(model.wsrf.1, newdata=ds[test, vars], type="class")
+cl <- predict(model.wsrf.1, newdata=ds[test, vars], type="class")$class
 actual <- ds[test, target]
-(accuracy.wsrf <- sum(cl == actual, na.rm=TRUE)/length(actual))
+(accuracy.wsrf <- mean(cl == actual, na.rm=TRUE))
 ```
 
 Thus, we have built a model that is around `r round(100*accuracy.wsrf,

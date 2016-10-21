@@ -52,9 +52,9 @@ An object of class \code{wsrf}.
   # Subset.
   submodel.wsrf <- subset.wsrf(model.wsrf, 1:200)
   print(submodel.wsrf)
-  cl <- predict(submodel.wsrf, newdata=ds[test, vars], type="response")
+  cl <- predict(submodel.wsrf, newdata=ds[test, vars], type="response")$response
   actual <- ds[test, target]
-  (accuracy.wsrf <- sum(cl==actual)/length(actual))
+  (accuracy.wsrf <- mean(cl==actual))
 }
 
 

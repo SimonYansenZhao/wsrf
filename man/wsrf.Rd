@@ -139,9 +139,14 @@
   # Evaluate.
   strength(model.wsrf)
   correlation(model.wsrf)
-  cl <- predict(model.wsrf, newdata=ds[test, vars], type="response")
+  res <- predict(model.wsrf, newdata=ds[test, vars], type=c("response", "waprob"))
   actual <- ds[test, target]
-  (accuracy.wsrf <- sum(cl==actual)/length(actual))
+  (accuracy.wsrf <- mean(res$response==actual))
+  
+  # Different type of prediction.
+  cl <- apply(res$waprob, 1, which.max)
+  cl <- factor(cl, levels=1:ncol(res$waprob), labels=levels(actual))
+  (accuracy2.wsrf <- mean(cl==actual))
 }
 
 \references{

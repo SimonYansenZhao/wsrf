@@ -53,9 +53,9 @@ An object of class \code{wsrf}.
   # Merge two models.
   model.wsrf.big <- combine.wsrf(model.wsrf.1, model.wsrf.2)
   print(model.wsrf.big)
-  cl <- predict(model.wsrf.big, newdata=ds[test.1, vars], type="response")
+  cl <- predict(model.wsrf.big, newdata=ds[test.1, vars], type="response")$response
   actual <- ds[test.1, target]
-  (accuracy.wsrf <- sum(cl==actual)/length(actual))
+  (accuracy.wsrf <- mean(cl==actual))
 
 }
 
