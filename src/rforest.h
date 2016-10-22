@@ -60,7 +60,6 @@ public:
     RForest (Dataset*, TargetData*, MetaData*, int, int, int, bool, bool, SEXP);
     ~RForest ();
 
-    Rcpp::NumericMatrix predictMatrix (Dataset* data, predictor pred);
     Rcpp::List predict (Dataset* data, int type);
 
     void saveModel (Rcpp::List& wsrf_R);

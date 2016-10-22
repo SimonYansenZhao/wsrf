@@ -232,16 +232,18 @@ Rcpp::List RForest::predict (Dataset* data, int type) {
             ) {
 
             if (tindex == PRED_TYPE_CLASS_IDX) {  // class or response
-                res[tindex] = Rcpp::IntegerVector(nobs);
-                ((Rcpp::IntegerVector) res[tindex]).attr("levels") = meta_data_->getLabelNames();
-                ((Rcpp::IntegerVector) res[tindex]).attr("class") = "factor";
-                class_iter = INTEGER(SEXP(res[tindex]));
+                Rcpp::IntegerVector temp(nobs);
+                temp.attr("levels") = meta_data_->getLabelNames();
+                temp.attr("class") = "factor";
+                res[tindex] = temp;
+                class_iter = INTEGER(SEXP(temp));
             } else {  // vote, prob, aprob or waprob
-                res[tindex] = Rcpp::NumericMatrix(nlabels_, nobs);
+                Rcpp::NumericMatrix temp(nlabels_, nobs);
                 Rcpp::List dimnames;
                 dimnames.push_back(meta_data_->getLabelNames());
-                Rcpp::as<Rcpp::NumericMatrix>((SEXPREC*)res[tindex]).attr("dimnames") = dimnames;
-                res_iter[tindex] = REAL(SEXP(res[tindex]));
+                temp.attr("dimnames") = dimnames;
+                res[tindex] = temp;
+                res_iter[tindex] = REAL(SEXP(temp));
             }
 
         } else
@@ -301,7 +303,8 @@ Rcpp::List RForest::predict (Dataset* data, int type) {
 
         // Update pointers.
         for (int tindex = 1, left_type = type >> 1; tindex < PRED_TYPE_NUM; tindex++, left_type >>= 1) {
-            if (left_type % 2) res_iter[tindex] += nlabels_;
+            if (left_type % 2 || ( tindex == PRED_TYPE_VOTE_IDX && need_class))
+                res_iter[tindex] += nlabels_;
         }
     }
 

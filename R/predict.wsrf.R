@@ -27,14 +27,13 @@ predict.wsrf <- function(object,
   if (hasClassType && hasResponseType) {
     type <- type[-which(type == "response")]
   } else if (!hasClassType && hasResponseType) {
-    hasClassType <- TRUE
     type[which(type == "response")] <- "class"
   }
 
   # Convert string type into integer flag.
 
   type <- sum(sapply(type, function(x) {
-    switch(x, response=1, class=1, vote=2, prob=4, aprob=8, waprob=16)
+    switch(x, class=1, vote=2, prob=4, aprob=8, waprob=16)
   }))
 
   # The C++ code for prediction does not handle missing values.  So handle
@@ -55,25 +54,27 @@ predict.wsrf <- function(object,
   # Deal with names and observations with missing values.
 
   res <- sapply(names(res), function(ty) {
-    cl <- res[[ty]]
+    pred <- res[[ty]]
 
-    if (is.null(cl)) return(cl)
+    if (is.null(pred)) return(pred)
 
     if (ty == "class") {
       if (hasmissing) {
-        cl <- factor(rep(NA, nobs), levels=levels(res[[ty]]))
-        cl[complete] <- res[[ty]]
+        temp <- factor(rep(NA, nobs), levels=levels(pred))
+        temp[complete] <- pred
+        pred <- temp
       }
-      names(cl) <- rnames
-      return(cl)
+      names(pred) <- rnames
+      return(pred)
     } else {
       if (hasmissing) {
-        cl <- matrix(NA_real_, nrow=nobs, ncol=ncol(res[[ty]]))
-        cl[complete, ] <- res[[ty]]
+        temp <- matrix(NA_real_, nrow=nobs, ncol=ncol(pred))
+        temp[complete, ] <- pred
+        colnames(temp) <- colnames(pred)
+        pred <- temp
       }
-      rownames(cl) <- rnames
-      colnames(cl) <- colnames(res[[ty]])
-      return(cl)
+      rownames(pred) <- rnames
+      return(pred)
     }
   }, simplify=FALSE)
 
