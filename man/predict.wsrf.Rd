@@ -26,11 +26,11 @@
       \item{class}{the same as response.}
       \item{prob}{matrix of class probabilities.  The probability is the
         proportion of trees in the forest voting for the particular
-        outcome (prob = votes / ntrees)}
+        outcome (prob = votes / ntree)}
 
       \item{aprob}{the average score from the decision trees for each
         class rather than the proportion of decision trees for each
-        class (aprob = scores / ntrees)}
+        class (aprob = scores / ntree)}
 	  
       \item{waprob}{the weighted average, weighted by the accuracy of
         the tree (waprob = scores * accuracy / sum(accuracy))}

@@ -1,12 +1,12 @@
 print.wsrf <- function(x, trees, ...)
 {
 
-  ntrees <- length(x[[.TREES_IDX]])
+  ntree <- length(x[[.TREES_IDX]])
 
   if (missing(trees))
   {
-    cat("A Weighted Subspace Random Forest model with ", ntrees,
-        " tree", ifelse(ntrees == 1, "", "s"), ".\n\n", sep="")
+    cat("A Weighted Subspace Random Forest model with ", ntree,
+        " tree", ifelse(ntree == 1, "", "s"), ".\n\n", sep="")
     
     cat(sprintf("%38s: %d\n",     "No. of variables tried at each split", x[[.MTRY_IDX]]))
     cat(sprintf("%38s: %d\n",     "Minimum size of terminal nodes",       x[[.NODESIZE_IDX]]))

@@ -18,7 +18,7 @@
 RcppExport SEXP wsrf (
     SEXP xSEXP,
     SEXP ySEXP,
-    SEXP ntreesSEXP,
+    SEXP ntreeSEXP,
     SEXP nvarsSEXP,
     SEXP minnodeSEXP,
     SEXP weightsSEXP,

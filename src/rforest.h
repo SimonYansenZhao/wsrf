@@ -20,7 +20,7 @@ private:
     vector<vector<int> > oob_set_vec_;  // Out-of-Bag set for each tree.
     vector<Tree*>        tree_vec_;     // All trees in the forest.
 
-    int       ntrees_;         // Number of trees.
+    int       ntree_;         // Number of trees.
     unsigned* tree_seeds_;     // Seed for each tree.
     int       nlabels_;        // Number of class labels in the target variable.
     bool      importance_;     // whether calculate variable importance.

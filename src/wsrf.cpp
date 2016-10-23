@@ -10,7 +10,7 @@ using namespace std;
 SEXP wsrf (
     SEXP xSEXP,         // Data.
     SEXP ySEXP,         // Target variable name.
-    SEXP ntreesSEXP,     // Number of trees.
+    SEXP ntreeSEXP,     // Number of trees.
     SEXP nvarsSEXP,      // Number of variables.
     SEXP minnodeSEXP,    // Minimum node size.
     SEXP weightsSEXP,    // Whether use weights.
@@ -31,7 +31,7 @@ SEXP wsrf (
 
 
         RForest rf (&train_set, &targ_data, &meta_data,
-                    Rcpp::as<int>(ntreesSEXP), Rcpp::as<int>(nvarsSEXP), Rcpp::as<int>(minnodeSEXP), Rcpp::as<bool>(weightsSEXP),
+                    Rcpp::as<int>(ntreeSEXP), Rcpp::as<int>(nvarsSEXP), Rcpp::as<int>(minnodeSEXP), Rcpp::as<bool>(weightsSEXP),
                     Rcpp::as<bool>(importanceSEXP), seedsSEXP);
 
         volatile bool interrupt = false;

@@ -4,7 +4,7 @@ RForest::RForest (
         Dataset* train_set,
         TargetData* targdata,
         MetaData* meta_data,
-        int ntrees,
+        int ntree,
         int nvars,
         int min_node_size,
         bool weights,
@@ -18,7 +18,7 @@ RForest::RForest (
     train_set_         = train_set;
     targ_data_         = targdata;
     meta_data_         = meta_data;
-    ntrees_            = ntrees;
+    ntree_            = ntree;
     mtry_              = nvars;
     min_node_size_     = min_node_size;
     weights_           = weights;
@@ -31,9 +31,9 @@ RForest::RForest (
     c_s2_              = NA_REAL;
     emr2_              = NA_REAL;
 
-    tree_vec_    = vector<Tree*>(ntrees);
-    bagging_set_ = vector<vector<int> >(ntrees, vector<int>(train_set->nobs(), -1));
-    oob_set_vec_ = vector<vector<int> >(ntrees);
+    tree_vec_    = vector<Tree*>(ntree);
+    bagging_set_ = vector<vector<int> >(ntree, vector<int>(train_set->nobs(), -1));
+    oob_set_vec_ = vector<vector<int> >(ntree);
 
     if (mtry_ == -1) mtry_ = log((double)(meta_data_->nvars()))/LN_2 + 1;
 }
@@ -67,9 +67,9 @@ RForest::RForest (Rcpp::List& wsrf_R, MetaData* meta_data, TargetData* targdata)
     vector<vector<vector<double> > > tree_list = Rcpp::as<vector<vector<vector<double> > > >((SEXPREC*)wsrf_R[TREES_IDX]);
     vector<double> tree_oob_error_rate_vec     = Rcpp::as<vector<double> >((SEXPREC*)wsrf_R[TREE_OOB_ERROR_RATES_IDX]);
 
-    ntrees_   = tree_list.size();
-    tree_vec_ = vector<Tree*>(ntrees_);
-    for (int i = 0; i < ntrees_; i++) {
+    ntree_   = tree_list.size();
+    tree_vec_ = vector<Tree*>(ntree_);
+    for (int i = 0; i < ntree_; i++) {
         Tree* tree = new Tree(tree_list[i], meta_data_, tree_oob_error_rate_vec[i]);
         tree_vec_[i] = tree;
     }
@@ -78,7 +78,7 @@ RForest::RForest (Rcpp::List& wsrf_R, MetaData* meta_data, TargetData* targdata)
 
     vector<vector<int> >    oob_predict_label_set_vec = Rcpp::as<vector<vector<int> > >((SEXPREC*)wsrf_R[OOB_PREDICT_LABELS_IDX]);
     vector<vector<double> > tree_IGR_VIs_vec          = Rcpp::as<vector<vector<double> > >((SEXPREC*)wsrf_R[TREE_IGR_IMPORTANCE_IDX]);
-    for (int i = 0; i < ntrees_; i++) {
+    for (int i = 0; i < ntree_; i++) {
         tree_vec_[i]->setOOBPredictLabelSet(oob_predict_label_set_vec[i]);
         tree_vec_[i]->setTreeIGRVIs(tree_IGR_VIs_vec[i]);
     }
@@ -118,7 +118,7 @@ void RForest::buildOneTree (int ind, volatile bool* pinterrupt) {
 }
 
 void RForest::buidForestSeq (volatile bool* pinterrupt) {
-    for (int ind = 0; ind < ntrees_; ind++) {
+    for (int ind = 0; ind < ntree_; ind++) {
         // check interruption
         if (check_interrupt()) throw interrupt_exception("The random forest model building is interrupted.");
 
@@ -155,7 +155,7 @@ void RForest::buildForestAsync (
     // using <nThreads> tree builder to build trees
     int index = 0;
     vector<future<void> > results(nThreads);
-    this->tree_vec_ = vector<Tree*>(this->ntrees_);
+    this->tree_vec_ = vector<Tree*>(this->ntree_);
     for (int i = 0; i < nThreads; i++)
         results[i] = async(launch::async, &RForest::buildOneTreeAsync, this, &index, pInterrupt);
 
@@ -197,7 +197,7 @@ void RForest::buildOneTreeAsync (int* index, volatile bool* pInterrupt)
         break;
 
         unique_lock<mutex> ulk(mut_);
-        if (*index < ntrees_) {
+        if (*index < ntree_) {
             ind = *index;
             (*index)++;
             ulk.unlock();
@@ -288,12 +288,12 @@ Rcpp::List RForest::predict (Dataset* data, int type) {
 
         if (need_prob) {  // prob
             for (int lab_idx = 0; lab_idx < nlabels_; lab_idx++)
-                res_iter[PRED_TYPE_PROB_IDX][lab_idx] /= ntrees_;
+                res_iter[PRED_TYPE_PROB_IDX][lab_idx] /= ntree_;
         }
 
         if (need_aprob) {  // aprob
             for (int lab_idx = 0; lab_idx < nlabels_; lab_idx++)
-                res_iter[PRED_TYPE_APROB_IDX][lab_idx] /= ntrees_;
+                res_iter[PRED_TYPE_APROB_IDX][lab_idx] /= ntree_;
         }
 
         if (need_waprob) {  // waprob
@@ -323,7 +323,7 @@ Rcpp::List RForest::predict (Dataset* data, int type) {
 void RForest::collectBasicStatistics () {
 
     int nvars = meta_data_->nvars();
-    for (int treeidx = 0; treeidx < ntrees_; ++treeidx) {
+    for (int treeidx = 0; treeidx < ntree_; ++treeidx) {
         vector<int>& poob_vec = oob_set_vec_[treeidx];
         vector<int>& oob_predict_label_set = tree_vec_[treeidx]->getOOBPredictLabelSet();
         int n = poob_vec.size();
@@ -342,7 +342,7 @@ void RForest::collectBasicStatistics () {
     }
 
     for (int vindex = 0; vindex < nvars; vindex++)
-        IGR_VIs_[vindex] /= ntrees_;
+        IGR_VIs_[vindex] /= ntree_;
 }
 
 void RForest::calcOOBConfusionErrorRateAndStrength () {
@@ -397,7 +397,7 @@ void RForest::calcOOBConfusionErrorRateAndStrength () {
 
 void RForest::calcRFCorrelationAndCS2 () {
     double sum_sd = 0.0;
-    for (int treeidx = 0; treeidx < ntrees_; ++treeidx) {
+    for (int treeidx = 0; treeidx < ntree_; ++treeidx) {
 
         vector<int>& poob_vec = oob_set_vec_[treeidx];
         vector<int>& oob_predict_label_set = tree_vec_[treeidx]->getOOBPredictLabelSet();
@@ -415,7 +415,7 @@ void RForest::calcRFCorrelationAndCS2 () {
         sum_sd += sqrt(base);
     }
 
-    double esd = sum_sd / ntrees_;
+    double esd = sum_sd / ntree_;
 
     rf_correlation_ = (emr2_ - rf_strength_ * rf_strength_) / (esd * esd);
     c_s2_           = rf_correlation_ / (rf_strength_ * rf_strength_);
@@ -430,7 +430,7 @@ void RForest::assessPermVariableImportance () {
     /*
      * Calculate raw variable importance.
      */
-    for (int tindex = 0; tindex < ntrees_; tindex++) {
+    for (int tindex = 0; tindex < ntree_; tindex++) {
         vector<double>& label_VIs = tree_vec_[tindex]->getTreePermVIs();
 
         for (int i = 0; i < size; i++)
@@ -438,12 +438,12 @@ void RForest::assessPermVariableImportance () {
     }
 
     for (int i = 0; i < size; i++)
-        raw_perm_VIs_[i] /= ntrees_;
+        raw_perm_VIs_[i] /= ntree_;
 
     /*
      * Calculate standard deviation.
      */
-    for (int tindex = 0; tindex < ntrees_; tindex++) {
+    for (int tindex = 0; tindex < ntree_; tindex++) {
         vector<double>& label_VIs = tree_vec_[tindex]->getTreePermVIs();
 
         for (int i = 0; i < size; i++) {
@@ -453,7 +453,7 @@ void RForest::assessPermVariableImportance () {
     }
 
     for (int i = 0; i < size; i++)
-        sigma_perm_VIs_[i] = sqrt(sigma_perm_VIs_[i]) / ntrees_;
+        sigma_perm_VIs_[i] = sqrt(sigma_perm_VIs_[i]) / ntree_;
 
 }
 
@@ -466,9 +466,9 @@ void RForest::saveModel (Rcpp::List& wsrf_R)
     wsrf_R[MTRY_IDX]     = Rcpp::wrap(mtry_);
     wsrf_R[NODESIZE_IDX] = Rcpp::wrap(min_node_size_);
 
-    vector<vector<vector<double> > > trees(ntrees_);
-    vector<double> tree_oob_error_rates(ntrees_);
-    for (int i = 0; i < ntrees_; i++) {
+    vector<vector<vector<double> > > trees(ntree_);
+    vector<double> tree_oob_error_rates(ntree_);
+    for (int i = 0; i < ntree_; i++) {
         tree_vec_[i]->save(trees[i]);
         tree_oob_error_rates[i] = tree_vec_[i]->getTreeOOBErrorRate();
     }
@@ -477,9 +477,9 @@ void RForest::saveModel (Rcpp::List& wsrf_R)
     wsrf_R[TREE_OOB_ERROR_RATES_IDX] = Rcpp::wrap(tree_oob_error_rates);
     wsrf_R[OOB_SETS_IDX]             = Rcpp::wrap(oob_set_vec_);
 
-    vector<vector<int> > oob_predict_label_set_vec(ntrees_);
-    vector<vector<double> > tree_IGR_VIs_vec(ntrees_);
-    for (int i = 0; i < ntrees_; i++) {
+    vector<vector<int> > oob_predict_label_set_vec(ntree_);
+    vector<vector<double> > tree_IGR_VIs_vec(ntree_);
+    for (int i = 0; i < ntree_; i++) {
         oob_predict_label_set_vec[i].swap(tree_vec_[i]->getOOBPredictLabelSet());
         tree_IGR_VIs_vec[i].swap(tree_vec_[i]->getTreeIGRVIs());
     }

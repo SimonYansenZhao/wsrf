@@ -110,7 +110,7 @@ and
 wsrf(x,
      y,
      mtry=floor(log2(length(x))+1),
-     ntrees=500,
+     ntree=500,
      weights=TRUE,
      parallel=TRUE,
      na.action=na.fail,
@@ -122,7 +122,7 @@ wsrf(x,
 
 We use the training dataset to build a random forest model.  All
 parameters, except `formula` and `data`, use their default values:
-`500` for `ntrees` --- the number of trees; `TRUE` for `weights` ---
+`500` for `ntree` --- the number of trees; `TRUE` for `weights` ---
 weighted subspace random forest or random forest; `TRUE` for
 `parallel` --- use multi-thread or other options, etc.
 

@@ -23,7 +23,7 @@
 \usage{
 
 \method{wsrf}{formula}(formula, data, ...)
-\method{wsrf}{default}(x, y, mtry=floor(log2(length(x))+1), ntrees=500,
+\method{wsrf}{default}(x, y, mtry=floor(log2(length(x))+1), ntree=500,
                        weights=TRUE, parallel=TRUE, na.action=na.fail,
                        importance=FALSE, nodesize=2, clusterlogfile, ...)
 
@@ -39,7 +39,7 @@
   \item{data}{a data frame in which to interpret the variables named in
     the formula.}
 
-  \item{ntrees}{number of trees to grow.  By default, 500}
+  \item{ntree}{number of trees to grow.  By default, 500}
 
   \item{mtry}{number of variables to choose as candidates at each node
     split, by default, \code{floor(log2(length(x))+1)}.}
