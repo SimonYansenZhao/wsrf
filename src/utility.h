@@ -108,4 +108,7 @@ const string VAR_NAMES            = "varnames";
 const string VAR_TYPES            = "vartypes";
 const string VAL_NAMES            = "valnames";
 
+// message
+const string INTERRUPT_MSG = "The random forest model building is interrupted.";
+
 #endif

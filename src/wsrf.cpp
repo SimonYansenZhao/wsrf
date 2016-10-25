@@ -63,7 +63,7 @@ SEXP wsrf (
                     // check interruption
                     if (check_interrupt()) {
                         interrupt = true;
-                        throw interrupt_exception("The random forest model building is interrupted.");
+                        throw interrupt_exception(INTERRUPT_MSG);
                     }
 
                     // check RF thread completion

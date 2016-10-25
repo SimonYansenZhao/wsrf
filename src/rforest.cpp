@@ -120,7 +120,7 @@ void RForest::buildOneTree (int ind, volatile bool* pinterrupt) {
 void RForest::buidForestSeq (volatile bool* pinterrupt) {
     for (int ind = 0; ind < ntree_; ind++) {
         // check interruption
-        if (check_interrupt()) throw interrupt_exception("The random forest model building is interrupted.");
+        if (check_interrupt()) throw interrupt_exception(INTERRUPT_MSG);
 
         buildOneTree(ind, pinterrupt);
     }
@@ -252,6 +252,9 @@ Rcpp::List RForest::predict (Dataset* data, int type) {
 
     // Get predictions.
     for (int obs_idx = 0; obs_idx < nobs; ++obs_idx) {
+
+        if ((obs_idx & 0x3ff) == 0 && check_interrupt()) throw interrupt_exception(INTERRUPT_MSG);
+
         double sumAccuracy = 0;
 
         // Get leaf node information.
