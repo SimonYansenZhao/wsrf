@@ -11,7 +11,7 @@ MetaData::MetaData (SEXP xSEXP, SEXP ySEXP)
  */
 {
     Rcpp::DataFrame data(xSEXP);
-    nvars_ = data.size() - 1;
+    nvars_ = data.size();
 
     if (nvars_ == 0) throw std::range_error("Dataset is empty.");
 
