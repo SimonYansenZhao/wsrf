@@ -1,6 +1,37 @@
 \name{NEWS}
 \title{News for Package 'wsrf'}
 
+\section{Changes in wsrf version 1.7.0 (2016-10-27)}{
+  \subsection{Changes}{
+    \itemize{
+
+      \item Change the output of \code{predict.wsrf} to be a list of
+      predictions of different types.
+
+    }
+  }
+
+  \subsection{Bug Fixes}{
+    \itemize{
+
+      \item Fix bug introduced in version 1.6.25 when adding
+      \code{wsrf.default} for seperate inputs and response.
+
+    }
+  }
+
+  \subsection{Enhancements}{
+    \itemize{
+
+      \item Throw more informative error when variable (attribute) not
+      found in \code{newdata} of \code{predict.wsrf}.
+
+      \item Add interrupt check in \code{predict.wsrf}.
+
+    }
+  }
+}
+
 \section{Changes in wsrf version 1.6.25 (2016-09-10)}{
   \subsection{New Features}{
     \itemize{
@@ -88,8 +119,8 @@
     \itemize{
 
       \item Add missing imports to correct the NOTEs from
-      \href{http://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2015/06/29#n2015-06-29}{the
-	newly added check item of R-devel on 2015-06-29}.
+      \href{https://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2015/06/29#n2015-06-29}{the
+      newly added check item of R-devel on 2015-06-29}.
 
       \item Correct the URLs of CRAN package pages to their canonical
       form in the documentation.

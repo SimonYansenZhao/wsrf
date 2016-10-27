@@ -1,12 +1,12 @@
 # wsrf: An R Package for Scalable Weighted Subspace Random Forests
 
-[![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
+[![License](https://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![Version on CRAN](http://www.r-pkg.org/badges/version/wsrf)](https://cran.r-project.org/package=wsrf)
-[![Number of downloads from RStudio CRAN mirror](http://cranlogs.r-pkg.org/badges/wsrf)](http://www.r-pkg.org/pkg/wsrf)
+[![Number of downloads from RStudio CRAN mirror](https://cranlogs.r-pkg.org/badges/wsrf)](http://www.r-pkg.org/pkg/wsrf)
 
 The [wsrf](https://cran.r-project.org/package=wsrf) is a parallel
 implementation of the Weighted Subspace Random Forest algorithm (wsrf)
-of [Xu et al](http://dx.doi.org/10.4018/jdwm.2012040103).  A novel
+of [Xu et al](https://dx.doi.org/10.4018/jdwm.2012040103).  A novel
 variable weighting method is used for variable subspace selection in
 place of the traditional approach of random variable sampling.  This
 new approach is particularly useful in building models for high
@@ -18,17 +18,17 @@ dimensional data with reduced elapsed times.
 ## Documentation & Examples
 
 The package ships with a [html
-vignette](https://cran.r-project.org/web/packages/wsrf/vignettes/wsrf-guide.html)
+vignette](https://cran.r-project.org/package=wsrf/vignettes/wsrf-guide.html)
 including more details and a few examples.
 
 
 ## Installation
 
-Currently, wsrf requires [R](http://www.r-project.org/) (>= 3.3.0),
+Currently, wsrf requires [R](https://www.r-project.org/) (>= 3.3.0),
 [Rcpp](https://cran.r-project.org/package=Rcpp) (>= 0.10.2).  For the
 use of multi-threading, a C++ compiler with
-[C++11](http://en.wikipedia.org/wiki/C%2B%2B11) standard support of
-threads (for example, [GCC](http://gcc.gnu.org/) 4.8.1) is required.
+[C++11](https://en.wikipedia.org/wiki/C%2B%2B11) standard support of
+threads (for example, [GCC](https://gcc.gnu.org/) 4.8.1) is required.
 Since the latest version of R has added support for C++11 on all
 operating systems, we do not provide support for the old version of R
 and C++ compiler without C++11 support.  To install the latest version

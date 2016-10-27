@@ -1,6 +1,6 @@
 PKGNAME  = wsrf
 GITVER   = $(shell git rev-list --count HEAD)
-VERSION  = 1.6.$(shell expr $(GITVER) - 36)
+VERSION  = 1.7.$(shell expr $(GITVER) - 68)
 DATE     = $(shell date +%Y-%m-%d)
 LPATH    = $(shell Rscript -e "write(Sys.getenv('R_LIBS_USER'), '')")
 PKGSRC   = $(shell pwd)
