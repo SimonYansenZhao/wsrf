@@ -41,6 +41,8 @@ private:
     vector<double> tree_IGR_VIs_;      // Vector of size nvars: The information gain ratio decreases for each variable.
     vector<double> tree_perm_VIs_;     // Matrix of (nlabels+1)*nvars: The percent increases of OOB error rate on each class label in the permuted OOB data, plus one over all class labels.
 
+    volatile bool* pInterrupt_;
+
     vector<int> removeOneVar (const vector<int>& var_vec, int index)
     /*
      * Remove a <index> from <var_vec>.
@@ -159,7 +161,7 @@ private:
 public:
 
     Tree (const vector<vector<double> >& node_infos, MetaData* meta_data, double tree_oob_error_rate);
-    Tree (Dataset*, TargetData*, MetaData*, int, unsigned int, vector<int>*, vector<int>*, int, bool, bool);
+    Tree (Dataset*, TargetData*, MetaData*, int, unsigned int, vector<int>*, vector<int>*, int, bool, bool, volatile bool*);
 
     ~Tree () {
         doSthOnNodes(root_, &Tree::deleteTheNode);
@@ -189,10 +191,7 @@ public:
         oob_predict_label_set_.swap(oob_predict_label_set);
     }
 
-    Node* genC4p5Tree (
-        const vector<int>& training_set_index,
-        const vector<int>& attribute_list,
-        volatile bool* pInterrupt);
+    Node* genC4p5Tree (const vector<int>& training_set_index, const vector<int>& attribute_list);
 
     Node* createLeafNode (const vector<int>& obs_vec, int nobs, bool pure)
     /*
@@ -243,7 +242,7 @@ public:
     }
 
     void print ();
-    void build (volatile bool* pinterrupt);
+    void build ();
     void save (vector<vector<double> >& res);
 
     void permute (int index);

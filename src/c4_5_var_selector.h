@@ -12,6 +12,8 @@ private:
     int  min_node_size_;  // threshold for minimum child node size
     int  mtry_;
 
+    volatile bool* pInterrupt_;
+
     unsigned seed_;
     double   info_;  // entropy of this node
 
@@ -21,19 +23,19 @@ private:
     map<int, map<int, vector<int> > > cand_splits_map_;  // <variable> : "<value> : <observations with that value>"
 
     void   setResult (int vindex, VarSelectRes& result, double gain_ratio = NA_REAL);
-    void   calcInfos (const vector<int>& var_vec, volatile bool* pInterrupt);
+    void   calcInfos (const vector<int>& var_vec);
     double averageInfoGain ();
 
 public:
 
-    C4p5Selector (Dataset*, TargetData*, MetaData*, int, const vector<int>&, const vector<int>&, int, unsigned);
+    C4p5Selector (Dataset*, TargetData*, MetaData*, int, const vector<int>&, const vector<int>&, int, unsigned, volatile bool*);
 
     template<class T> void handleContVar (int var_idx);
     void handleContVar (int var_idx);
     void handleDiscVar (int var_idx);
-    void findBest(VarSelectRes& res, volatile bool* pInterrupt);
-    void doSelection (VarSelectRes& res, volatile bool* pInterrupt);     // C4.5
-    void doIGRSelection (VarSelectRes& res, volatile bool* pInterrupt);  // IGR weight method
+    void findBest(VarSelectRes& res);
+    void doSelection (VarSelectRes& res);     // C4.5
+    void doIGRSelection (VarSelectRes& res);  // IGR weight method
 
     double sumNlogn (const vector<int>& dstr, int nobs) {
         double sum = 0;

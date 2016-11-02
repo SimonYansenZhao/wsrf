@@ -9,7 +9,8 @@ RForest::RForest (
         int min_node_size,
         bool weights,
         bool importance,
-        SEXP seeds)
+        SEXP seeds,
+        volatile bool* pInterrupt)
 /*
  * For training.
  */
@@ -18,7 +19,7 @@ RForest::RForest (
     train_set_         = train_set;
     targ_data_         = targdata;
     meta_data_         = meta_data;
-    ntree_            = ntree;
+    ntree_             = ntree;
     mtry_              = nvars;
     min_node_size_     = min_node_size;
     weights_           = weights;
@@ -30,6 +31,8 @@ RForest::RForest (
     rf_oob_error_rate_ = NA_REAL;
     c_s2_              = NA_REAL;
     emr2_              = NA_REAL;
+
+    pInterrupt_        = pInterrupt;
 
     tree_vec_    = vector<Tree*>(ntree);
     bagging_set_ = vector<vector<int> >(ntree, vector<int>(train_set->nobs(), -1));
@@ -55,6 +58,7 @@ RForest::RForest (Rcpp::List& wsrf_R, MetaData* meta_data, TargetData* targdata)
     mtry_              = -1;
     weights_           = false;
     min_node_size_     = 2;
+    pInterrupt_        = NULL;
 
     train_set_ = NULL;
     targ_data_ = targdata;
@@ -101,7 +105,7 @@ RForest::~RForest () {
     }
 }
 
-void RForest::buildOneTree (int ind, volatile bool* pinterrupt) {
+void RForest::buildOneTree (int ind) {
     Tree* decision_tree = new Tree(
             train_set_,
             targ_data_,
@@ -112,35 +116,33 @@ void RForest::buildOneTree (int ind, volatile bool* pinterrupt) {
             &(oob_set_vec_[ind]),
             mtry_,
             weights_,
-            importance_);
-    decision_tree->build(pinterrupt);
+            importance_,
+            pInterrupt_);
+    decision_tree->build();
     tree_vec_[ind] = decision_tree;
 }
 
-void RForest::buidForestSeq (volatile bool* pinterrupt) {
+void RForest::buidForestSeq ()
+/*
+ * Grow trees sequentially
+ */
+{
     for (int ind = 0; ind < ntree_; ind++) {
         // check interruption
-        if (check_interrupt()) throw interrupt_exception(INTERRUPT_MSG);
+        if (check_interrupt()) throw interrupt_exception(MODEL_INTERRUPT_MSG);
 
-        buildOneTree(ind, pinterrupt);
+        buildOneTree(ind);
     }
 }
 
-void RForest::buildForestAsync (
-    int parallel,
-    volatile bool* pInterrupt)
+void RForest::buildForestAsync (int parallel)
 /*
  * Build RandomForests::trees_num_ decision trees
  *
  * forest building controller
  *
- * interrupt check points:
- * 1. check at the beginning of every tree building: RandomForests::buildForestAsync()
- * 2. check at the beginning of every node building: DecisionTree::GenerateDecisionTreeByC4_5()
- * 3. check at the beginning of time consuming operation: C4_5AttributeSelectionMethod::HandleDiscreteAttribute() in C4_5AttributeSelectionMethod::ExecuteSelectionByIGR()
  */
 {
-
     int nCoresMinusTwo = thread::hardware_concurrency() - 2;
 
     // simultaneously build <nThreads> trees until <tree_num_> trees has been built
@@ -157,33 +159,43 @@ void RForest::buildForestAsync (
     vector<future<void> > results(nThreads);
     this->tree_vec_ = vector<Tree*>(this->ntree_);
     for (int i = 0; i < nThreads; i++)
-        results[i] = async(launch::async, &RForest::buildOneTreeAsync, this, &index, pInterrupt);
+        results[i] = async(launch::async, &RForest::buildOneTreeAsync, this, &index);
 
     try {
-        vector<bool> mark(nThreads, false);
+
         int i = 0;
         do {
             // check each tree builder's status till all are finished
             for (int j = 0; j < nThreads; j++) {
 #if (defined(__GNUC__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ >= 5))) || defined(__clang__)
-                if (mark[j] != true && results[j].valid() && results[j].wait_for(chrono::seconds {0}) == future_status::ready) {
+                if (results[j].valid() && results[j].wait_for(chrono::seconds {0}) == future_status::ready) {
 #else
-                if (mark[j] != true && results[j].valid() && results[j].wait_for(chrono::seconds {0})) {
+                if (results[j].valid() && results[j].wait_for(chrono::seconds {0})) {
 #endif
-                    results[j].get();
-                    mark[j] = true;
+                    results[j].get();  // May throw exception.
                     i++;
                 } // if ()
             } // for ()
-//    this_thread::sleep_for(chrono::seconds(1));
         } while (i < nThreads);
-    } catch (...) {
-        (*pInterrupt) = true;  // if one tree builder throw a exception, set true to inform others
+
+    } catch (...) {  // May exception from sub-threads.
+
+        // If one tree builder throw a exception, set true to inform others.
+        (*pInterrupt_) = true;
+
+        // Wait for other threads to finish.
+        for (int i = 0; i < nThreads; i++) {
+            if (results[i].valid())
+                results[i].wait();
+        }
+
         rethrow_exception(current_exception());
+
     } // try-catch
+
 }
 
-void RForest::buildOneTreeAsync (int* index, volatile bool* pInterrupt)
+void RForest::buildOneTreeAsync (int* index)
 /*
  * tree building function: pick a bagging set from bagging_set_ to build one tree a time until no set to fetch
  */
@@ -193,8 +205,8 @@ void RForest::buildOneTreeAsync (int* index, volatile bool* pInterrupt)
 
     while (!finished) {
 
-        if (*pInterrupt)
-        break;
+        if (*pInterrupt_)
+            break;
 
         unique_lock<mutex> ulk(mut_);
         if (*index < ntree_) {
@@ -206,7 +218,7 @@ void RForest::buildOneTreeAsync (int* index, volatile bool* pInterrupt)
         }
 
         if (!finished) {
-            buildOneTree(ind, pInterrupt);
+            buildOneTree(ind);
         }
     }
 }
@@ -253,7 +265,7 @@ Rcpp::List RForest::predict (Dataset* data, int type) {
     // Get predictions.
     for (int obs_idx = 0; obs_idx < nobs; ++obs_idx) {
 
-        if ((obs_idx & 0x3ff) == 0 && check_interrupt()) throw interrupt_exception(INTERRUPT_MSG);
+        if ((obs_idx & 0x3ff) == 0 && check_interrupt()) throw interrupt_exception(PRED_INTERRUPT_MSG);
 
         double sumAccuracy = 0;
 

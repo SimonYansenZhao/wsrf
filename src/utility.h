@@ -52,7 +52,11 @@ static inline void check_interrupt_impl(void* /*dummy*/) {
     R_CheckUserInterrupt();
 }
 
-inline bool check_interrupt() {
+inline bool check_interrupt()
+/*
+ * Can only be used in top level thread.
+ */
+{
     return (R_ToplevelExec(check_interrupt_impl, NULL) == FALSE);
 }
 
@@ -109,6 +113,7 @@ const string VAR_TYPES            = "vartypes";
 const string VAL_NAMES            = "valnames";
 
 // message
-const string INTERRUPT_MSG = "The random forest model building is interrupted.";
+const string MODEL_INTERRUPT_MSG = "The random forest model building is interrupted.";
+const string PRED_INTERRUPT_MSG  = "Prediction is interrupted.";
 
 #endif

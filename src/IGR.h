@@ -14,12 +14,14 @@ private:
     vector<double> weights_;
     vector<int>    wst_;
 
+    volatile bool* pInterrupt_;
+
     const vector<double>& gain_ratio_vec_;
 
 public:
-    IGR(const vector<double>& gain_ratio, int nvars, unsigned seed);
+    IGR(const vector<double>& gain_ratio, int nvars, unsigned seed, volatile bool* pInterrupt);
 
-    int  getSelectedIdx(volatile bool* pInterrupt);
+    int  getSelectedIdx();
 };
 
 #endif /* IGR_H_ */

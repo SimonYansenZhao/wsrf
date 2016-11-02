@@ -47,6 +47,8 @@ private:
 
     mutex mut_;
 
+    volatile bool* pInterrupt_;
+
     typedef void (RForest::*predictor)(Dataset* data, int index, double* out_iter);
 
     void collectBasicStatistics ();
@@ -57,7 +59,7 @@ private:
 public:
 
     RForest (Rcpp::List& model_list, MetaData* meta_data, TargetData* targdata);
-    RForest (Dataset*, TargetData*, MetaData*, int, int, int, bool, bool, SEXP);
+    RForest (Dataset*, TargetData*, MetaData*, int, int, int, bool, bool, SEXP, volatile bool*);
     ~RForest ();
 
     Rcpp::List predict (Dataset* data, int type);
@@ -85,12 +87,12 @@ public:
         if (importance_) assessPermVariableImportance();
     }
 
-    void buildOneTree (int ind, volatile bool* interrupt);
-    void buidForestSeq (volatile bool* pinterrupt);
+    void buildOneTree (int ind);
+    void buidForestSeq ();
 
     // parallel: 0 or 1 (sequential);  < 0 (cores-2 threads); > 1 (the exact num of threads)
-    void buildForestAsync (int parallel, volatile bool* pInterrupt);
-    void buildOneTreeAsync (int* index, volatile bool* pInterrupt);
+    void buildForestAsync (int parallel);
+    void buildOneTreeAsync (int* index);
 
 };
 

@@ -10,11 +10,13 @@ private:
     vector<double> weights_;
     vector<int>    wst_;
 
+    volatile bool* pInterrupt_;
+
 public:
-    Sampling(unsigned seed);
+    Sampling(unsigned seed, volatile bool* pInterrupt);
     vector<int> nonReplaceRandomSample(vector<int> var_vec, int nselect);
-    vector<int> nonReplaceWeightedSample(const vector<double>& originalweights, int nselect, volatile bool* pInterrupt, bool needsqrt=true);
-    vector<int> nonReplaceWeightedSample(const vector<int>& var_vec, const vector<double>& originalweights, int nselect, volatile bool* pInterrupt, bool needsqrt=true);
+    vector<int> nonReplaceWeightedSample(const vector<double>& originalweights, int nselect, bool needsqrt=true);
+    vector<int> nonReplaceWeightedSample(const vector<int>& var_vec, const vector<double>& originalweights, int nselect, bool needsqrt=true);
 };
 
 #endif /* SRC_SAMPLING_H_ */

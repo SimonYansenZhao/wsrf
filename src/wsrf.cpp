@@ -8,9 +8,9 @@
 using namespace std;
 
 SEXP wsrf (
-    SEXP xSEXP,         // Data.
-    SEXP ySEXP,         // Target variable name.
-    SEXP ntreeSEXP,     // Number of trees.
+    SEXP xSEXP,          // Data.
+    SEXP ySEXP,          // Target variable name.
+    SEXP ntreeSEXP,      // Number of trees.
     SEXP nvarsSEXP,      // Number of variables.
     SEXP minnodeSEXP,    // Minimum node size.
     SEXP weightsSEXP,    // Whether use weights.
@@ -29,63 +29,69 @@ SEXP wsrf (
         TargetData targ_data (ySEXP);
         Dataset    train_set (xSEXP, &meta_data, true);
 
+        /*
+         * <interrupt> is used to inform each thread of no need to continue, but has 2 roles:
+         *  1. represents user interrupt.
+         *  2. represents a exception has been thrown from one tree builder.
+         *
+         * Interruption check points:
+         *  1. check at the beginning of every tree growing.
+         *  2. check at the beginning of every node growing.
+         *  3. check at the beginning of time consuming operation.
+         */
+
+        volatile bool interrupt = false;
 
         RForest rf (&train_set, &targ_data, &meta_data,
                     Rcpp::as<int>(ntreeSEXP), Rcpp::as<int>(nvarsSEXP), Rcpp::as<int>(minnodeSEXP), Rcpp::as<bool>(weightsSEXP),
-                    Rcpp::as<bool>(importanceSEXP), seedsSEXP);
+                    Rcpp::as<bool>(importanceSEXP), seedsSEXP, &interrupt);
 
-        volatile bool interrupt = false;
 
 
         int nthreads       = Rcpp::as<int>(parallelSEXP);
         int nCoresMinusTwo = thread::hardware_concurrency() - 2;
-        if (nthreads == 0 || nthreads == 1 || (nthreads < 0 && nCoresMinusTwo == 1)) {  // build trees sequentially
+        if (nthreads == 0 || nthreads == 1 || (nthreads < 0 && nCoresMinusTwo == 1)) {
 
-            rf.buidForestSeq(&interrupt);
+            rf.buidForestSeq();  // Grow trees sequentially
 
-        } else {  // run in parallel
+        } else {
 
-            /**
-             * create a thread for model building
-             * leave main thread for interrupt check once per 100 milliseconds
-             *
-             * <interrupt> is used to inform each thread of no need to continue, but has 2 roles:
-             *  1. represents user interrupt
-             *  2. represents a exception has been thrown from one tree builder
-             */
+            // Create a thread for model building and leave main thread for interrupt check.
 
-            future<void> res = async(launch::async, &RForest::buildForestAsync, &rf, nthreads, &interrupt);
+            future<void> res = async(launch::async, &RForest::buildForestAsync, &rf, nthreads);
             try {
 
                 while (true) {
-//                  this_thread::sleep_for(chrono::seconds {1});
 
-                    // check interruption
+                    // check interruption per 100 milliseconds.
+                    this_thread::sleep_for(chrono::milliseconds {100});
                     if (check_interrupt()) {
                         interrupt = true;
-                        throw interrupt_exception(INTERRUPT_MSG);
+                        throw interrupt_exception(MODEL_INTERRUPT_MSG);
                     }
 
                     // check RF thread completion
 
 #if (defined(__GNUC__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ >= 5))) || defined(__clang__)
-                    if (res.wait_for(chrono::milliseconds {100}) == future_status::ready) {
+                    if (res.valid() && res.wait_for(chrono::milliseconds {0}) == future_status::ready) {
 #else  // #if __GNUC__ >= 4 && __GNUC_MINOR__ >= 7
-                    if (res.wait_for(chrono::milliseconds {100})) {
+                    if (res.valid() && res.wait_for(chrono::milliseconds {0})) {
 #endif // #if __GNUC__ >= 4 && __GNUC_MINOR__ >= 7
-                        res.get();
+                        res.get();  // May throw exception.
                         break;
                     } // if ()
                 } // while (true)
 
-            } catch (...) {
+            } catch (...) {  // May interrupted or exception from sub-thread.
 
-                // make sure thread is finished
+                // Make sure sub-thread is finished if interrupted.
                 if (res.valid())
-                    res.get();
+                    res.wait();
 
                 rethrow_exception(current_exception());
+
             } // try-catch
+
         } // if-else
 
         Rcpp::List wsrf_R(WSRF_MODEL_SIZE);

@@ -1,7 +1,8 @@
 #include "sampling.h"
 
-Sampling::Sampling(unsigned seed) {
+Sampling::Sampling(unsigned seed, volatile bool* pInterrupt) {
     seed_ = seed;
+    pInterrupt_ = pInterrupt;
 }
 
 vector<int> Sampling::nonReplaceRandomSample(vector<int> var_vec, int nselect)
@@ -30,7 +31,7 @@ vector<int> Sampling::nonReplaceRandomSample(vector<int> var_vec, int nselect)
     return result;
 }
 
-vector<int> Sampling::nonReplaceWeightedSample(const vector<double>& originalweights, int nselect, volatile bool* pInterrupt, bool needsqrt)
+vector<int> Sampling::nonReplaceWeightedSample(const vector<double>& originalweights, int nselect, bool needsqrt)
 /*
  * Weighted randomly sample without replacement.
  * Return the indexes of items in <originalweights> being selected.
@@ -58,7 +59,7 @@ vector<int> Sampling::nonReplaceWeightedSample(const vector<double>& originalwei
     double sum = 0;
     for (int i = 0, j = 1; i < n; i++, j++) {
 
-        if (*pInterrupt)
+        if (*pInterrupt_)
             throw std::range_error("Interrupted.");
 
         weights_[j] = needsqrt ? sqrt(originalweights[i]) : originalweights[i];
@@ -115,8 +116,8 @@ vector<int> Sampling::nonReplaceWeightedSample(const vector<double>& originalwei
     return result;
 }
 
-vector<int> Sampling::nonReplaceWeightedSample(const vector<int>& var_vec, const vector<double>& originalweights, int nselect, volatile bool* pInterrupt, bool needsqrt) {
-    vector<int> res = nonReplaceWeightedSample(originalweights, nselect, pInterrupt, needsqrt);
+vector<int> Sampling::nonReplaceWeightedSample(const vector<int>& var_vec, const vector<double>& originalweights, int nselect, bool needsqrt) {
+    vector<int> res = nonReplaceWeightedSample(originalweights, nselect, needsqrt);
     for (int i = 0; i < (int)res.size(); i++)
         res[i] = var_vec[res[i]];
     return res;

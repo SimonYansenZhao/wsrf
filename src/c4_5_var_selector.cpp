@@ -8,12 +8,14 @@ C4p5Selector::C4p5Selector (
         const vector<int>& obs_vec,
         const vector<int>& var_vec,
         int mtry,
-        unsigned seed)
+        unsigned seed,
+        volatile bool* pInterrupt)
     : VarSelector(train_set, targdata, meta_data, obs_vec, var_vec) {
     seed_ = seed;
     info_ = calcEntropy(obs_vec);
     mtry_ = mtry;
     min_node_size_ = min_node_size;
+    pInterrupt_ = pInterrupt;
 
 }
 
@@ -141,7 +143,7 @@ void C4p5Selector::handleContVar (int var_idx)
     };
 }
 
-void C4p5Selector::calcInfos (const vector<int>& var_vec, volatile bool* pInterrupt)
+void C4p5Selector::calcInfos (const vector<int>& var_vec)
 /*
  * Calculate the impurity difference when using each variable for node splitting.
  */
@@ -149,7 +151,7 @@ void C4p5Selector::calcInfos (const vector<int>& var_vec, volatile bool* pInterr
     int n = var_vec.size();
     for (int i = 0; i < n; i++) {
 
-        if (*pInterrupt)
+        if (*pInterrupt_)
             return;
 
         if (meta_data_->getVarType(var_vec[i]) == DISCRETE) {
@@ -170,13 +172,13 @@ double C4p5Selector::averageInfoGain () {
     return average_info_gain;
 }
 
-void C4p5Selector::doIGRSelection (VarSelectRes& res, volatile bool* pInterrupt)
+void C4p5Selector::doIGRSelection (VarSelectRes& res)
 /*
  * calculate all information gain when split by any one of the variables
  * from the weighted randomly selected subspace of size <mtry_>
  */
 {
-    calcInfos(var_vec_, pInterrupt);
+    calcInfos(var_vec_);
 
     if (info_gain_map_.empty()) {
         setResult(-1, res);
@@ -202,7 +204,7 @@ void C4p5Selector::doIGRSelection (VarSelectRes& res, volatile bool* pInterrupt)
         }
     }
 
-    if (*pInterrupt) {
+    if (*pInterrupt_) {
         setResult(-1, res);
         return;
     }
@@ -215,8 +217,8 @@ void C4p5Selector::doIGRSelection (VarSelectRes& res, volatile bool* pInterrupt)
         gain_ratio = split_info > 0 ? info_gain_map_.begin()->second / split_info : NA_REAL;
     } else {
 
-        IGR igr(cand_gain_ratio_vec, mtry_, seed_);
-        int index = igr.getSelectedIdx(pInterrupt);
+        IGR igr(cand_gain_ratio_vec, mtry_, seed_, pInterrupt_);
+        int index = igr.getSelectedIdx();
         vindex = cand_var_vec[index];
 
         gain_ratio = cand_gain_ratio_vec[index];
@@ -239,26 +241,26 @@ void C4p5Selector::setResult (int vindex, VarSelectRes& result, double gain_rati
     }
 }
 
-void C4p5Selector::doSelection (VarSelectRes& res, volatile bool* pInterrupt)
+void C4p5Selector::doSelection (VarSelectRes& res)
 /*
  * calculate all information gain when split by any one of the variables
  * from the randomly selected subspace of size <mtry_>
  */
 {
-    Sampling rs (seed_);
+    Sampling rs (seed_, pInterrupt_);
     vector<int> subvar_vec = rs.nonReplaceRandomSample(var_vec_, mtry_);
 
-    calcInfos(subvar_vec, pInterrupt);
+    calcInfos(subvar_vec);
 
     if (info_gain_map_.empty()) {
         setResult(-1, res);
         return;
     }
 
-    findBest(res, pInterrupt);
+    findBest(res);
 }
 
-void C4p5Selector::findBest(VarSelectRes& res, volatile bool* pInterrupt)
+void C4p5Selector::findBest(VarSelectRes& res)
 /*
  * find the best variable.
  */
@@ -269,7 +271,7 @@ void C4p5Selector::findBest(VarSelectRes& res, volatile bool* pInterrupt)
     bool is_set_gain_ratio = false;
     for (map<int, double>::iterator iter = info_gain_map_.begin(); iter != info_gain_map_.end(); ++iter) {
 
-        if (*pInterrupt) {
+        if (*pInterrupt_) {
             setResult(-1, res);
             return;
         }
