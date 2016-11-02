@@ -31,11 +31,17 @@ Currently, **wsrf** requires R (>= 3.3.0),
 [**Rcpp**](https://cran.r-project.org/package=Rcpp) (>= 0.10.2)
 [@dirk2011rcpp; @dirk2013seamless].  For the use of multi-threading, a
 C++ compiler with [C++11](https://en.wikipedia.org/wiki/C%2B%2B11)
-standard support of threads is required.  To install the latest
+standard support of threads is required.  To install the latest stable
 version of the package, from within R run:
 
 ```{r eval=FALSE}
 install.packages("wsrf")
+```
+
+or the latest development version:
+
+```{r eval=FALSE}
+devtools::install_github("simonyansenzhao/wsrf")
 ```
 
 The version of R before 3.3.0 doesn't provide fully support of C++11,
