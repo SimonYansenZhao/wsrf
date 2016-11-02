@@ -180,7 +180,7 @@ void C4p5Selector::doIGRSelection (VarSelectRes& res)
 {
     calcInfos(var_vec_);
 
-    if (info_gain_map_.empty()) {
+    if (info_gain_map_.empty() || *pInterrupt_) {
         setResult(-1, res);
         return;
     }
@@ -219,6 +219,12 @@ void C4p5Selector::doIGRSelection (VarSelectRes& res)
 
         IGR igr(cand_gain_ratio_vec, mtry_, seed_, pInterrupt_);
         int index = igr.getSelectedIdx();
+
+        if (*pInterrupt_) {
+            setResult(-1, res);
+            return;
+        }
+
         vindex = cand_var_vec[index];
 
         gain_ratio = cand_gain_ratio_vec[index];
@@ -252,7 +258,7 @@ void C4p5Selector::doSelection (VarSelectRes& res)
 
     calcInfos(subvar_vec);
 
-    if (info_gain_map_.empty()) {
+    if (info_gain_map_.empty() || *pInterrupt_) {
         setResult(-1, res);
         return;
     }

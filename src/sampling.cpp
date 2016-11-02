@@ -60,7 +60,7 @@ vector<int> Sampling::nonReplaceWeightedSample(const vector<double>& originalwei
     for (int i = 0, j = 1; i < n; i++, j++) {
 
         if (*pInterrupt_)
-            throw std::range_error("Interrupted.");
+            return vector<int>();
 
         weights_[j] = needsqrt ? sqrt(originalweights[i]) : originalweights[i];
         sum += weights_[j];

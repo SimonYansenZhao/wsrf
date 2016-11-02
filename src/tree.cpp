@@ -109,6 +109,11 @@ void Tree::build ()
 {
     genBaggingSets();
     root_ = genC4p5Tree(*pbagging_vec_, meta_data_->getFeatureVars());
+
+    // If interrupted, tree nodes would be NULL, subsequent calculation would not proceed.
+    if (*pInterrupt_)
+        return;
+
     calcOOBMeasures(isimportance_);
 }
 
