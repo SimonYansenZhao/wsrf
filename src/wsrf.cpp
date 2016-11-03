@@ -70,6 +70,9 @@ SEXP wsrf (
                         throw interrupt_exception(MODEL_INTERRUPT_MSG);
                     }
 
+//                    interrupt = true;
+//                    throw interrupt_exception(MODEL_INTERRUPT_MSG);
+
                     // check RF thread completion
 
 #if (defined(__GNUC__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 7) || (__GNUC__ >= 5))) || defined(__clang__)
@@ -82,11 +85,12 @@ SEXP wsrf (
                     } // if ()
                 } // while (true)
 
-            } catch (...) {  // May interrupted or exception from sub-thread.
+            } catch (...) {  // Interrupted or exception from sub-thread.
 
                 // Make sure sub-thread is finished if interrupted.
-                if (res.valid())
+                if (res.valid()) {
                     res.wait();
+                }
 
                 rethrow_exception(current_exception());
 

@@ -178,7 +178,7 @@ void RForest::buildForestAsync (int parallel)
             } // for ()
         } while (i < nThreads);
 
-    } catch (...) {  // May exception from sub-threads.
+    } catch (...) {  // Only exception from sub-threads, except user interruption.
 
         // If one tree builder throw a exception, set true to inform others.
         (*pInterrupt_) = true;

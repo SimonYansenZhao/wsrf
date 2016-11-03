@@ -124,11 +124,13 @@ private:
 
         for (int i = 0; !untraversed_nodes.empty(); i++) {
             Node* node = untraversed_nodes.front();
-            int   n    = node->nchild();  // Leaf node has no child.
-            for (int j = 0; j < n; j++)
-                untraversed_nodes.push(node->getChild(j));
+            if (node) {
+                int n = node->nchild();  // Leaf node has no child.
+                for (int j = 0; j < n; j++)
+                    untraversed_nodes.push(node->getChild(j));
 
-            (this->*dosth)(node, i);
+                (this->*dosth)(node, i);
+            }
             untraversed_nodes.pop();
         }
 
