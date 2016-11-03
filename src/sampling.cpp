@@ -1,8 +1,9 @@
 #include "sampling.h"
 
-Sampling::Sampling(unsigned seed, volatile bool* pInterrupt) {
+Sampling::Sampling(unsigned seed, volatile bool* pInterrupt, bool isParallel) {
     seed_ = seed;
     pInterrupt_ = pInterrupt;
+    isParallel_ = isParallel;
 }
 
 vector<int> Sampling::nonReplaceRandomSample(vector<int> var_vec, int nselect)
@@ -59,8 +60,12 @@ vector<int> Sampling::nonReplaceWeightedSample(const vector<double>& originalwei
     double sum = 0;
     for (int i = 0, j = 1; i < n; i++, j++) {
 
-        if (*pInterrupt_)
+        if (!isParallel_ && check_interrupt()) {
+            // If run sequentially, check user interruption directly.
+            throw interrupt_exception(MODEL_INTERRUPT_MSG);
+        } else if (*pInterrupt_) {
             return vector<int>();
+        }
 
         weights_[j] = needsqrt ? sqrt(originalweights[i]) : originalweights[i];
         sum += weights_[j];

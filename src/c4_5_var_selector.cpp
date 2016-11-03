@@ -9,13 +9,15 @@ C4p5Selector::C4p5Selector (
         const vector<int>& var_vec,
         int mtry,
         unsigned seed,
-        volatile bool* pInterrupt)
+        volatile bool* pInterrupt,
+        bool isParallel)
     : VarSelector(train_set, targdata, meta_data, obs_vec, var_vec) {
     seed_ = seed;
     info_ = calcEntropy(obs_vec);
     mtry_ = mtry;
     min_node_size_ = min_node_size;
     pInterrupt_ = pInterrupt;
+    isParallel_ = isParallel;
 
 }
 
@@ -151,8 +153,14 @@ void C4p5Selector::calcInfos (const vector<int>& var_vec)
     int n = var_vec.size();
     for (int i = 0; i < n; i++) {
 
-        if (*pInterrupt_)
+
+        if (!isParallel_ && check_interrupt()) {
+            // If run sequentially, check user interruption directly.
+            throw interrupt_exception(MODEL_INTERRUPT_MSG);
+        } else if (*pInterrupt_) {
+            // Otherwise, return immediately if run in parallel.
             return;
+        }
 
         if (meta_data_->getVarType(var_vec[i]) == DISCRETE) {
             handleDiscVar(var_vec[i]);
@@ -180,7 +188,10 @@ void C4p5Selector::doIGRSelection (VarSelectRes& res)
 {
     calcInfos(var_vec_);
 
-    if (info_gain_map_.empty() || *pInterrupt_) {
+    if (!isParallel_ && check_interrupt()) {
+        // If run sequentially, check user interruption directly.
+        throw interrupt_exception(MODEL_INTERRUPT_MSG);
+    } else if (info_gain_map_.empty() || *pInterrupt_) {
         setResult(-1, res);
         return;
     }
@@ -204,7 +215,10 @@ void C4p5Selector::doIGRSelection (VarSelectRes& res)
         }
     }
 
-    if (*pInterrupt_) {
+    if (!isParallel_ && check_interrupt()) {
+        // If run sequentially, check user interruption directly.
+        throw interrupt_exception(MODEL_INTERRUPT_MSG);
+    } else if (*pInterrupt_) {
         setResult(-1, res);
         return;
     }
@@ -217,10 +231,13 @@ void C4p5Selector::doIGRSelection (VarSelectRes& res)
         gain_ratio = split_info > 0 ? info_gain_map_.begin()->second / split_info : NA_REAL;
     } else {
 
-        IGR igr(cand_gain_ratio_vec, mtry_, seed_, pInterrupt_);
+        IGR igr(cand_gain_ratio_vec, mtry_, seed_, pInterrupt_, isParallel_);
         int index = igr.getSelectedIdx();
 
-        if (*pInterrupt_) {
+        if (!isParallel_ && check_interrupt()) {
+            // If run sequentially, check user interruption directly.
+            throw interrupt_exception(MODEL_INTERRUPT_MSG);
+        } else if (*pInterrupt_) {
             setResult(-1, res);
             return;
         }
@@ -253,12 +270,15 @@ void C4p5Selector::doSelection (VarSelectRes& res)
  * from the randomly selected subspace of size <mtry_>
  */
 {
-    Sampling rs (seed_, pInterrupt_);
+    Sampling rs (seed_, pInterrupt_, isParallel_);
     vector<int> subvar_vec = rs.nonReplaceRandomSample(var_vec_, mtry_);
 
     calcInfos(subvar_vec);
 
-    if (info_gain_map_.empty() || *pInterrupt_) {
+    if (!isParallel_ && check_interrupt()) {
+        // If run sequentially, check user interruption directly.
+        throw interrupt_exception(MODEL_INTERRUPT_MSG);
+    } else if (info_gain_map_.empty() || *pInterrupt_) {
         setResult(-1, res);
         return;
     }
@@ -277,7 +297,10 @@ void C4p5Selector::findBest(VarSelectRes& res)
     bool is_set_gain_ratio = false;
     for (map<int, double>::iterator iter = info_gain_map_.begin(); iter != info_gain_map_.end(); ++iter) {
 
-        if (*pInterrupt_) {
+        if (!isParallel_ && check_interrupt()) {
+            // If run sequentially, check user interruption directly.
+            throw interrupt_exception(MODEL_INTERRUPT_MSG);
+        } else if (*pInterrupt_) {
             setResult(-1, res);
             return;
         }

@@ -13,6 +13,7 @@ private:
     int  mtry_;
 
     volatile bool* pInterrupt_;
+    bool isParallel_;
 
     unsigned seed_;
     double   info_;  // entropy of this node
@@ -28,7 +29,7 @@ private:
 
 public:
 
-    C4p5Selector (Dataset*, TargetData*, MetaData*, int, const vector<int>&, const vector<int>&, int, unsigned, volatile bool*);
+    C4p5Selector (Dataset*, TargetData*, MetaData*, int, const vector<int>&, const vector<int>&, int, unsigned, volatile bool*, bool);
 
     template<class T> void handleContVar (int var_idx);
     void handleContVar (int var_idx);

@@ -32,7 +32,8 @@ RForest::RForest (
     c_s2_              = NA_REAL;
     emr2_              = NA_REAL;
 
-    pInterrupt_        = pInterrupt;
+    pInterrupt_ = pInterrupt;
+    isParallel_ = false;
 
     tree_vec_    = vector<Tree*>(ntree);
     bagging_set_ = vector<vector<int> >(ntree, vector<int>(train_set->nobs(), -1));
@@ -59,6 +60,7 @@ RForest::RForest (Rcpp::List& wsrf_R, MetaData* meta_data, TargetData* targdata)
     weights_           = false;
     min_node_size_     = 2;
     pInterrupt_        = NULL;
+    isParallel_        = false;
 
     train_set_ = NULL;
     targ_data_ = targdata;
@@ -117,7 +119,8 @@ void RForest::buildOneTree (int ind) {
             mtry_,
             weights_,
             importance_,
-            pInterrupt_);
+            pInterrupt_,
+            isParallel_);
     decision_tree->build();
     tree_vec_[ind] = decision_tree;
 }
@@ -127,6 +130,7 @@ void RForest::buidForestSeq ()
  * Grow trees sequentially
  */
 {
+    isParallel_ = false;
     for (int ind = 0; ind < ntree_; ind++) {
         // check interruption
         if (check_interrupt()) throw interrupt_exception(MODEL_INTERRUPT_MSG);
@@ -143,6 +147,7 @@ void RForest::buildForestAsync (int parallel)
  *
  */
 {
+    isParallel_ = true;
     int nCoresMinusTwo = thread::hardware_concurrency() - 2;
 
     // simultaneously build <nThreads> trees until <tree_num_> trees has been built

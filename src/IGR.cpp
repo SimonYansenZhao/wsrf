@@ -1,6 +1,6 @@
 #include "IGR.h"
 
-IGR::IGR(const vector<double>& gain_ratio, int nvars, unsigned seed, volatile bool* pInterrupt)
+IGR::IGR(const vector<double>& gain_ratio, int nvars, unsigned seed, volatile bool* pInterrupt, bool isParallel)
     : gain_ratio_vec_(gain_ratio) {
 
     weights_ = vector<double>(gain_ratio.size()+1);
@@ -8,6 +8,7 @@ IGR::IGR(const vector<double>& gain_ratio, int nvars, unsigned seed, volatile bo
     seed_    = seed;
 
     pInterrupt_ = pInterrupt;
+    isParallel_ = isParallel;
 
     int n = gain_ratio.size();
     nvars_ = nvars >= n ? n : nvars;
@@ -19,7 +20,7 @@ int IGR::getSelectedIdx()
  * are randomly picked from all variables according to their weights
  */
 {
-    Sampling rs (seed_, pInterrupt_);
+    Sampling rs (seed_, pInterrupt_, isParallel_);
     const vector<int>& wrs_vec = rs.nonReplaceWeightedSample(gain_ratio_vec_, nvars_);
     int max = -1;
     bool is_max_set = false;

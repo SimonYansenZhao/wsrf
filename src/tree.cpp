@@ -10,7 +10,8 @@ Tree::Tree (Dataset* train_set,
         int mtry,
         bool isweight,
         bool isimportance,
-        volatile bool* pInterrupt) {
+        volatile bool* pInterrupt,
+        bool isParallel) {
 
     train_set_     = train_set;
     targ_data_     = targdata;
@@ -31,6 +32,7 @@ Tree::Tree (Dataset* train_set,
     tree_IGR_VIs_         = vector<double>(meta_data->nvars(), 0);
 
     pInterrupt_ = pInterrupt;
+    isParallel_ = isParallel;
 
     resetPerm(true);
 }
@@ -51,6 +53,7 @@ Tree::Tree (const vector<vector<double> >& node_infos, MetaData* meta_data, doub
     seed_         = NA_INTEGER;
 
     pInterrupt_ = NULL;
+    isParallel_ = false;
 
     tree_oob_error_rate_ = tree_oob_error_rate;
 
@@ -110,9 +113,13 @@ void Tree::build ()
     genBaggingSets();
     root_ = genC4p5Tree(*pbagging_vec_, meta_data_->getFeatureVars());
 
-    // If interrupted, tree nodes would be NULL, subsequent calculation would not proceed.
-    if (*pInterrupt_)
+    if (!isParallel_ && check_interrupt()) {
+        // If run sequentially, check user interruption directly.
+        throw interrupt_exception(MODEL_INTERRUPT_MSG);
+    } else if (*pInterrupt_) {
+        // If interrupted in parallel, tree nodes would be NULL, subsequent calculation would not proceed.
         return;
+    }
 
     calcOOBMeasures(isimportance_);
 }
@@ -123,8 +130,11 @@ Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec)
  */
 {
 
-
-    if (*pInterrupt_) {
+    if (!isParallel_ && check_interrupt()) {
+        // If run sequentially, check user interruption directly.
+        throw interrupt_exception(MODEL_INTERRUPT_MSG);
+    } else if (*pInterrupt_ ) {
+        // Otherwise, return immediately if run in parallel.
         return NULL;
     }
 
@@ -140,10 +150,10 @@ Node* Tree::genC4p5Tree (const vector<int>& obs_vec, const vector<int>& var_vec)
     } else {
         VarSelectRes result;
         if (isweight_) {
-            C4p5Selector method(train_set_, targ_data_, meta_data_, min_node_size_, obs_vec, var_vec, mtry_, seed_, pInterrupt_);
+            C4p5Selector method(train_set_, targ_data_, meta_data_, min_node_size_, obs_vec, var_vec, mtry_, seed_, pInterrupt_, isParallel_);
             method.doIGRSelection(result);
         } else {
-            C4p5Selector method(train_set_, targ_data_, meta_data_, min_node_size_, obs_vec, var_vec, mtry_, seed_, pInterrupt_);
+            C4p5Selector method(train_set_, targ_data_, meta_data_, min_node_size_, obs_vec, var_vec, mtry_, seed_, pInterrupt_, isParallel_);
             method.doSelection(result);
         }
 

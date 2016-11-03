@@ -41,7 +41,8 @@ private:
     vector<double> tree_IGR_VIs_;      // Vector of size nvars: The information gain ratio decreases for each variable.
     vector<double> tree_perm_VIs_;     // Matrix of (nlabels+1)*nvars: The percent increases of OOB error rate on each class label in the permuted OOB data, plus one over all class labels.
 
-    volatile bool* pInterrupt_;
+    volatile bool* pInterrupt_;  // Interruption or exception flag.
+    bool isParallel_;  // Run in parallel or not.
 
     vector<int> removeOneVar (const vector<int>& var_vec, int index)
     /*
@@ -163,7 +164,7 @@ private:
 public:
 
     Tree (const vector<vector<double> >& node_infos, MetaData* meta_data, double tree_oob_error_rate);
-    Tree (Dataset*, TargetData*, MetaData*, int, unsigned int, vector<int>*, vector<int>*, int, bool, bool, volatile bool*);
+    Tree (Dataset*, TargetData*, MetaData*, int, unsigned int, vector<int>*, vector<int>*, int, bool, bool, volatile bool*, bool);
 
     ~Tree () {
         doSthOnNodes(root_, &Tree::deleteTheNode);

@@ -47,7 +47,8 @@ private:
 
     mutex mut_;
 
-    volatile bool* pInterrupt_;
+    volatile bool* pInterrupt_;  // Interruption or exception flag.
+    bool isParallel_;  // Run in parallel or not.
 
     typedef void (RForest::*predictor)(Dataset* data, int index, double* out_iter);
 

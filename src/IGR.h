@@ -15,11 +15,12 @@ private:
     vector<int>    wst_;
 
     volatile bool* pInterrupt_;
+    bool isParallel_;
 
     const vector<double>& gain_ratio_vec_;
 
 public:
-    IGR(const vector<double>& gain_ratio, int nvars, unsigned seed, volatile bool* pInterrupt);
+    IGR(const vector<double>& gain_ratio, int nvars, unsigned seed, volatile bool* pInterrupt, bool isParallel);
 
     int  getSelectedIdx();
 };
