@@ -116,4 +116,15 @@ const string VAL_NAMES            = "valnames";
 const string MODEL_INTERRUPT_MSG = "The random forest model building is interrupted.";
 const string PRED_INTERRUPT_MSG  = "Prediction is interrupted.";
 
+const string INER_ERR_SPLIT_MSG         = "Internal error: TrainingSet::SplitByPositon.";
+const string INER_ERR_EMPTY_NODE_MSG    = "Internal error: Empty node.";
+const string INER_ERR_NON_LEAF_NODE_MSG = "Internal error: Internal node has no class label distributions.";
+
+const string EMPTY_DATASET_MSG        = "Empty dataset.";
+const string UNMATCHED_NUM_OF_VAR_MSG = "The number of variables is less than expected.";
+const string UNEXPECTED_VAR_TYPE_MSG  = ": Unexpected variable type.";
+const string VAR_NOT_FOUND_MSG        = ": Variable not found.";
+const string UNEXPECTED_VALUE_MSG     = ": Unexpected values found.";
+
+
 #endif

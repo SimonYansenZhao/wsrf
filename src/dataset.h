@@ -56,7 +56,7 @@ public:
         // Whether all observations in <obs_vec> have the same class label.
         int nobs = obs_vec.size();
         if (nobs == 0) {
-            throw std::range_error("Empty node.");
+            throw std::range_error(INER_ERR_EMPTY_NODE_MSG);
         } else if (nobs == 1) {
             return true;
         } else {
@@ -110,7 +110,7 @@ private:
         switch (meta_data_->getVarType(pindex)) {
         case DISCRETE:
             if (!training_) {
-                if (!Rf_isFactor(dataptr)) throw std::range_error("Variable " + meta_data_->getVarName(pindex) + "is not type of factor which is different from the data for the model!");
+                if (!Rf_isFactor(dataptr)) throw std::range_error(meta_data_->getVarName(pindex) + UNEXPECTED_VAR_TYPE_MSG);
 
                 Rcpp::IntegerVector rcppdata(dataptr);
                 int nlevels_actual = Rcpp::CharacterVector(rcppdata.attr("levels")).size();
@@ -118,7 +118,7 @@ private:
 
                 if (nlevels_known < nlevels_actual) {  // There are more values than in training data.
 
-                    throw std::range_error("New values that do not exist in training data found in variable " + meta_data_->getVarName(pindex) + "!");
+                    throw std::range_error(meta_data_->getVarName(pindex) + UNEXPECTED_VALUE_MSG);
 
                 } else if (nlevels_known == nlevels_actual) {
 
@@ -127,7 +127,7 @@ private:
 
                     if (equal(actual_levels.begin(), actual_levels.end(), known_levels.begin())) {
                         data_ptr_vec_[pindex] = INTEGER(rcppdata);
-                    } else throw std::range_error("Mismatch values between training data and predicting data found in variable " + meta_data_->getVarName(pindex) + "!");
+                    } else throw std::range_error(meta_data_->getVarName(pindex) + UNEXPECTED_VALUE_MSG);
 
                 } else {  // There are less values than in training data.  We need to match the values with training data.
 
@@ -148,7 +148,7 @@ private:
                             pdata[i] = match_vec[pdata[i]];
                         data_ptr_vec_[pindex] = pdata;
 
-                    } else throw std::range_error("New values that do not exist in training data found in variable " + meta_data_->getVarName(pindex) + "!");
+                    } else throw std::range_error(meta_data_->getVarName(pindex) + UNEXPECTED_VALUE_MSG);
 
                 }
 
@@ -173,7 +173,7 @@ private:
             }
             break;
         default:
-            throw std::range_error("Unexpected variable type for " + meta_data_->getVarName(pindex) + ": Only integer, numeric and factor supported now.");
+            throw std::range_error(meta_data_->getVarName(pindex) + UNEXPECTED_VAR_TYPE_MSG);
             break;
         }
     }

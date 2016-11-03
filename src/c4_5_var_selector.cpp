@@ -139,7 +139,7 @@ void C4p5Selector::handleContVar (int var_idx)
         handleContVar<double>(var_idx);
         break;
     default:
-        throw std::range_error("Unexpected variable type for " + meta_data_->getVarName(var_idx));
+        throw std::range_error(meta_data_->getVarName(var_idx) + UNEXPECTED_VAR_TYPE_MSG);
     };
 }
 

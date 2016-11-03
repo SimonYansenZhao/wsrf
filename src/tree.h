@@ -87,7 +87,7 @@ private:
                 value = getDataValue<double>(this, data_set, vindex, oindex);
                 break;
             default:
-                throw std::range_error("Unexpected variable type for " + meta_data_->getVarName(vindex));
+                throw std::range_error(meta_data_->getVarName(vindex) + UNEXPECTED_VAR_TYPE_MSG);
                 break;
             }
 

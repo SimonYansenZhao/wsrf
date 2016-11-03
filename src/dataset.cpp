@@ -7,7 +7,7 @@ Dataset::Dataset (SEXP xSEXP, MetaData* meta_data, bool training) {
     data_ptr_vec_ = vector<void*>(ds.size());
     meta_data_    = meta_data;
 
-    if (nobs_ == 0) throw std::range_error("No observations in the dataset.");
+    if (nobs_ == 0) throw std::range_error(EMPTY_DATASET_MSG);
 
     int nvars = meta_data_->nvars();
     if (training_) {
@@ -28,7 +28,7 @@ Dataset::Dataset (SEXP xSEXP, MetaData* meta_data, bool training) {
         /*
          * For prediction.
          */
-        if (nvars > ds.size()) throw std::range_error("The number of variables is less than expected.");
+        if (nvars > ds.size()) throw std::range_error(UNMATCHED_NUM_OF_VAR_MSG);
 
         Rcpp::CharacterVector vnames(ds.names());
         for (int i = 0; i < nvars; i++) {
@@ -38,7 +38,7 @@ Dataset::Dataset (SEXP xSEXP, MetaData* meta_data, bool training) {
                 try {
                     this->init(i, ds[meta_data_->getVarName(i)]);
                 } catch(const Rcpp::index_out_of_bounds& e) {
-                    throw interrupt_exception("Variable not found: " + meta_data_->getVarName(i));
+                    throw interrupt_exception(meta_data_->getVarName(i) + VAR_NOT_FOUND_MSG);
                 }
             }
         }
@@ -81,7 +81,7 @@ map<int, vector<int> > Dataset::splitPosition (vector<int>& obs_vec, int pos)
     int nobs = obs_vec.size();
     map<int, vector<int> > result;
     if (pos < 0 || pos >= nobs) {
-        throw std::range_error("wrong in TrainingSet::SplitByPositon");
+        throw std::range_error(INER_ERR_SPLIT_MSG);
     } else {
         vector<int> vec0(pos + 1);
         for (int i = 0; i <= pos; ++i)

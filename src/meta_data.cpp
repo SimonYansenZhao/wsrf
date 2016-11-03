@@ -13,7 +13,7 @@ MetaData::MetaData (SEXP xSEXP, SEXP ySEXP)
     Rcpp::DataFrame data(xSEXP);
     nvars_ = data.size();
 
-    if (nvars_ == 0) throw std::range_error("Dataset is empty.");
+    if (nvars_ == 0) throw std::range_error(EMPTY_DATASET_MSG);
 
     feature_vars_ = idx_vec(nvars_);
     var_names_    = name_vec(nvars_);

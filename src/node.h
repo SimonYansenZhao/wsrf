@@ -144,7 +144,7 @@ public:
 
     vector<double> getLabelDstr () {
 
-        if (type_ != LEAFNODE) throw range_error("Internal node has no class label distributions");
+        if (type_ != LEAFNODE) throw range_error(INER_ERR_NON_LEAF_NODE_MSG);
 
         if (label_distribution_.size() <= 0) {
             int n = label_freq_count_.size();
