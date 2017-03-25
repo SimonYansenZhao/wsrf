@@ -1,0 +1,25 @@
+bibentry(bibtype = "Article",
+  title        = "{wsrf}: An {R} Package for Classification with Scalable Weighted Subspace Random Forests",
+  author       = c(person(given = "He",
+                          family = "Zhao",
+                          email = "Simon.Yansen.Zhao@gmail.com"),
+                   person(given = c("Graham", "J."),
+                          family = "Williams",
+                          email = "Graham.Williams@togaware.com"),
+                   person(given = c("Joshua", "Zhexue"),
+                          family = "Huang",
+                          email = "zx.huang@szu.edu.cn")),
+  journal      = "Journal of Statistical Software",
+  year         = "2017",
+  volume       = "77",
+  number       = "3",
+  pages        = "1--30",
+  doi          = "10.18637/jss.v077.i03",
+  header       = paste0("To cite package ", sQuote("wsrf"), " in publications, please use:"),
+  textVersion  =
+  paste("He Zhao, Graham J. Williams, Joshua Zhexue Huang (2017).",
+        "wsrf: An R Package for Classification with Scalable Weighted Subspace Random Forests.",
+        "Journal of Statistical Software, 77(3), 1-30.",
+        "doi:10.18637/jss.v077.i03")
+)
+
