@@ -1,8 +1,20 @@
 import("stats")
 import("parallel")
 import("Rcpp")
-useDynLib(wsrf)
-exportPattern("^[[:alpha:]]+")
+
+useDynLib(wsrf, .registration = TRUE, .fixes = "WSRF_")
+
+export(wsrf,
+       combine,
+       combine.wsrf,
+       correlation,
+       correlation.wsrf,
+       importance,
+       oob.error.rate,
+       strength,
+       varCounts.wsrf,
+       subset.wsrf
+       )
 
 S3method(combine, wsrf)
 S3method(correlation, wsrf)

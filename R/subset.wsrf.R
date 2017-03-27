@@ -23,7 +23,7 @@ subset.wsrf <- function(x, trees, ...)
     else res[tag] <- list(NULL)
   }
 
-  .Call("afterMergeOrSubset", res, PACKAGE="wsrf")
+  .Call(WSRF_afterMergeOrSubset, res)
 
   class(res) <- "wsrf"
 

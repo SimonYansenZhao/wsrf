@@ -38,7 +38,7 @@ combine.wsrf <- function(...)
 
   res <- .reduce.wsrf(res)
 
-  .Call("afterMergeOrSubset", res, PACKAGE="wsrf")
+  .Call(WSRF_afterMergeOrSubset, res)
 
   class(res) <- "wsrf"
 

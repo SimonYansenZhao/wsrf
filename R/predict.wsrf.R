@@ -47,7 +47,7 @@ predict.wsrf <- function(object,
   hasmissing <- !all(complete)
   nobs       <- length(complete)
 
-  res <- .Call("predict", object, newdata, type, PACKAGE="wsrf")
+  res <- .Call(WSRF_predict, object, newdata, type)
   names(res) <- c("class", "vote", "prob", "aprob", "waprob")
   
 

@@ -20,7 +20,7 @@ print.wsrf <- function(x, trees, ...)
   {
     if (is.logical(trees))
       trees <- seq(x[[.TREES_IDX]])[trees]
-    .Call("print", x, trees, PACKAGE="wsrf")
+    .Call(WSRF_print, x, trees)
   }
 
   invisible()

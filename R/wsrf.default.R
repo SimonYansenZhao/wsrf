@@ -60,8 +60,8 @@ wsrf.default <- function(
 
 .wsrf <- function(x, y, ntree, mtry, nodesize, weights, parallel, seeds, importance, ispart)
 {
-  model <- .Call("wsrf", x, y, ntree, mtry, nodesize,
-      weights, parallel, seeds, importance, ispart, PACKAGE="wsrf")
+  model <- .Call(WSRF_wsrf, x, y, ntree, mtry, nodesize,
+      weights, parallel, seeds, importance, ispart)
   names(model) <- .WSRF_MODEL_NAMES
   return(model)
 }
@@ -162,7 +162,7 @@ wsrf.default <- function(
   model <- .reduce.wsrf(forests)
   
   # "afterReduceForCluster" is used for statistics.
-  .Call("afterReduceForCluster", model, x, y, PACKAGE="wsrf")
+  .Call(WSRF_afterReduceForCluster, model, x, y)
   
   class(model) <- "wsrf"
   
