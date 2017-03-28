@@ -232,7 +232,7 @@ Rcpp::List RForest::predict (Dataset* data, int type) {
     // 0 - class; 1 - vote; 2 - prob; 3 - aprob; 4 - waprob
     Rcpp::List res(PRED_TYPE_NUM);
     double* res_iter[PRED_TYPE_NUM];
-    int* class_iter;
+    int* class_iter = NULL;
 
     int nobs = data->nobs();
 

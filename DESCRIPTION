@@ -1,7 +1,7 @@
 Package: wsrf
 Type: Package
 Title: Weighted Subspace Random Forest for Classification
-Version: 1.7.9
+Version: 1.7.10
 Date: 2017-03-28
 Authors@R: c(person(given = "Qinghan",
                     family = "Meng",
