@@ -70,8 +70,9 @@
 
 \details{
 
-  See Xu, Huang, Williams, Wang, and Ye (2012) for more details of
-  the algorithm.
+  See Xu, Huang, Williams, Wang, and Ye (2012) for more details of the
+  algorithm, and Zhao, Williams, Huang (2017) for more details of the
+  package.
 
   Currently, \pkg{wsrf} can only be used for classification.  When
   \code{weights=FALSE}, C4.5-based trees (Quinlan (1993)) are grown by
@@ -160,11 +161,15 @@
   J. R. (1993). "C4.5: Programs for Machine Learning". \emph{Morgan
   Kaufmann}.
 
+  He Zhao, Graham J. Williams, Joshua Zhexue Huang
+  (2017). "wsrf: An R Package for Classification with Scalable Weighted Subspace Random Forests". \emph{Journal
+  of Statistical Software}, 77(3), 1-30. doi:10.18637/jss.v077.i03
+
 }
 
 \author{
 
-  He Zhao and Graham Williams (SIAT)
+  He Zhao and Graham Williams (SIAT, CAS)
 
 }
 

@@ -50,7 +50,7 @@
   \code{nrow(newdata)}, and \code{res$prob} is a matrix of class probabilities.}
 
 \author{
-  He Zhao and Graham Williams (SIAT)
+  He Zhao and Graham Williams (SIAT, CAS)
 }
 
 \seealso{

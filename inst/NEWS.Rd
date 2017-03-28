@@ -1,6 +1,37 @@
 \name{NEWS}
 \title{News for Package 'wsrf'}
 
+\section{Changes in wsrf version 1.7.9 (2017-03-28)}{
+  \subsection{Enhancements}{
+    \itemize{
+
+      \item Increase the responsiveness when user interrupt.
+
+      \item Add registration for native routines.
+
+    }
+  }
+
+  \subsection{Bug Fixes}{
+    \itemize{
+
+      \item Segment fault and memory not mapped when user interrupt.
+
+    }
+  }
+
+  \subsection{Documentation}{
+    \itemize{
+
+      \item Add description for installation from GitHub.
+
+      \item Add citation info.
+
+    }
+  }
+
+}
+
 \section{Changes in wsrf version 1.7.0 (2016-10-27)}{
   \subsection{Changes}{
     \itemize{
@@ -261,11 +292,11 @@
     }
   }
 
-  \subsection{BUG FIXES}{
+  \subsection{Bug Fixes}{
     \itemize{
 
       \item The predict method requires a dummy outcome column to be in
-      the new data (Thank \emph{Max Knhn} for reporting this bug).
+      the new data (Thank \emph{Max Kuhn} for reporting this bug).
 
     }
   }
