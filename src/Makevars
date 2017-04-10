@@ -1,9 +1,2 @@
 CXX_STD = "CXX11"
 PKG_LIBS = `"$(R_HOME)/bin/Rscript" -e "Rcpp:::LdFlags()"` -pthread
-wsrf_FLAGS = $(R_XTRA_CPPFLAGS) $(PKG_CPPFLAGS) $(CPPFLAGS) $(CLINK_CPPFLAGS) $(R_XTRA_CXXFLAGS) $(PKG_CXXFLAGS) $(CXX1XPICFLAGS) $(SHLIB_CXXFLAGS) $(CXX1XFLAGS) $(CXX1XSTD)
-
-all: $(SHLIB)
-
-%.o: %.cpp
-	$(SHLIB_CXX1XLD) $(wsrf_FLAGS) -c $< -o $@
-

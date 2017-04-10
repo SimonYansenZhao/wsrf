@@ -1,8 +1,8 @@
 Package: wsrf
 Type: Package
 Title: Weighted Subspace Random Forest for Classification
-Version: 1.7.10
-Date: 2017-03-28
+Version: 1.7.11
+Date: 2017-04-10
 Authors@R: c(person(given = "Qinghan",
                     family = "Meng",
 		    email = "qinghan.meng@gmail.com",
@@ -44,6 +44,7 @@ Suggests: rattle (>= 2.6.26), randomForest (>= 4.6.7),
           party (>= 1.0.7), stringr (>= 0.6.2), knitr (>= 1.5)
 VignetteBuilder: knitr
 NeedsCompilation: yes
+SystemRequirements: C++11
 Classification/ACM-2012: Computing methodologies ~ Classification and
     regression trees, Computing methodologies ~ Supervised learning by
     classification, Computing methodologies ~ Massively parallel and
