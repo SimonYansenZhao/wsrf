@@ -1,3 +1,5 @@
+# This file lists files needn't to be included in the tar.
+
 # Eclipse project files
 ^\.cproject$
 ^\.project$
