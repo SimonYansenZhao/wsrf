@@ -1,6 +1,19 @@
 \name{NEWS}
 \title{News for Package 'wsrf'}
 
+\section{Changes in wsrf version 1.7.13 (2017-04-17)}{
+  \subsection{CRAN Checks}{
+    \itemize{
+
+      \item Remove deprecated Make variables with prefix \code{CXX1X}
+      (\href{http://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2017/04/01#n2017-04-01}{CHANGES
+      IN R 3.4.0})
+
+    }
+  }
+
+}
+
 \section{Changes in wsrf version 1.7.10 (2017-03-28)}{
   \subsection{Enhancements}{
     \itemize{
