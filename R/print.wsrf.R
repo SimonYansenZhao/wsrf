@@ -23,6 +23,7 @@ print.wsrf <- function(x, trees, ...)
     .Call(WSRF_print, x, trees)
   }
 
+  # return invisible NULL
   invisible()
 
 }

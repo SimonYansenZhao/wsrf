@@ -173,7 +173,8 @@ wsrf.default <- function(
   wsrfDescription <- "wsrf: An R Package for Scalable Weighted Subspace Random Forests."
   wsrfVersion <- read.dcf(file=system.file("DESCRIPTION", package=pkgname),
       fields="Version")
-  
+
+  # Use packageStartupMessage() instead of message() to give startup messages.
   packageStartupMessage(wsrfDescription)
   packageStartupMessage(paste("Version", wsrfVersion))
   packageStartupMessage("Use C++ standard thread library for parallel computing")
