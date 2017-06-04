@@ -3,7 +3,7 @@
 \alias{print}
 \alias{print.wsrf}
 
-\title{ Print Method for \code{wsrf} model }
+\title{Print Method for \code{wsrf} Model}
 
 \description{
 

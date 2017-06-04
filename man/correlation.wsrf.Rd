@@ -32,7 +32,10 @@
 }
 
 \references{
-  Breiman L (2001). "Random forests." Machine learning, 45(1), 5-32.
+
+  Breiman, L.  2001 "Random forests".  \emph{Machine learning},
+  \bold{45(1)}, 5--32.
+
 }
 
 \author{

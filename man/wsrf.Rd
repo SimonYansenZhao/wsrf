@@ -152,18 +152,19 @@
 
 \references{
 
-  Xu B, Huang JZ, Williams G, Wang Q, Ye YM
-  (2012). "Classifying very high-dimensional data with random forests built from small subspaces."
+  Xu, B. and Huang, J. Z. and Williams, G. J. and Wang, Q. and Ye, Y.
+  2012
+  "Classifying very high-dimensional data with random forests built from small subspaces".
   \emph{International Journal of Data Warehousing and Mining (IJDWM)},
-  8(2), 44-63.
+  \bold{8(2)}, 44--63.
 
-  Quinlan
-  J. R. (1993). "C4.5: Programs for Machine Learning". \emph{Morgan
-  Kaufmann}.
+  Quinlan, J. R.  1993 \emph{C4.5: Programs for Machine Learning}.
+  Morgan Kaufmann.
 
-  He Zhao, Graham J. Williams, Joshua Zhexue Huang
-  (2017). "wsrf: An R Package for Classification with Scalable Weighted Subspace Random Forests". \emph{Journal
-  of Statistical Software}, 77(3), 1-30. doi:10.18637/jss.v077.i03
+  Zhao, H. and Williams, G. J. and Huang, J. Z.  2017
+  "wsrf: An R Package for Classification with Scalable Weighted Subspace Random Forests".
+  \emph{Journal of Statistical Software}, \bold{77(3)}, 1--30.
+  doi:10.18637/jss.v077.i03
 
 }
 
