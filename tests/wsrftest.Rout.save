@@ -15,14 +15,11 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> suppressMessages(library(wsrf))
-> suppressMessages(library(rattle))
-> suppressMessages(library(randomForest))
+> suppressMessages(library("wsrf"))
+> suppressMessages(library("rattle.data"))
+> suppressMessages(library("randomForest"))
 > 
 > # prepare parameters
-> library("wsrf")
-> library("rattle")
-> library("randomForest")
 > ds <- weather
 > target <- "RainTomorrow"
 > ignore <- c("Date", "Location", "RISK_MM")

@@ -1,11 +1,8 @@
-suppressMessages(library(wsrf))
-suppressMessages(library(rattle))
-suppressMessages(library(randomForest))
+suppressMessages(library("wsrf"))
+suppressMessages(library("rattle.data"))
+suppressMessages(library("randomForest"))
 
 # prepare parameters
-library("wsrf")
-library("rattle")
-library("randomForest")
 ds <- weather
 target <- "RainTomorrow"
 ignore <- c("Date", "Location", "RISK_MM")

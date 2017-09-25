@@ -1,13 +1,27 @@
 \name{NEWS}
 \title{News for Package 'wsrf'}
 
+\newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
+
+\section{Changes in wsrf version 1.7.17 (2017-09-25)}{
+  \subsection{Bug Fixes}{
+    \itemize{
+
+      \item Use \pkglink{rattle.data} for datasets instead of
+      \pkglink{rattle}.
+
+    }
+  }
+
+}
+
 \section{Changes in wsrf version 1.7.13 (2017-04-17)}{
   \subsection{CRAN Checks}{
     \itemize{
 
       \item Remove deprecated Make variables with prefix \code{CXX1X}
       (\href{http://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2017/04/01#n2017-04-01}{CHANGES
-      IN R 3.4.0})
+      IN R 3.4.0}).
 
     }
   }
@@ -155,8 +169,6 @@
 
 }
 
-\newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
-
 \section{Changes in wsrf version 1.5.24 (2015-07-07)}{
 
   \subsection{Bug Fixes}{
@@ -227,13 +239,13 @@
     \itemize{
 
       \item Add new function \code{subset} to get a sub-forest from a
-      \pkg{wsrf} model.
+      \pkglink{wsrf} model.
       
-      \item Add new function \code{combine} to merge multiple \pkg{wsrf}
-      models into bigger one.
+      \item Add new function \code{combine} to merge multiple
+      \pkglink{wsrf} models into bigger one.
 
       \item Add \code{confusion}, \code{oot.times}, \code{predicted},
-      \code{useweights}, \code{mtry} in the \pkg{wsrf} model list.
+      \code{useweights}, \code{mtry} in the \pkglink{wsrf} model list.
 
       \item Add \code{clusterlogfile} in the parameter list of function
       \code{wsrf} for debug.

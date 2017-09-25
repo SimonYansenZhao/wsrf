@@ -1,8 +1,8 @@
 Package: wsrf
 Type: Package
 Title: Weighted Subspace Random Forest for Classification
-Version: 1.7.13
-Date: 2017-04-17
+Version: 1.7.17
+Date: 2017-09-25
 Authors@R:
     c(person(given = "Qinghan",
              family = "Meng",
@@ -52,7 +52,7 @@ Suggests:
     knitr (>= 1.5),
     party (>= 1.0.7),
     randomForest (>= 4.6.7),
-    rattle (>= 2.6.26),
+    rattle.data (>= 1.0.2),
     stringr (>= 0.6.2)
 VignetteBuilder: knitr
 NeedsCompilation: yes

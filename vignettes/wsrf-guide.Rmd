@@ -55,12 +55,12 @@ This section demonstrates how to use **wsrf**, especially on a cluster
 of machines.
 
 The example uses a small dataset *weather* from
-[**rattle**](https://cran.r-project.org/package=rattle) [@rattle].
-See the help page of **rattle** in R (`?weather`) for more details of
-*weather*.  Below are the basic information of it.
+[**rattle.data**](https://cran.r-project.org/package=rattle.data)
+[@rattle].  See the help page of **rattle.data** in R (`?weather`) for
+more details of *weather*.  Below are the basic information of it.
 
 ```{r usage_load, message=FALSE}
-library("rattle")
+library("rattle.data")
 ds <- weather
 dim(ds)
 names(ds)

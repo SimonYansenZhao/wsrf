@@ -110,7 +110,7 @@
   library("wsrf")
 
   # Prepare parameters.
-  ds <- rattle::weather
+  ds <- rattle.data::weather
   dim(ds)
   names(ds)
   target <- "RainTomorrow"
