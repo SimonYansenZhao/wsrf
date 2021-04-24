@@ -1,7 +1,7 @@
 Package: wsrf
 Type: Package
 Title: Weighted Subspace Random Forest for Classification
-Version: 1.7.17
+Version: 1.7.19
 Date: 2021-04-24
 Authors@R:
     c(person(given = "Qinghan",
@@ -11,11 +11,13 @@ Authors@R:
       person(given = "He",
              family = "Zhao",
              email = "Simon.Yansen.Zhao@gmail.com",
-             role = c("aut", "cre")),
+             role = c("aut", "cre"),
+             comment = c(ORCID = "0000-0001-5763-9743")),
       person(given = c("Graham", "J."),
              family = "Williams",
              email = "graham.williams@togaware.com",
-             role = "aut"),
+             role = "aut",
+             comment = c(ORCID = "0000-0001-7041-4127")),
       person(given = "Junchao",
              family = "Lv",
              role = "aut"),
@@ -25,7 +27,8 @@ Authors@R:
       person(given = c("Joshua", "Zhexue"),
              family = "Huang",
              email = "zx.huang@szu.edu.cn",
-             role = "aut"))
+             role = "aut",
+             comment = c(ORCID = "0000-0002-6797-2571")))
 Description:
     A parallel implementation of Weighted Subspace Random Forest.  The
     Weighted Subspace Random Forest algorithm was proposed in the
@@ -40,7 +43,7 @@ Description:
 License: GPL (>= 2)
 URL:
     https://github.com/SimonYansenZhao/wsrf,
-    http://togaware.com
+    https://togaware.com
 BugReports: https://github.com/SimonYansenZhao/wsrf/issues
 Depends:
     parallel,

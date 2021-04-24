@@ -3,13 +3,23 @@
 
 \newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in wsrf version 1.7.18 (2021-04-24)}{
+\section{Changes in wsrf version 1.7.19 (2021-04-24)}{
   \subsection{CRAN Checks}{
     \itemize{
 
       \item Add 'Suggests: markdown, rmarkdown' (See
       \href{https://github.com/yihui/knitr/issues/1864}{Move the
       markdown package from Imports to Suggests #1864}).
+
+    }
+  }
+
+  \subsection{Documentation}{
+    \itemize{
+
+      \item Add authors' ORCID identifiers.
+
+      \item Change http to https.
 
     }
   }
@@ -33,7 +43,7 @@
     \itemize{
 
       \item Remove deprecated Make variables with prefix \code{CXX1X}
-      (\href{http://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2017/04/01#n2017-04-01}{CHANGES
+      (\href{https://developer.r-project.org/blosxom.cgi/R-devel/NEWS/2017/04/01#n2017-04-01}{CHANGES
       IN R 3.4.0}).
 
     }
