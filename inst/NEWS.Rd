@@ -3,6 +3,19 @@
 
 \newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in wsrf version 1.7.18 (2021-04-24)}{
+  \subsection{CRAN Checks}{
+    \itemize{
+
+      \item Add 'Suggests: markdown, rmarkdown' (See
+      \href{https://github.com/yihui/knitr/issues/1864}{Move the
+      markdown package from Imports to Suggests #1864}).
+
+    }
+  }
+
+}
+
 \section{Changes in wsrf version 1.7.17 (2017-09-25)}{
   \subsection{Bug Fixes}{
     \itemize{
