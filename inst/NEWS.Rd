@@ -3,13 +3,23 @@
 
 \newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in wsrf version 1.7.19 (2021-04-24)}{
+\section{Changes in wsrf version 1.7.20 (2021-04-24)}{
+  \subsection{Bug Fixes}{
+    \itemize{
+
+      \item Correct the uninitialized variable \code{pos} in
+      src/c4_5_var_selector.cpp.
+
+    }
+  }
+
   \subsection{CRAN Checks}{
     \itemize{
 
-      \item Add 'Suggests: markdown, rmarkdown' (See
+      \item Suggest \pkglink{markdown} and \pkglink{rmarkdown} as
+      dependency (See
       \href{https://github.com/yihui/knitr/issues/1864}{Move the
-      markdown package from Imports to Suggests #1864}).
+      \pkglink{markdown} package from Imports to Suggests #1864}).
 
     }
   }

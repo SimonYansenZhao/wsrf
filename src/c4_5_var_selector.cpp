@@ -84,7 +84,7 @@ void C4p5Selector::handleContVar (int var_idx) {
     double subinfo;
     double split_value = -1;
     bool subinfo_is_set = false;
-    int pos;
+    int pos = min_node_size_ - 1;
     for (int i = min_node_size_; i < nobs_ - min_node_size_; ++i) {
         int next_label = targ_data_->getLabel(sorted_obs_vec[i]) - 1;
         double next_value = var_array[sorted_obs_vec[i]];
