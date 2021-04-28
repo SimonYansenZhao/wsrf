@@ -3,6 +3,18 @@
 
 \newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in wsrf version 1.7.21 (2021-04-28)}{
+  \subsection{Documentation}{
+    \itemize{
+
+      \item Correct invalid links in NEWS.
+
+    }
+  }
+
+}
+
+
 \section{Changes in wsrf version 1.7.20 (2021-04-24)}{
   \subsection{Bug Fixes}{
     \itemize{
@@ -19,7 +31,7 @@
       \item Suggest \pkglink{markdown} and \pkglink{rmarkdown} as
       dependency (See
       \href{https://github.com/yihui/knitr/issues/1864}{Move the
-      \pkglink{markdown} package from Imports to Suggests #1864}).
+      markdown package from Imports to Suggests #1864}).
 
     }
   }
