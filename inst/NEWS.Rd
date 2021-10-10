@@ -3,6 +3,18 @@
 
 \newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in wsrf version 1.7.22 (2021-10-10)}{
+  \subsection{Documentation}{
+    \itemize{
+
+      \item Replace JSS URLs with DOIs.
+
+    }
+  }
+
+}
+
+
 \section{Changes in wsrf version 1.7.21 (2021-04-28)}{
   \subsection{Documentation}{
     \itemize{
