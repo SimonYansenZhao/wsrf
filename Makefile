@@ -36,6 +36,14 @@ help:
 check: clean build
 	R CMD check --as-cran --check-subdirs=yes $(PKGNAME)_$(VERSION).tar.gz
 
+.PHONY: envdeps
+envdeps:
+	Rscript -e 'install.packages("knitr")'
+	Rscript -e 'install.packages("Rcpp")'
+	Rscript -e 'install.packages("rmarkdown")'
+	Rscript -e 'install.packages("randomForest")'
+	sudo apt install pandoc pandoc-citeproc qpdf
+
 .PHONY: before_install
 before_install:
 	sed -i 's/^Version: .*/Version: $(VERSION)/' DESCRIPTION
@@ -44,7 +52,7 @@ before_install:
 	rm -rf package .travis.yml
 
 .PHONY: build
-build: clean
+build: clean envdeps
 	sed -i 's/^Version: .*/Version: $(VERSION)/' DESCRIPTION && \
 	sed -i 's/^Date: .*/Date: $(DATE)/' DESCRIPTION && \
 	R CMD build $(PKGSRC)
