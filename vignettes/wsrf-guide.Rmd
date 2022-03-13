@@ -172,7 +172,7 @@ servers <- paste0("node", 31:40)
 model.wsrf.3 <- wsrf(form, data=ds[train, vars], parallel=servers)
 ```
 
-All we need is a character verctor specifying the hostnames of which
+All we need is a character vector specifying the hostnames of which
 nodes to use, or a named integer vector, whose values of the elements
 give how many threads to use for model building, in other words, how
 many trees built simultaneously.  More detail descriptions about

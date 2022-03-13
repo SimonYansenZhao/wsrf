@@ -11,7 +11,7 @@ wsrf.default <- function(
     clusterlogfile,
     ...) {
 
-  # Perform the required na.action, which defaults to faling if there is missing
+  # Perform the required na.action, which defaults to failing if there is missing
   # data in the dataset.
 
   if (!is.null(na.action)) {

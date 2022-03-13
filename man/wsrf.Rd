@@ -98,12 +98,12 @@
   \item{predicted}{the predicted values of the input data based on
     out-of-bag samples.}
 
-  \item{useweights}{logical.  Whether weighted subspace selcetion is
+  \item{useweights}{logical.  Whether weighted subspace selection is
   used?  NULL if the model is obtained by combining multiple \pkg{wsrf}
   model and one of them has different value of 'useweights'.}
 
   \item{mtry}{integer.  The number of variables to be chosen when
-    spliting a node.}
+    splitting a node.}
 }
 
 \examples{

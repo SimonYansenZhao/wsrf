@@ -19,7 +19,7 @@ predict.wsrf <- function(object,
 
   type <- match.arg(type, several.ok = TRUE)
 
-  # type "reponse" is the same as "class"
+  # type "response" is the same as "class"
 
   hasResponseType <- ifelse("response" %in% type, TRUE, FALSE)
   hasClassType <- ifelse("class" %in% type, TRUE, FALSE)
@@ -78,7 +78,7 @@ predict.wsrf <- function(object,
     }
   }, simplify=FALSE)
 
-  # In case users aren't aware that type "reponse" is the same as "class".
+  # In case users aren't aware that type "response" is the same as "class".
 
   if (hasResponseType) res[["response"]] <- res[["class"]]
 
