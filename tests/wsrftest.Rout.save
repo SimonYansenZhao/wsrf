@@ -1,6 +1,6 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
-Copyright (C) 2015 The R Foundation for Statistical Computing
+R version 4.1.3 (2022-03-10) -- "One Push-Up"
+Copyright (C) 2022 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -28,9 +28,9 @@ Type 'q()' to quit R.
 Species ~ .
 > set.seed(500)
 > length(train <- sample(nrow(ds), 0.7*nrow(ds)))
-[1] 256
+[1] 105
 > length(test  <- setdiff(seq_len(nrow(ds)), train))
-[1] 110
+[1] 45
 > 
 > 
 > # build model
@@ -55,4 +55,4 @@ Species ~ .
 > 
 > proc.time()
    user  system elapsed 
-   3.22    0.12    3.35 
+  0.230   0.016   0.239 
