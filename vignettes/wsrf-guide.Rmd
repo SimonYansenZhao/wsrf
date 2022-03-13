@@ -54,27 +54,22 @@ documentation from previous version if interested.
 This section demonstrates how to use **wsrf**, especially on a cluster
 of machines.
 
-The example uses a small dataset *weather* from
-[**rattle.data**](https://cran.r-project.org/package=rattle.data)
-[@rattle].  See the help page of **rattle.data** in R (`?weather`) for
-more details of *weather*.  Below are the basic information of it.
+The example uses a small dataset *iris* from R.  See the help page in
+R (`?iris`) for more details of *iris*.  Below are the basic
+information of it.
 
 ```{r usage_load, message=FALSE}
-library("rattle.data")
-ds <- weather
+ds <- iris
 dim(ds)
 names(ds)
 ```
 
 Before building the model we need to prepare the training dataset.
-First we note the various roles played by the different variables,
-including identifying the irrelevant variables.
+First we specify the target variable.
 
 ```{r usage_prepare}
-target <- "RainTomorrow"
-ignore <- c("Date", "Location", "RISK_MM")
-(vars <- setdiff(names(ds), ignore))
-dim(ds[vars])
+target <- "Species"
+vars <- names(ds)
 ```
 
 Next we deal with missing values, using `na.roughfix()` from
@@ -153,6 +148,8 @@ Thus, we have built a model that is around `r round(100*accuracy.wsrf,
 Using different random seed, we obtain another model.
 
 ```{r usage_build_another, message=FALSE}
+set.seed(seed+1)
+
 # Here we build another model without weighting.
 model.wsrf.2 <- wsrf(form, data=ds[train, vars], weights=FALSE, parallel=FALSE)
 print(model.wsrf.2)

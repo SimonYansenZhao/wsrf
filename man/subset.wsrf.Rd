@@ -31,9 +31,9 @@ An object of class \code{wsrf}.
   library("wsrf")
 
   # Prepare parameters.
-  ds     <- rattle.data::weather
-  target <- "RainTomorrow"
-  vars   <- setdiff(names(ds), c("Date", "Location", "RISK_MM"))
+  ds     <- iris
+  target <- "Species"
+  vars   <- names(ds)
   if (sum(is.na(ds[vars]))) ds[vars] <- randomForest::na.roughfix(ds[vars])
   ds[target] <- as.factor(ds[[target]])
   form <- as.formula(paste(target, "~ ."))

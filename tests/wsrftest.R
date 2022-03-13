@@ -1,12 +1,10 @@
 suppressMessages(library("wsrf"))
-suppressMessages(library("rattle.data"))
 suppressMessages(library("randomForest"))
 
 # prepare parameters
-ds <- weather
-target <- "RainTomorrow"
-ignore <- c("Date", "Location", "RISK_MM")
-vars <- setdiff(names(ds), ignore)
+ds <- iris
+target <- "Species"
+vars <- names(ds)
 if (sum(is.na(ds[vars]))) ds[vars] <- na.roughfix(ds[vars])
 ds[target] <- as.factor(ds[[target]])
 (form <- as.formula(paste(target, "~ .")))

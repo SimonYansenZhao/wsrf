@@ -16,18 +16,16 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > suppressMessages(library("wsrf"))
-> suppressMessages(library("rattle.data"))
 > suppressMessages(library("randomForest"))
 > 
 > # prepare parameters
-> ds <- weather
-> target <- "RainTomorrow"
-> ignore <- c("Date", "Location", "RISK_MM")
-> vars <- setdiff(names(ds), ignore)
+> ds <- iris
+> target <- "Species"
+> vars <- names(ds)
 > if (sum(is.na(ds[vars]))) ds[vars] <- na.roughfix(ds[vars])
 > ds[target] <- as.factor(ds[[target]])
 > (form <- as.formula(paste(target, "~ .")))
-RainTomorrow ~ .
+Species ~ .
 > set.seed(500)
 > length(train <- sample(nrow(ds), 0.7*nrow(ds)))
 [1] 256

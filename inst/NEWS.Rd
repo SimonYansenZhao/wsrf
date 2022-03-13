@@ -3,6 +3,26 @@
 
 \newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in wsrf version 1.7.24 (2022-03-13)}{
+  \subsection{CRAN Checks}{
+    \itemize{
+
+      \item Drop the dependency on \pkglink{rattle.data} since it's not
+      available.
+
+    }
+  }
+
+  \subsection{Documentation}{
+    \itemize{
+
+      \item Use the \code{iris} dataset in examples.
+
+    }
+  }
+
+}
+
 \section{Changes in wsrf version 1.7.22 (2021-10-10)}{
   \subsection{Documentation}{
     \itemize{

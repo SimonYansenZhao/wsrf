@@ -110,14 +110,11 @@
   library("wsrf")
 
   # Prepare parameters.
-  ds <- rattle.data::weather
+  ds <- iris
   dim(ds)
   names(ds)
-  target <- "RainTomorrow"
-  id     <- c("Date", "Location")
-  risk   <- "RISK_MM"
-  ignore <- c(id, if (exists("risk")) risk) 
-  vars   <- setdiff(names(ds), ignore)
+  target <- "Species"
+  vars   <- names(ds)
   if (sum(is.na(ds[vars]))) ds[vars] <- randomForest::na.roughfix(ds[vars])
   ds[target] <- as.factor(ds[[target]])
   (tt  <- table(ds[target]))
