@@ -3,7 +3,7 @@
 
 \newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in wsrf version 1.7.24 (2022-03-13)}{
+\section{Changes in wsrf version 1.7.27 (2022-03-13)}{
   \subsection{CRAN Checks}{
     \itemize{
 
@@ -17,6 +17,11 @@
     \itemize{
 
       \item Use the \code{iris} dataset in examples.
+
+      \item Remove dependencies on \pkglink{party} and
+      \pkglink{markdown}.
+
+      \item Correct typos.
 
     }
   }
