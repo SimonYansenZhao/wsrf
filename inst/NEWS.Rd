@@ -3,6 +3,16 @@
 
 \newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in wsrf version 1.7.28 (2022-12-27)}{
+  \subsection{Bug Fixes}{
+    \itemize{
+
+      \item Replace \code{sprintf} with \code{snprintf}.
+
+    }
+  }
+}
+
 \section{Changes in wsrf version 1.7.27 (2022-03-13)}{
   \subsection{CRAN Checks}{
     \itemize{

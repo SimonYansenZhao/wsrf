@@ -347,7 +347,7 @@ void Tree::printTree (Node* node, int level) {
             }
         } else {
             char numstr[21]; // enough to hold all numbers up to 64-bits
-            sprintf(numstr, "%.10g", node->getSplitValue());
+            snprintf(numstr, sizeof(numstr), "%.10g", node->getSplitValue());
             printNodeInfo("%s %d) %s <= %s", indent, id, varname, numstr, node->getChild(0));
             printTree(node->getChild(0), level + 1);
             printNodeInfo("%s %d) %s >  %s", indent, id, varname, numstr, node->getChild(1));
