@@ -1,8 +1,8 @@
 Package: wsrf
 Type: Package
 Title: Weighted Subspace Random Forest for Classification
-Version: 1.7.30
-Date: 2022-12-27
+Version: 1.7.31
+Date: 2025-12-16
 Authors@R:
     c(person(given = "Qinghan",
              family = "Meng",
@@ -42,7 +42,7 @@ Description:
     subspace selection in place of the traditional random variable
     sampling.This new approach is particularly useful in building
     models from high-dimensional data.
-License: GPL (>= 2)
+License: GPL (>= 3)
 URL:
     https://github.com/SimonYansenZhao/wsrf,
     https://togaware.com
@@ -60,7 +60,6 @@ Suggests:
     rmarkdown (>= 1.6)
 VignetteBuilder: knitr
 NeedsCompilation: yes
-SystemRequirements: C++11
 Classification/ACM-2012:
     Computing methodologies ~ Classification and regression trees,
     Computing methodologies ~ Supervised learning by classification,

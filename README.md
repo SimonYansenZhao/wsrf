@@ -1,6 +1,6 @@
 # wsrf: An R Package for Scalable Weighted Subspace Random Forests
 
-[![License](https://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![License](https://img.shields.io/badge/license-GPL%20%28%3E%3D%203%29-brightgreen.svg?style=flat)](https://www.gnu.org/licenses/gpl-3.0.html)
 [![Version on CRAN](http://www.r-pkg.org/badges/version/wsrf)](https://cran.r-project.org/package=wsrf)
 [![Number of downloads from RStudio CRAN mirror](https://cranlogs.r-pkg.org/badges/wsrf)](https://www.r-pkg.org/pkg/wsrf)
 
@@ -68,4 +68,4 @@ R> wsrfParallelInfo()
 
 ## License
 
-GPL (>= 2)
+GPL (>= 3)

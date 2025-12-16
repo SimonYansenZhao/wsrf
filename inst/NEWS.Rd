@@ -3,6 +3,27 @@
 
 \newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in wsrf version 1.7.31 (2025-12-16)}{
+  \subsection{CRAN Checks}{
+    \itemize{
+
+      \item Remove Makevars, since C++17 is now the default C++
+      standard in the mainstream compilers (including Clang and GCC),
+      and \code{Rcpp:::LdFlags()} has not been needed anymore for
+      quite a long time.
+
+    }
+  }
+
+  \subsection{Changes}{
+    \itemize{
+
+      \item Change License from GPL>=2 to GPL>=3.
+
+    }
+  }
+}
+
 \section{Changes in wsrf version 1.7.30 (2022-12-27)}{
   \subsection{Bug Fixes}{
     \itemize{

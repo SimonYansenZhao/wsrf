@@ -42,7 +42,8 @@ envdeps:
 	Rscript -e 'install.packages("Rcpp")'
 	Rscript -e 'install.packages("rmarkdown")'
 	Rscript -e 'install.packages("randomForest")'
-	sudo apt install pandoc pandoc-citeproc qpdf
+	Rscript -e 'install.packages("stringr")'
+	sudo apt install pandoc qpdf tidy
 
 .PHONY: before_install
 before_install:
