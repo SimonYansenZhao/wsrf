@@ -3,6 +3,19 @@
 
 \newcommand{\pkglink}{\href{https://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in wsrf version 1.7.32 (2026-02-21)}{
+  \subsection{CRAN Checks}{
+    \itemize{
+
+      \item Resolve the warning "comparison of floating-point type
+      with enumeration type is deprecated" because C++20 deprecated
+      implicit conversions between enumerations and floating-point
+      types.
+
+    }
+  }
+}
+
 \section{Changes in wsrf version 1.7.31 (2025-12-16)}{
   \subsection{CRAN Checks}{
     \itemize{

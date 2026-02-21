@@ -181,7 +181,7 @@ SEXP print (SEXP wsrfSEXP, SEXP treesSEXP) {
             int ntests = 0;
             int nnodes = node_infos.size();
             for (int k = 0; k < nnodes; k++)
-                if (node_infos[k][0] == INTERNALNODE)
+              if (node_infos[k][0] == static_cast<double>(INTERNALNODE))
                     ntests++;
 
             if (i > 0) Rprintf("======================================================================\n");
